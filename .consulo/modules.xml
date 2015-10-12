@@ -2,21 +2,6 @@
 <project version="4">
   <component name="ModuleManager">
     <modules>
-      <module name="android/adt-branding" dirurl="file://$PROJECT_DIR$/android/adt-branding" current-layer="Default">
-        <module-layer name="Default">
-          <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
-          <content url="file://$MODULE_DIR$">
-            <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
-          </content>
-          <orderEntry type="module-extension-sdk" extension-id="java" />
-          <orderEntry type="sourceFolder" />
-          <orderEntry type="module" module-name="util" />
-          <orderEntry type="module" module-name="platform-api" />
-          <orderEntry type="module" module-name="lang-impl" />
-          <orderEntry type="module" module-name="idea-ui" />
-          <orderEntry type="module" module-name="xml" />
-        </module-layer>
-      </module>
       <module name="android/android" dirurl="file://$PROJECT_DIR$/android/android" current-layer="Default">
         <module-layer name="Default">
           <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
@@ -216,12 +201,14 @@
       </module>
       <module name="android/sdktools/assetstudio" dirurl="file://$PROJECT_DIR$/tools-base/asset-studio" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
             <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="common" exported="" />
           <orderEntry type="module" module-name="layoutlib-api" exported="" />
@@ -244,12 +231,14 @@
       </module>
       <module name="android/sdktools/builder-test-api" dirurl="file://$PROJECT_DIR$/tools-base/build-system/builder-test-api" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
             <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="ddmlib" exported="" />
           <orderEntry type="library" exploded="" name="guava-tools" level="project" />
@@ -260,12 +249,14 @@
       </module>
       <module name="android/sdktools/chartlib" dirurl="file://$PROJECT_DIR$/tools-base/chartlib" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
             <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="android-annotations" />
           <orderEntry type="library" name="Trove4j" level="project" />
@@ -274,12 +265,14 @@
       </module>
       <module name="android/sdktools/common" dirurl="file://$PROJECT_DIR$/tools-base/common" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
             <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="library" exploded="" name="guava-tools" level="project" />
           <orderEntry type="library" name="JUnit4" level="project" />
@@ -288,12 +281,13 @@
       </module>
       <module name="android/sdktools/ddmlib" dirurl="file://$PROJECT_DIR$/tools-base/ddmlib" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
-            <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="android-annotations" />
           <orderEntry type="library" name="Guava" level="project" />
@@ -309,7 +303,6 @@
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/src/main/resources" />
-            <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
           <orderEntry type="sourceFolder" />
@@ -322,8 +315,6 @@
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/src/main/resources" />
-            <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
-            <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/resources" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
           <orderEntry type="sourceFolder" />
@@ -333,12 +324,14 @@
       </module>
       <module name="android/sdktools/layoutlib-api" dirurl="file://$PROJECT_DIR$/tools-base/layoutlib-api" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
             <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="library" exploded="" name="kxml2" level="project" />
           <orderEntry type="library" exploded="" name="JUnit4" level="project" />
@@ -387,7 +380,6 @@
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <orderEntry type="module-extension-sdk" extension-id="java" />
           <orderEntry type="sourceFolder" />
-          <orderEntry type="module" module-name="adt-branding" />
           <orderEntry type="module" module-name="android" />
           <orderEntry type="module" module-name="platform-main" />
           <orderEntry type="module" module-name="resources" />
@@ -397,12 +389,14 @@
       </module>
       <module name="android/sdktools/manifest-merger" dirurl="file://$PROJECT_DIR$/tools-base/build-system/manifest-merger" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
             <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="library" name="JUnit4" level="project" />
           <orderEntry type="library" name="gson" level="project" />
@@ -416,8 +410,6 @@
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
-            <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
-            <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/resources" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
           <orderEntry type="sourceFolder" />
@@ -426,6 +418,7 @@
       </module>
       <module name="android/sdktools/perflib" dirurl="file://$PROJECT_DIR$/tools-base/perflib" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
@@ -433,6 +426,7 @@
             <content-folder type="TEST_RESOURCE" url="file://$MODULE_DIR$/src/test/resources" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="ddmlib" />
           <orderEntry type="library" name="JUnit4" level="project" />
@@ -444,12 +438,14 @@
       </module>
       <module name="android/sdktools/rpclib" dirurl="file://$PROJECT_DIR$/tools-base/rpclib" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
             <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="annotations" />
           <orderEntry type="module" module-name="util" />
@@ -459,12 +455,13 @@
       </module>
       <module name="android/sdktools/sdk-common" dirurl="file://$PROJECT_DIR$/tools-base/sdk-common" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
-            <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="android-annotations" />
           <orderEntry type="module" module-name="common" />
@@ -479,12 +476,13 @@
       </module>
       <module name="android/sdktools/sdklib" dirurl="file://$PROJECT_DIR$/tools-base/sdklib" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
-            <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="common" exported="" />
           <orderEntry type="module" module-name="dvlib" exported="" />
@@ -497,12 +495,14 @@
       </module>
       <module name="android/sdktools/testutils" dirurl="file://$PROJECT_DIR$/tools-base/testutils" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
             <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="common" exported="" />
           <orderEntry type="library" name="JUnit4" level="project" />
