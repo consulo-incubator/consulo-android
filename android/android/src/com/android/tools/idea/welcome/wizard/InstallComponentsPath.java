@@ -15,6 +15,16 @@
  */
 package com.android.tools.idea.welcome.wizard;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.android.SdkConstants;
 import com.android.sdklib.AndroidVersion;
 import com.android.sdklib.SdkManager;
@@ -23,7 +33,6 @@ import com.android.sdklib.repository.descriptors.PkgType;
 import com.android.tools.idea.sdk.IdeSdks;
 import com.android.tools.idea.sdk.SdkMerger;
 import com.android.tools.idea.sdk.remote.RemotePkgInfo;
-import com.android.tools.idea.welcome.config.AndroidFirstRunPersistentData;
 import com.android.tools.idea.welcome.config.FirstRunWizardMode;
 import com.android.tools.idea.welcome.install.*;
 import com.android.tools.idea.wizard.DynamicWizardPath;
@@ -33,24 +42,16 @@ import com.android.tools.idea.wizard.WizardConstants;
 import com.android.utils.NullLogger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.collect.*;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.*;
 
 /**
  * Wizard path that manages component installation flow. It will prompt the user
@@ -465,7 +466,6 @@ public class InstallComponentsPath extends DynamicWizardPath implements LongRunn
             @Override
             public void run() {
               IdeSdks.setAndroidSdkPath(input, null);
-              AndroidFirstRunPersistentData.getInstance().markSdkUpToDate(myInstallerTimestamp);
             }
           });
         }

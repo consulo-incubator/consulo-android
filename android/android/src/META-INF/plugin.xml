@@ -13,9 +13,7 @@
 
   <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="test-ng.xml">TestNG-J</depends>
-  <depends optional="true" config-file="androidstudio.xml">com.intellij.modules.androidstudio</depends>
   <depends optional="true" config-file="eclipse.xml">org.jetbrains.idea.eclipse</depends>
-  <depends optional="true"  config-file="database-support.xml">com.intellij.database</depends>
 
   <resource-bundle>messages.AndroidBundle</resource-bundle>
 
