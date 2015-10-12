@@ -7,7 +7,7 @@
   <version>10.1.3.0</version>
   <vendor>JetBrains</vendor>
 
-  <depends>JUnit</depends>
+  <depends>com.intellij.junit</depends>
   <depends>org.consulo.java</depends>
   <depends>com.intellij.xml</depends>
   <depends>com.intellij.properties</depends>
@@ -15,7 +15,7 @@
   <depends>com.intellij.spellchecker</depends>
 
   <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
-  <depends optional="true" config-file="test-ng.xml">TestNG-J</depends>
+  <depends optional="true" config-file="test-ng.xml">org.mustbe.consulo.testng</depends>
 
   <resource-bundle>messages.AndroidBundle</resource-bundle>
 
@@ -178,9 +178,7 @@
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
     <projectResolve implementation="com.android.tools.idea.gradle.project.AndroidGradleProjectResolver"/>
-    <importCustomizer implementation="com.android.tools.idea.gradle.project.AndroidStudioGradleImportCustomizer"/>
     <taskManager implementation="com.android.tools.idea.gradle.task.AndroidGradleTaskManager"/>
-    <settingsControlProvider implementation="com.android.tools.idea.gradle.project.AndroidStudioGradleSettingsControlProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -188,7 +186,6 @@
 
     <externalSystemTaskNotificationListener implementation="com.android.tools.idea.gradle.AndroidGradleImportTaskNotificationListener"/>
     <externalSystemNotificationExtension implementation="com.android.tools.idea.gradle.service.notification.GradleNotificationExtension"/>
-    <buildProcess.parametersProvider implementation="com.android.tools.idea.gradle.compiler.AndroidGradleBuildProcessParametersProvider"/>
     <externalProjectDataService implementation="com.android.tools.idea.gradle.service.GradleProjectDataService" />
     <externalProjectDataService implementation="com.android.tools.idea.gradle.service.AndroidProjectDataService" />
     <externalProjectDataService implementation="com.android.tools.idea.gradle.service.JavaProjectDataService" />
@@ -646,9 +643,8 @@
 
     <sdkType implementation="org.jetbrains.android.sdk.AndroidSdkType"/>
     <gotoDeclarationHandler implementation="org.jetbrains.android.AndroidGotoDeclarationHandler"/>
-    <importFilter implementation="com.android.tools.idea.editors.AndroidImportFilter" />
     <editorTabTitleProvider implementation="com.android.tools.idea.editors.AndroidEditorTitleProvider"/>
-    <iconProvider implementation="com.android.tools.idea.fileTypes.AndroidIconProvider"/>
+    <iconDescriptorUpdater implementation="com.android.tools.idea.fileTypes.AndroidIconProvider"/>
     <refactoring.safeDeleteProcessor id="android_component" order="before javaProcessor"
                                      implementation="org.jetbrains.android.AndroidComponentSafeDeleteProcessor"/>
     <refactoring.safeDeleteProcessor id="android_resource_file" implementation="org.jetbrains.android.AndroidResourceFileSafeDeleteProcessor"/>
@@ -677,9 +673,6 @@
     <editorNotificationProvider implementation="com.android.tools.idea.editors.theme.ThemeEditorNotificationProvider"/>
     <editorNotificationProvider implementation="com.android.tools.idea.editors.AttachAndroidSdkSourcesNotificationProvider"/>
 
-    <compileServer.plugin classpath="jps/android-jps-plugin.jar;jps/android-gradle-jps.jar;android-common.jar;android-rt.jar;sdk-common.jar"/>
-    <compileServer.plugin classpath="sdklib.jar;common.jar;jarutils.jar;layoutlib-api.jar;manifest-merger.jar"/>
-
     <inlineActionHandler implementation="org.jetbrains.android.refactoring.AndroidInlineStyleHandler"/>
     <inlineActionHandler implementation="org.jetbrains.android.refactoring.AndroidInlineLayoutHandler" order="first"/>
 
@@ -688,9 +681,6 @@
     <predefinedCodeStyle implementation="org.jetbrains.android.formatter.AndroidXmlPredefinedCodeStyle"/>
     <editorNotificationProvider implementation="org.jetbrains.android.formatter.AndroidCodeStyleNotificationProvider"/>
     <editorNotificationProvider implementation="org.jetbrains.android.sdk.AndroidSdkNotConfiguredNotificationProvider"/>
-    <compiler.buildTargetScopeProvider implementation="org.jetbrains.android.compiler.AndroidBuildTargetScopeProvider"/>
-    <compiler.buildTargetScopeProvider implementation="com.android.tools.idea.gradle.compiler.AndroidGradleBuildTargetScopeProvider"/>
-    <buildProcess.parametersProvider implementation="org.jetbrains.android.compiler.AndroidBuildProcessParametersProvider"/>
 
     <!-- Temporarily disabled: need to display counts for files in multiple folders, and investigate bug
          where cloned layout files do not appear etc.
@@ -819,6 +809,8 @@
     <debugger.nodeRenderer implementation="com.android.tools.idea.debug.AndroidTypedIntegerRenderer" />
     <debugger.nodeRenderer implementation="com.android.tools.idea.debug.ArrayMapRenderer" />
     <debugger.nodeRenderer implementation="com.android.tools.idea.debug.SupportArrayMapRenderer" />
+
+    <importFilter implementation="com.android.tools.idea.editors.AndroidImportFilter" />
 
     <deadCode implementation="org.jetbrains.android.inspections.AndroidComponentEntryPoint"/>
     <testPatcher implementation="com.android.tools.idea.gradle.AndroidJunitPatcher" />

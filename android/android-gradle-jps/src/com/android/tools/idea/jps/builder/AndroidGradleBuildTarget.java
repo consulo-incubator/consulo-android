@@ -15,7 +15,6 @@
  */
 package com.android.tools.idea.jps.builder;
 
-import com.android.tools.idea.gradle.compiler.AndroidGradleBuildTargetScopeProvider;
 import com.android.tools.idea.jps.AndroidGradleJps;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
