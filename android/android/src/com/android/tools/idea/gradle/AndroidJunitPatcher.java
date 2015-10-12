@@ -19,7 +19,7 @@ import com.android.builder.model.AndroidProject;
 import com.android.builder.model.BaseArtifact;
 import com.android.builder.model.JavaArtifact;
 import com.android.sdklib.IAndroidTarget;
-import com.intellij.execution.JUnitPatcher;
+import com.intellij.execution.JavaTestPatcher;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.openapi.module.Module;
 import com.intellij.util.PathsList;
@@ -41,7 +41,7 @@ import static com.intellij.openapi.util.io.FileUtil.toSystemDependentName;
  * JUnit run configurations if the selected test artifact is "unit tests". In this case, the mockable android.jar is already in the
  * dependencies (taken from the model).
  */
-public class AndroidJunitPatcher extends JUnitPatcher {
+public class AndroidJunitPatcher implements JavaTestPatcher {
   @Override
   public void patchJavaParameters(@Nullable Module module, @NotNull JavaParameters javaParameters) {
     if (module == null) {

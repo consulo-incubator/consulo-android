@@ -8,12 +8,14 @@
   <vendor>JetBrains</vendor>
 
   <depends>JUnit</depends>
+  <depends>org.consulo.java</depends>
+  <depends>com.intellij.xml</depends>
   <depends>com.intellij.properties</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
+  <depends>com.intellij.spellchecker</depends>
 
   <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
   <depends optional="true" config-file="test-ng.xml">TestNG-J</depends>
-  <depends optional="true" config-file="eclipse.xml">org.jetbrains.idea.eclipse</depends>
 
   <resource-bundle>messages.AndroidBundle</resource-bundle>
 
@@ -53,6 +55,15 @@
     <component>
       <implementation-class>com.android.tools.idea.model.DeclaredPermissionsLookup</implementation-class>
       <skipForDefaultProject/>
+    </component>
+    <component>
+      <implementation-class>com.android.tools.idea.databinding.DataBindingProjectComponent</implementation-class>
+    </component>
+    <component>
+      <implementation-class>com.intellij.android.designer.designSurface.BuildProjectListener</implementation-class>
+    </component>
+    <component>
+      <implementation-class>com.android.tools.idea.rendering.AarResourceClassRegistry</implementation-class>
     </component>
   </project-components>
   <actions>
@@ -204,7 +215,6 @@
     <stepsBeforeRunProvider implementation="com.android.tools.idea.gradle.run.MakeBeforeRunTaskProvider" />
     <projectConfigurable groupId="build" id="gradle.compiler" parentId="project.propCompiler"
                          provider="com.android.tools.idea.gradle.compiler.GradleCompilerSettingsConfigurableProvider"/>
-    <compiler.optionsManager implementation="com.android.tools.idea.gradle.compiler.HideCompilerOptions" />
 
     <projectConfigurable instance="com.android.tools.idea.gradle.project.GradleExperimentalSettingsConfigurable"
                          id ="gradle.experimental" displayName="Experimental" parentId="reference.settingsdialog.project.gradle"/>
@@ -212,7 +222,6 @@
                         serviceImplementation="com.android.tools.idea.gradle.project.GradleExperimentalSettings"/>
 
     <errorHandler        implementation="com.android.tools.idea.diagnostics.error.ErrorReporter"/>
-    <statisticsService   implementationClass="com.android.tools.idea.stats.AndroidStatisticsService" key="android-studio" />
     <dom.fileDescription implementation="org.jetbrains.android.dom.drawable.DrawableStateListDomFileDescription"/>
     <dom.fileDescription implementation="org.jetbrains.android.dom.drawable.BitmapOrNinePatchDomFileDescription"/>
     <dom.fileDescription implementation="org.jetbrains.android.dom.drawable.LayerListDomFileDescription"/>
@@ -279,11 +288,7 @@
     <facetType implementation="org.jetbrains.android.facet.AndroidFacetType"/>
     <facetType implementation="com.android.tools.idea.gradle.facet.AndroidGradleFacetType"/>
     <facetType implementation="com.android.tools.idea.gradle.facet.JavaGradleFacetType"/>
-    <framework.detector implementation="org.jetbrains.android.facet.AndroidFrameworkDetector"/>
     <fileTemplateGroup implementation="org.jetbrains.android.AndroidFileTemplateProvider"/>
-
-    <projectTemplatesFactory implementation="com.android.tools.idea.wizard.TemplateWizardProjectTemplateFactory"/>
-    <projectTemplatesFactory implementation="org.jetbrains.android.newProject.AndroidProjectTemplatesFactory"/>
 
     <defaultLiveTemplatesProvider implementation="com.android.tools.idea.templates.live.AndroidLiveTemplatesProvider"/>
 
@@ -559,9 +564,6 @@
     <colorSettingsPage implementation="org.jetbrains.android.logcat.AndroidLogcatColorPage"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.android.AndroidFindUsagesHandlerFactory"/>
     <xml.schemaProvider implementation="org.jetbrains.android.AndroidXmlSchemaProvider"/>
-    <project.converterProvider implementation="org.jetbrains.android.converter.AndroidModuleConverterProvider"/>
-    <project.converterProvider implementation="org.jetbrains.android.converter.AndroidModuleToJavaModuleConverterProvider"/>
-    <project.converterProvider implementation="org.jetbrains.android.converter.AndroidProguardOptionsConverterProvider"/>
     <annotator language="XML" implementationClass="org.jetbrains.android.AndroidColorAnnotator" order="first"/>
     <annotator language="JAVA" implementationClass="org.jetbrains.android.AndroidColorAnnotator" order="first"/>
     <xml.elementDescriptorProvider implementation="org.jetbrains.android.dom.AndroidDomElementDescriptorProvider" order="first"/>
@@ -662,8 +664,6 @@
     <renameInputValidator implementation="com.android.tools.idea.gradle.refactoring.rename.GradleAwareSourceRootRenameValidator"/>
 
     <codeInsight.unresolvedReferenceQuickFixProvider implementation="org.jetbrains.android.inspections.AndroidQuickFixProvider"/>
-    <lang.psiAugmentProvider implementation="org.jetbrains.android.augment.AndroidPsiAugmentProvider"/>
-    <java.elementFinder implementation="org.jetbrains.android.augment.AndroidPsiElementFinder"/>
 
     <packaging.elementType implementation="org.jetbrains.android.compiler.artifact.AndroidFinalPackageElementType"/>
     <packaging.sourceItemProvider implementation="org.jetbrains.android.compiler.artifact.AndroidSourceItemsProvider"/>
@@ -704,27 +704,19 @@
     <projectViewNodeDecorator id="android.module.node.decorator" implementation="com.android.tools.idea.gradle.projectView.ModuleNodeIconDecorator"/>
 
     <spellchecker.bundledDictionaryProvider implementation="org.jetbrains.android.spellchecker.AndroidBundledDictionaryProvider"/>
-    <projectStructureDetector implementation="org.jetbrains.android.newProject.AndroidProjectStructureDetector"/>
     <resolveScopeProvider implementation="org.jetbrains.android.AndroidSdkResolveScopeProvider"/>
     <lookup.charFilter implementation="org.jetbrains.android.dom.AndroidXmlCharFilter" order="before xml"/>
     <gotoRelatedProvider implementation="org.jetbrains.android.AndroidGotoRelatedProvider"/>
     <codeInsight.lineMarkerProvider language="XML" implementationClass="org.jetbrains.android.AndroidLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="JAVA" implementationClass="org.jetbrains.android.AndroidLineMarkerProvider"/>
     <implicitUsageProvider implementation="org.jetbrains.android.AndroidImplicitUsagesProvider"/>
-    <spellchecker.support language="XML" implementationClass="org.jetbrains.android.spellchecker.AndroidXmlSpellcheckingStrategy" order="before xml"/>
-    <spellchecker.support language="TEXT" implementationClass="org.jetbrains.android.spellchecker.AndroidTextSpellcheckingStrategy" order="first"/>
-    <spellchecker.support language="Properties" implementationClass="org.jetbrains.android.spellchecker.AndroidTextSpellcheckingStrategy" order="first"/>
-    <spellchecker.support language="Groovy" implementationClass="org.jetbrains.android.spellchecker.AndroidGradleSpellcheckingStrategy" order="first"/>
-    <deadCode implementation="org.jetbrains.android.inspections.AndroidComponentEntryPoint"/>
-    <junitPatcher implementation="com.android.tools.idea.gradle.AndroidJunitPatcher" />
-
-    <debugger.nodeRenderer implementation="com.android.tools.idea.debug.BitmapRenderer" />
-    <debugger.nodeRenderer implementation="com.android.tools.idea.debug.BitmapDrawableRenderer" />
-    <debugger.nodeRenderer implementation="com.android.tools.idea.debug.AndroidTypedIntegerRenderer" />
-    <debugger.nodeRenderer implementation="com.android.tools.idea.debug.ArrayMapRenderer" />
-    <debugger.nodeRenderer implementation="com.android.tools.idea.debug.SupportArrayMapRenderer" />
 
     <virtualFileSystem key="android-dummy" implementationClass="com.android.tools.idea.editors.AndroidFakeFileSystem"/>
+    <fileEditorProvider implementation="com.intellij.android.designer.AndroidDesignerEditorProvider"/>
+    <fileEditorProvider implementation="com.android.tools.idea.gradle.editor.GradleFileEditorProvider"/>
+
+    <projectService serviceInterface="com.intellij.android.designer.model.ViewsMetaManager"
+                    serviceImplementation="com.intellij.android.designer.model.ViewsMetaManager"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij.properties">
@@ -805,23 +797,6 @@
 
   <!-- Layout editor -->
 
-  <extensions defaultExtensionNs="com.intellij">
-    <fileEditorProvider implementation="com.intellij.android.designer.AndroidDesignerEditorProvider"/>
-    <fileEditorProvider implementation="com.android.tools.idea.gradle.editor.GradleFileEditorProvider"/>
-
-    <projectService serviceInterface="com.intellij.android.designer.model.ViewsMetaManager"
-                    serviceImplementation="com.intellij.android.designer.model.ViewsMetaManager"/>
-  </extensions>
-
-  <project-components>
-    <component>
-      <implementation-class>com.intellij.android.designer.designSurface.BuildProjectListener</implementation-class>
-    </component>
-    <component>
-      <implementation-class>com.android.tools.idea.rendering.AarResourceClassRegistry</implementation-class>
-    </component>
-  </project-components>
-
   <extensions defaultExtensionNs="org.jetbrains.android">
     <refactoringContextProvider implementation="com.intellij.android.designer.AndroidDesignerRefactoringContextProvider"/>
   </extensions>
@@ -830,17 +805,30 @@
     <customizations implementation="com.intellij.android.designer.AndroidDesignerCustomizations" />
   </extensions>
 
+  <extensions defaultExtensionNs="com.intellij.spellchecker">
+    <support language="XML" implementationClass="org.jetbrains.android.spellchecker.AndroidXmlSpellcheckingStrategy" order="before xml"/>
+    <support language="TEXT" implementationClass="org.jetbrains.android.spellchecker.AndroidTextSpellcheckingStrategy" order="first"/>
+    <support language="Properties" implementationClass="org.jetbrains.android.spellchecker.AndroidTextSpellcheckingStrategy" order="first"/>
+    <support language="Groovy" implementationClass="org.jetbrains.android.spellchecker.AndroidGradleSpellcheckingStrategy" order="first"/>
+  </extensions>
+
   <!-- data binding-->
-  <extensions defaultExtensionNs="com.intellij">
+  <extensions defaultExtensionNs="org.consulo.java">
+    <debugger.nodeRenderer implementation="com.android.tools.idea.debug.BitmapRenderer" />
+    <debugger.nodeRenderer implementation="com.android.tools.idea.debug.BitmapDrawableRenderer" />
+    <debugger.nodeRenderer implementation="com.android.tools.idea.debug.AndroidTypedIntegerRenderer" />
+    <debugger.nodeRenderer implementation="com.android.tools.idea.debug.ArrayMapRenderer" />
+    <debugger.nodeRenderer implementation="com.android.tools.idea.debug.SupportArrayMapRenderer" />
+
+    <deadCode implementation="org.jetbrains.android.inspections.AndroidComponentEntryPoint"/>
+    <testPatcher implementation="com.android.tools.idea.gradle.AndroidJunitPatcher" />
+
+    <augmentProvider implementation="org.jetbrains.android.augment.AndroidPsiAugmentProvider"/>
+    <elementFinder implementation="org.jetbrains.android.augment.AndroidPsiElementFinder"/>
+
     <java.shortNamesCache implementation="com.android.tools.idea.databinding.BrShortNamesCache"/>
     <java.shortNamesCache implementation="com.android.tools.idea.databinding.DataBindingShortNamesCache"/>
-    <java.elementFinder implementation="com.android.tools.idea.databinding.BrClassFinder"/>
-    <java.elementFinder implementation="com.android.tools.idea.databinding.DataBindingClassFinder"/>
+    <elementFinder implementation="com.android.tools.idea.databinding.BrClassFinder"/>
+    <elementFinder implementation="com.android.tools.idea.databinding.DataBindingClassFinder"/>
   </extensions>
-  <project-components>
-    <component>
-      <implementation-class>com.android.tools.idea.databinding.DataBindingProjectComponent</implementation-class>
-    </component>
-  </project-components>
-
 </idea-plugin>

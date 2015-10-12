@@ -32,7 +32,6 @@ import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.util.Consumer;
 import org.jetbrains.android.newProject.AndroidModuleBuilder;
 import org.jetbrains.android.newProject.AndroidModuleWizardStep;
-import org.jetbrains.android.newProject.AndroidProjectTemplatesFactory;
 import org.jetbrains.android.sdk.AndroidSdkType;
 
 /**

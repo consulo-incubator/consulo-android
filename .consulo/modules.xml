@@ -4,7 +4,7 @@
     <modules>
       <module name="android/android" dirurl="file://$PROJECT_DIR$/android/android" current-layer="Default">
         <module-layer name="Default">
-          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" custom-plugin-dir-url="file://$MODULE_DIR$/../../dep" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/gen">
@@ -100,6 +100,67 @@
           </orderEntry>
           <orderEntry type="module" module-name="diff-impl" />
           <orderEntry type="library" name="Mocks" level="project" />
+          <orderEntry type="module-library">
+            <library name="consulo:Java">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/asm-all.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/coverate_rt.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/instrumentation-util.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/jacocoant.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/java-i18n.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/java-manifest.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/java-rt.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/java.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/jdi.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/jdk-annotations.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/java/lib/jimage-jdk6.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
+          <orderEntry type="module-library">
+            <library name="consulo:XML">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/../../dep/xml/lib/jsr173_1.0_api.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/xml/lib/resolver.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/xml/lib/xerces.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/xml/lib/xml.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
+          <orderEntry type="module-library">
+            <library name="consulo:Properties Support">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/../../dep/properties/lib/properties.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
+          <orderEntry type="module-library">
+            <library name="consulo:Maven Integration">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/artifact-resolver-m2.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/artifact-resolver-m3.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/artifact-resolver-m31.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/commons-cli-1.2.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/lucene-core-2.4.1.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/maven-server-api.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/maven.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/maven2-server-impl.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/maven3-server-common.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/maven30-server-impl.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/maven32-server-impl.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/plexus-archiver-2.4.4.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/plexus-utils-2.0.6.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../dep/maven/lib/wadl-core.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
+          <orderEntry type="module-library">
+            <library name="consulo:Spellchecker">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/../../dep/spellchecker/lib/spellchecker.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
         </module-layer>
       </module>
       <module name="android/android-annotations" dirurl="file://$PROJECT_DIR$/tools-base/annotations" current-layer="Default">
