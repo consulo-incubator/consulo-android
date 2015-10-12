@@ -1,0 +1,7 @@
+<component name="libraryTable">
+  <library name="Eclipse">
+    <binaries>
+      <root url="jar://$PROJECT_DIR$/lib/ecj-4.4.jar!/" />
+    </binaries>
+  </library>
+</component>

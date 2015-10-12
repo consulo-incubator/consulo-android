@@ -1,0 +1,7 @@
+<component name="libraryTable">
+  <library name="freemarker-2.3.20">
+    <binaries>
+      <root url="jar://$PROJECT_DIR$/android/android/lib/freemarker-2.3.20.jar!/" />
+    </binaries>
+  </library>
+</component>

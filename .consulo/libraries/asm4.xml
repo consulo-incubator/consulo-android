@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="asm4">
+    <binaries>
+      <root url="jar://$PROJECT_DIR$/lib/asm4-all.jar!/" />
+    </binaries>
+    <sources>
+      <root url="jar://$PROJECT_DIR$/lib/src/asm4-src.zip!/" />
+    </sources>
+  </library>
+</component>

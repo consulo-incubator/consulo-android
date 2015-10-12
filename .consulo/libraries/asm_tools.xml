@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="asm-tools">
+    <binaries>
+      <root url="jar://$PROJECT_DIR$/android/android/lib/asm-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android/android/lib/asm-analysis-5.0.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/android/android/lib/asm-tree-5.0.3.jar!/" />
+    </binaries>
+  </library>
+</component>
