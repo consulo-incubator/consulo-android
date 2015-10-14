@@ -44,6 +44,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
@@ -74,11 +75,11 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.android.dom.attrs.AttributeDefinition;
 import org.jetbrains.android.dom.attrs.AttributeDefinitions;
 import org.jetbrains.android.dom.attrs.AttributeFormat;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerOptions;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -119,14 +120,16 @@ import static org.jetbrains.android.sdk.AndroidSdkUtils.isAndroidSdk;
 /**
  * Panel which can show render errors, along with embedded hyperlinks to perform actions such as
  * showing relevant source errors, or adding missing attributes, etc.
- * <p>
+ * <p/>
  * Partially based on {@link com.intellij.codeInspection.ui.Browser}, the inspections result HTML pane, modified
  * to show render errors instead
  */
 public class RenderErrorPanel extends JPanel {
   public static final boolean SIZE_ERROR_PANEL_DYNAMICALLY = true;
   private static final int ERROR_PANEL_OPACITY = UIUtil.isUnderDarcula() ? 224 : 208; // out of 255
-  /** Class of the render session implementation class; for render errors, we cut off stack dumps at this frame */
+  /**
+   * Class of the render session implementation class; for render errors, we cut off stack dumps at this frame
+   */
   private static final String RENDER_SESSION_IMPL_FQCN = "com.android.layoutlib.bridge.impl.RenderSessionImpl";
   private static final Logger LOG = Logger.getInstance(RenderErrorPanel.class);
 
@@ -136,7 +139,7 @@ public class RenderErrorPanel extends JPanel {
   private HtmlLinkManager myLinkManager;
   private final JScrollPane myScrollPane;
 
-  public void dispose(){
+  public void dispose() {
     removeAll();
     if (myHTMLViewer != null) {
       myHTMLViewer.removeHyperlinkListener(myHyperLinkListener);
@@ -338,7 +341,8 @@ public class RenderErrorPanel extends JPanel {
         for (String fqcn : views) {
           if (fqcn.startsWith("android.") && !viewNeedsPackage(fqcn)) {
             androidViewClassNames.add(fqcn);
-          } else {
+          }
+          else {
             customViews.add(fqcn);
           }
         }
@@ -384,7 +388,7 @@ public class RenderErrorPanel extends JPanel {
 
       builder.addIcon(HtmlBuilderHelper.getTipIconPath());
       builder.addLink("Tip: Try to ", "build", " the project.",
-                      myLinkManager.createCompileModuleUrl());
+          myLinkManager.createCompileModuleUrl());
       if (foundCustomView) {
         builder.newline();
         builder.add("One or more missing custom views were found in the project, but does not appear to have been compiled yet.");
@@ -394,9 +398,9 @@ public class RenderErrorPanel extends JPanel {
   }
 
   private boolean addTypoSuggestions(@NotNull HtmlBuilder builder,
-                                  String actual,
-                                  @Nullable Collection<String> views,
-                                  boolean compareWithPackage) {
+                                     String actual,
+                                     @Nullable Collection<String> views,
+                                     boolean compareWithPackage) {
     if (views == null || views.isEmpty()) {
       return false;
     }
@@ -428,10 +432,11 @@ public class RenderErrorPanel extends JPanel {
           if (!sameBase) {
             // If they differ in the base name, handled by separate call with !compareWithPackage
             continue;
-          } else if (actualBase.equals(actual) && !actualBase.equals(suggested) && viewNeedsPackage(suggested)) {
+          }
+          else if (actualBase.equals(actual) && !actualBase.equals(suggested) && viewNeedsPackage(suggested)) {
             // Custom view needs to be specified with a fully qualified path
             builder.addLink(String.format("Change to %1$s", suggested),
-                            myLinkManager.createReplaceTagsUrl(actual, suggested));
+                myLinkManager.createReplaceTagsUrl(actual, suggested));
             builder.add(", ");
             continue;
           }
@@ -451,10 +456,10 @@ public class RenderErrorPanel extends JPanel {
           // Suggest this class as a typo for the given class
           String labelClass = (suggestedBase.equals(actual) || actual.indexOf('.') != -1) ? suggested : suggestedBase;
           builder.addLink(String.format("Change to %1$s", labelClass),
-                          myLinkManager.createReplaceTagsUrl(actual,
-                          // Only show full package name if class name
-                          // is the same
-                          (viewNeedsPackage(suggested) ? suggested : suggestedBase)));
+              myLinkManager.createReplaceTagsUrl(actual,
+                  // Only show full package name if class name
+                  // is the same
+                  (viewNeedsPackage(suggested) ? suggested : suggestedBase)));
           builder.add(", ");
         }
       }
@@ -468,9 +473,9 @@ public class RenderErrorPanel extends JPanel {
     if (fragmentNames != null && !fragmentNames.isEmpty()) {
 
       builder.add("A ").addHtml("<code>").add("<fragment>").addHtml("</code>").add(" tag allows a layout file to dynamically include " +
-                                                                                   "different layouts at runtime. ");
+          "different layouts at runtime. ");
       builder.add("At layout editing time the specific layout to be used is not known. You can choose which layout you would " +
-                  "like previewed while editing the layout.");
+          "like previewed while editing the layout.");
       builder.beginList();
 
       // TODO: Add link to not warn any more for this session
@@ -483,7 +488,8 @@ public class RenderErrorPanel extends JPanel {
           builder.add("<fragment ");
           builder.addBold(className);
           builder.add(" ...>");
-        } else {
+        }
+        else {
           builder.add("<fragment>");
         }
         builder.add(" (");
@@ -514,7 +520,8 @@ public class RenderErrorPanel extends JPanel {
                   if (matcher.find(index)) {
                     layouts.add(matcher.group(1));
                     index = matcher.end();
-                  } else {
+                  }
+                  else {
                     break;
                   }
                 }
@@ -536,7 +543,8 @@ public class RenderErrorPanel extends JPanel {
               builder.addLink("Pick Layout...", myLinkManager.createPickLayoutUrl(className));
             }
           });
-        } else {
+        }
+        else {
           builder.addLink("Choose Fragment Class...", myLinkManager.createAssignFragmentUrl(className));
         }
         builder.add(")");
@@ -566,7 +574,7 @@ public class RenderErrorPanel extends JPanel {
     Set<String> names = new java.util.HashSet<String>();
     for (PsiClass psiClass : findInheritors(module, CLASS_VIEW)) {
       String name = psiClass.getQualifiedName();
-      if (name != null ) {
+      if (name != null) {
         names.add(name);
       }
     }
@@ -599,31 +607,31 @@ public class RenderErrorPanel extends JPanel {
   }
 
   private void reportBrokenClasses(@NotNull RenderLogger logger, @NotNull HtmlBuilder builder) {
-    Map<String,Throwable> brokenClasses = logger.getBrokenClasses();
+    Map<String, Throwable> brokenClasses = logger.getBrokenClasses();
     if (brokenClasses != null && !brokenClasses.isEmpty()) {
       final Module module = logger.getModule();
       if (module != null) {
-        AndroidFacet facet = AndroidFacet.getInstance(module);
+        AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
         if (facet != null && facet.isGradleProject() && facet.getIdeaAndroidProject() != null) {
           AndroidProject androidProject = facet.getIdeaAndroidProject().getDelegate();
           String modelVersion = androidProject.getModelVersion();
           if (hasLayoutRenderingIssue(androidProject)) {
             builder.addBold("Using an obsolete version of the Gradle plugin (" + modelVersion +
-                            "); this can lead to layouts not rendering correctly.").newline();
+                "); this can lead to layouts not rendering correctly.").newline();
             builder.addIcon(HtmlBuilderHelper.getTipIconPath());
 
             Runnable runnable = new Runnable() {
               @Override
               public void run() {
                 FixGradleModelVersionHyperlink quickFix = new FixGradleModelVersionHyperlink(GRADLE_PLUGIN_RECOMMENDED_VERSION,
-                                                                                             null, false);
+                    null, false);
                 quickFix.executeIfClicked(module.getProject(),
-                                          new HyperlinkEvent(this, HyperlinkEvent.EventType.ACTIVATED, null, quickFix.getUrl()));
+                    new HyperlinkEvent(this, HyperlinkEvent.EventType.ACTIVATED, null, quickFix.getUrl()));
               }
             };
             builder.add("Tip: Either ")
-              .addLink("update the Gradle plugin build version to 1.2.3", myLinkManager.createRunnableLink(runnable))
-              .add(" or later, or downgrade to version 1.1.3, or as a workaround, ");
+                .addLink("update the Gradle plugin build version to 1.2.3", myLinkManager.createRunnableLink(runnable))
+                .add(" or later, or downgrade to version 1.1.3, or as a workaround, ");
             builder.beginList();
             builder.listItem().addLink("", "Build the project", ", then", myLinkManager.createCompileModuleUrl());
             builder.listItem().addLink("", "Gradle Sync the project", ", then", myLinkManager.createSyncProjectUrl());
@@ -644,7 +652,7 @@ public class RenderErrorPanel extends JPanel {
 
       Throwable firstThrowable = null;
       builder.beginList();
-      for (Map.Entry<String,Throwable> entry : brokenClasses.entrySet()) {
+      for (Map.Entry<String, Throwable> entry : brokenClasses.entrySet()) {
         String className = entry.getKey();
         Throwable throwable = entry.getValue();
 
@@ -669,7 +677,7 @@ public class RenderErrorPanel extends JPanel {
 
       builder.addIcon(HtmlBuilderHelper.getTipIconPath());
       builder.addLink("Tip: Use ", "View.isInEditMode()", " in your custom views to skip code or show sample data when shown in the IDE",
-                      "http://developer.android.com/reference/android/view/View.html#isInEditMode()");
+          "http://developer.android.com/reference/android/view/View.html#isInEditMode()");
 
       if (firstThrowable != null) {
         builder.newline().newline();
@@ -709,15 +717,15 @@ public class RenderErrorPanel extends JPanel {
       }
 
       if (throwable.getMessage().equals("Unable to create temporary file")) {
-          if (JAVA_VERSION.startsWith("1.7.0_")) {
-            int version = Integer.parseInt(JAVA_VERSION.substring(JAVA_VERSION.indexOf('_') + 1));
-            if (version > 0 && version < 45) {
-              builder.newline();
-              builder.addIcon(HtmlBuilderHelper.getTipIconPath());
-              builder.add("Tip: This may be caused by using an older version of JDK 1.7.0; try using at least 1.7.0_45 " +
-                          "(you are using " + JAVA_VERSION + ")");
-            }
+        if (JAVA_VERSION.startsWith("1.7.0_")) {
+          int version = Integer.parseInt(JAVA_VERSION.substring(JAVA_VERSION.indexOf('_') + 1));
+          if (version > 0 && version < 45) {
+            builder.newline();
+            builder.addIcon(HtmlBuilderHelper.getTipIconPath());
+            builder.add("Tip: This may be caused by using an older version of JDK 1.7.0; try using at least 1.7.0_45 " +
+                "(you are using " + JAVA_VERSION + ")");
           }
+        }
       }
 
       if (newlineAfter) {
@@ -780,7 +788,8 @@ public class RenderErrorPanel extends JPanel {
     if (logger.seenTagPrefix(TAG_STILL_BUILDING)) {
       builder.addBold("Project Still Building: May cause rendering errors until the build is done.").newline();
       builder.newline().newline();
-    } else if (logger.seenTagPrefix(TAG_RESOURCES_RESOLVE_THEME_ATTR)) {
+    }
+    else if (logger.seenTagPrefix(TAG_RESOURCES_RESOLVE_THEME_ATTR)) {
       builder.addBold("Missing styles. Is the correct theme chosen for this layout?").newline();
       builder.addIcon(HtmlBuilderHelper.getTipIconPath());
       builder.add("Use the Theme combo box above the layout to choose a different layout, or fix the theme style references.");
@@ -795,7 +804,7 @@ public class RenderErrorPanel extends JPanel {
         builder.addBold("It looks like you are using a render target where the layout library does not support the tvdpi density.");
         builder.newline().newline();
         builder.add("Please try either updating to the latest available version (using the SDK manager), or if no updated " +
-                    "version is available for this specific version of Android, try using a more recent render target version.");
+            "version is available for this specific version of Android, try using a more recent render target version.");
         builder.newline().newline();
         break;
       }
@@ -818,10 +827,11 @@ public class RenderErrorPanel extends JPanel {
         });
         if (haveResourceErrors) {
           builder.addBold("NOTE: This project contains resource errors, so aapt did not succeed, " +
-                          "which can cause rendering failures. Fix resource problems first.");
+              "which can cause rendering failures. Fix resource problems first.");
           builder.newline().newline();
         }
-      } else if (renderTask.getLayoutlibCallback() != null && renderTask.getLayoutlibCallback().isUsed()) {
+      }
+      else if (renderTask.getLayoutlibCallback() != null && renderTask.getLayoutlibCallback().isUsed()) {
         boolean hasJavaErrors = wolfgang.hasProblemFilesBeneath(new Condition<VirtualFile>() {
           @Override
           public boolean value(VirtualFile virtualFile) {
@@ -830,8 +840,8 @@ public class RenderErrorPanel extends JPanel {
         });
         if (hasJavaErrors) {
           builder.addBold("NOTE: This project contains Java compilation errors, " +
-                          "which can cause rendering failures for custom views. " +
-                          "Fix compilation problems first.");
+              "which can cause rendering failures for custom views. " +
+              "Fix compilation problems first.");
           builder.newline().newline();
         }
       }
@@ -844,7 +854,7 @@ public class RenderErrorPanel extends JPanel {
     if (logger.isMissingSize()) {
       // Emit hyperlink about missing attributes; the action will operate on all of them
       builder.addBold("NOTE: One or more layouts are missing the layout_width or layout_height attributes. " +
-                      "These are required in most layouts.").newline();
+          "These are required in most layouts.").newline();
       final ResourceResolver resourceResolver = renderTask.getResourceResolver();
       XmlFile psiFile = renderTask.getPsiFile();
       if (psiFile == null) {
@@ -858,9 +868,9 @@ public class RenderErrorPanel extends JPanel {
       // See whether we should offer match_parent instead of fill_parent
       AndroidModuleInfo moduleInfo = AndroidModuleInfo.get(module);
       final String fill = moduleInfo == null
-                          ||  moduleInfo.getBuildSdkVersion() == null
-                          || moduleInfo.getBuildSdkVersion().getApiLevel() >= 8
-                          ? VALUE_MATCH_PARENT : VALUE_FILL_PARENT;
+          || moduleInfo.getBuildSdkVersion() == null
+          || moduleInfo.getBuildSdkVersion().getApiLevel() >= 8
+          ? VALUE_MATCH_PARENT : VALUE_FILL_PARENT;
 
       for (final XmlTag tag : missing) {
         ApplicationManager.getApplication().runReadAction(new Runnable() {
@@ -909,7 +919,8 @@ public class RenderErrorPanel extends JPanel {
         HighlightSeverity severity = message.getSeverity();
         if (severity == HighlightSeverity.ERROR) {
           builder.addIcon(HtmlBuilderHelper.getErrorIconPath());
-        } else if (severity == HighlightSeverity.WARNING) {
+        }
+        else if (severity == HighlightSeverity.WARNING) {
           builder.addIcon(HtmlBuilderHelper.getWarningIconPath());
         }
 
@@ -983,7 +994,8 @@ public class RenderErrorPanel extends JPanel {
         for (String value : values) {
           if (first) {
             first = false;
-          } else {
+          }
+          else {
             builder.add(", ");
           }
           builder.addLink(value, myLinkManager.createReplaceAttributeValueUrl(attributeName, currentValue, value));
@@ -992,7 +1004,9 @@ public class RenderErrorPanel extends JPanel {
     }
   }
 
-  /** Display the problem list encountered during a render */
+  /**
+   * Display the problem list encountered during a render
+   */
   private void reportThrowable(@NotNull HtmlBuilder builder, @NotNull final Throwable throwable, boolean hideIfIrrelevant) {
     StackTraceElement[] frames = throwable.getStackTrace();
     int end = -1;
@@ -1017,7 +1031,8 @@ public class RenderErrorPanel extends JPanel {
           builder.addLink("Show Exception", myLinkManager.createRunnableLink(detailsFix));
         }
         return;
-      } else {
+      }
+      else {
         // List just the top frames
         for (int i = 0; i < frames.length; i++) {
           StackTraceElement frame = frames[i];
@@ -1069,7 +1084,8 @@ public class RenderErrorPanel extends JPanel {
           }
           String url = myLinkManager.createOpenStackUrl(className, methodName, fileName, lineNumber);
           builder.add("(").addLink(location, url).add(")");
-        } else {
+        }
+        else {
           // Try to link to local documentation
           String url = null;
           if (isFramework(frame) && platformSourceExists) { // try to link to documentation, if available
@@ -1097,7 +1113,8 @@ public class RenderErrorPanel extends JPanel {
           }
           if (url != null) {
             builder.add("(").addLink(location, url).add(")");
-          } else {
+          }
+          else {
             builder.add("(").add(location).add(")");
           }
         }
@@ -1121,28 +1138,28 @@ public class RenderErrorPanel extends JPanel {
   private static boolean isHiddenFrame(StackTraceElement frame) {
     String className = frame.getClassName();
     return
-      className.startsWith("sun.reflect.") ||
-      className.equals("android.view.BridgeInflater") ||
-      className.startsWith("com.android.tools.") ||
-      className.startsWith("org.jetbrains.");
+        className.startsWith("sun.reflect.") ||
+            className.equals("android.view.BridgeInflater") ||
+            className.startsWith("com.android.tools.") ||
+            className.startsWith("org.jetbrains.");
   }
 
   private static boolean isInterestingFrame(StackTraceElement frame) {
     String className = frame.getClassName();
     return !(className.startsWith("android.")          //$NON-NLS-1$
-             || className.startsWith("org.jetbrains.") //$NON-NLS-1$
-             || className.startsWith("com.android.")   //$NON-NLS-1$
-             || className.startsWith("java.")          //$NON-NLS-1$
-             || className.startsWith("javax.")         //$NON-NLS-1$
-             || className.startsWith("sun."));         //$NON-NLS-1$
+        || className.startsWith("org.jetbrains.") //$NON-NLS-1$
+        || className.startsWith("com.android.")   //$NON-NLS-1$
+        || className.startsWith("java.")          //$NON-NLS-1$
+        || className.startsWith("javax.")         //$NON-NLS-1$
+        || className.startsWith("sun."));         //$NON-NLS-1$
   }
 
   private static boolean isFramework(StackTraceElement frame) {
     String className = frame.getClassName();
     return (className.startsWith("android.")          //$NON-NLS-1$
-             || className.startsWith("java.")          //$NON-NLS-1$
-             || className.startsWith("javax.")         //$NON-NLS-1$
-             || className.startsWith("sun."));         //$NON-NLS-1$
+        || className.startsWith("java.")          //$NON-NLS-1$
+        || className.startsWith("javax.")         //$NON-NLS-1$
+        || className.startsWith("sun."));         //$NON-NLS-1$
   }
 
   private static boolean isVisible(StackTraceElement frame) {
@@ -1196,14 +1213,15 @@ public class RenderErrorPanel extends JPanel {
         builder.add(", but you are running the IDE on JDK ");
         builder.add(ClassConverter.getCurrentJdkVersion());
         builder.add(". ");
-      } else {
+      }
+      else {
         builder.add("For example, if you are compiling with sourceCompatibility 1.7, you must run the IDE with JDK 1.7. ");
       }
       builder.add("Running on a higher JDK is necessary such that these classes can be run in the layout renderer. " +
-                  "(Or, extract your custom views into a library which you compile with a lower JDK version.)");
+          "(Or, extract your custom views into a library which you compile with a lower JDK version.)");
       builder.newline().newline();
       builder.addLink("If you have just accidentally built your code with a later JDK, try to ", "build", " the project.",
-                      myLinkManager.createCompileModuleUrl());
+          myLinkManager.createCompileModuleUrl());
       builder.newline().newline();
       builder.add("Classes with incompatible format:");
 
@@ -1237,7 +1255,7 @@ public class RenderErrorPanel extends JPanel {
         builder.newline();
       }
 
-      AndroidFacet facet = AndroidFacet.getInstance(logger.getModule());
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(logger.getModule(), AndroidModuleExtension.class);
       if (facet != null && !facet.isGradleProject()) {
         Project project = logger.getModule().getProject();
         builder.addLink("Rebuild project with '-target 1.6'", myLinkManager.createRunnableLink(new RebuildWith16Fix(project)));
@@ -1255,7 +1273,7 @@ public class RenderErrorPanel extends JPanel {
 
   private static void askAndRebuild(Project project) {
     final int r = Messages.showYesNoDialog(project, "You have to rebuild project to see the fixed preview. Would you like to do it?",
-                                           "Rebuild Project", Messages.getQuestionIcon());
+        "Rebuild Project", Messages.getQuestionIcon());
     if (r == Messages.YES) {
       CompilerManager.getInstance(project).rebuild(null);
     }
@@ -1311,7 +1329,7 @@ public class RenderErrorPanel extends JPanel {
       }
     }
     return sdk.getSdkType() instanceof JavaSdk &&
-           JavaSdk.getInstance().isOfVersionOrHigher(sdk, JavaSdkVersion.JDK_1_7);
+        JavaSdk.getInstance().isOfVersionOrHigher(sdk, JavaSdkVersion.JDK_1_7);
   }
 
   private static class RebuildWith16Fix implements Runnable {
@@ -1361,8 +1379,8 @@ public class RenderErrorPanel extends JPanel {
       }
 
       final String moduleToSelect = myProblemModules.size() > 0
-                                    ? myProblemModules.iterator().next().getName()
-                                    : null;
+          ? myProblemModules.iterator().next().getName()
+          : null;
       if (ModulesConfigurator.showDialog(myProject, moduleToSelect, ClasspathEditor.NAME)) {
         askAndRebuild(myProject);
       }

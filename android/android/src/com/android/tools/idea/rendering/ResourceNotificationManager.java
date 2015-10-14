@@ -37,6 +37,7 @@ import com.intellij.psi.xml.*;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.ResourceFolderManager;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -127,7 +128,7 @@ public class ResourceNotificationManager implements ProjectComponent {
   }
 
   @NotNull
-  public ResourceVersion getCurrentVersion(@NotNull AndroidFacet facet, @Nullable PsiFile file, @Nullable Configuration configuration) {
+  public ResourceVersion getCurrentVersion(@NotNull AndroidModuleExtension facet, @Nullable PsiFile file, @Nullable Configuration configuration) {
     AppResourceRepository repository = AppResourceRepository.getAppResources(facet, true);
     if (file != null) {
       long fileStamp = file.getModificationStamp();
@@ -158,7 +159,7 @@ public class ResourceNotificationManager implements ProjectComponent {
      * @return the current resource modification stamp of the given module
      */
   public ResourceVersion addListener(@NotNull ResourceChangeListener listener,
-                                     @NotNull AndroidFacet facet,
+                                     @NotNull AndroidModuleExtension facet,
                                      @Nullable PsiFile file,
                                      @Nullable Configuration configuration) {
     synchronized (this) {
@@ -210,7 +211,7 @@ public class ResourceNotificationManager implements ProjectComponent {
    * @param configuration the configuration passed in to the corresponding {@link #addListener} call
    */
   public void removeListener(@NotNull ResourceChangeListener listener,
-                             @NonNull AndroidFacet facet,
+                             @NonNull AndroidModuleExtension facet,
                              @Nullable PsiFile file,
                              @Nullable Configuration configuration) {
     synchronized (this) {
@@ -331,11 +332,11 @@ public class ResourceNotificationManager implements ProjectComponent {
    * resource folder manager changes) and then notifies {@link #notice(Reason)} when it sees an event
    */
   private class ModuleEventObserver implements ModificationTracker, ResourceFolderManager.ResourceFolderListener {
-    private final AndroidFacet myFacet;
+    private final AndroidModuleExtension myFacet;
     private long myGeneration;
     private final List<ResourceChangeListener> myListeners = Lists.newArrayListWithExpectedSize(4);
 
-    private ModuleEventObserver(@NotNull AndroidFacet facet) {
+    private ModuleEventObserver(@NotNull AndroidModuleExtension facet) {
       myFacet = facet;
       myGeneration = AppResourceRepository.getAppResources(facet, true).getModificationCount();
     }
@@ -404,7 +405,7 @@ public class ResourceNotificationManager implements ProjectComponent {
     // ---- Implements ResourceFolderManager.ResourceFolderListener ----
 
     @Override
-    public void resourceFoldersChanged(@NotNull AndroidFacet facet,
+    public void resourceFoldersChanged(@NotNull AndroidModuleExtension facet,
                                        @NotNull List<VirtualFile> folders,
                                        @NotNull Collection<VirtualFile> added,
                                        @NotNull Collection<VirtualFile> removed) {

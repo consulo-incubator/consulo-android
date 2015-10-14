@@ -48,6 +48,7 @@ import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.sdk.AndroidSdkType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -351,7 +352,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
   @Nullable
   private static LocalSdk getLocalSdk(@Nullable Module module) {
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         AndroidSdkData sdkData = facet.getSdkData();
         if (sdkData != null) {
@@ -367,7 +368,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
   public boolean isGradleProject(com.android.tools.lint.detector.api.Project project) {
     Module module = getModule();
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       return facet != null && facet.isGradleProject();
     }
     return Projects.isGradleProject(myProject);
@@ -534,7 +535,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
     @NonNull
     @Override
     public List<File> getResourceFolders(@NonNull com.android.tools.lint.detector.api.Project project) {
-      AndroidFacet facet = AndroidFacet.getInstance(myState.getModule());
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(myState.getModule(), AndroidModuleExtension.class);
       if (facet != null) {
         return IntellijLintUtils.getResourceDirectories(facet);
       }
@@ -589,7 +590,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
         final Module module = findModuleForLintProject(myProject, context.getProject());
 
         if (module != null) {
-          final AndroidFacet facet = AndroidFacet.getInstance(module);
+          final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
           vFile = facet != null ? AndroidRootUtil.getPrimaryManifestFile(facet) : null;
 
           if (vFile != null) {
@@ -671,7 +672,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
     public List<File> getResourceFolders(@NonNull com.android.tools.lint.detector.api.Project project) {
       final Module module = findModuleForLintProject(myProject, project);
       if (module != null) {
-        AndroidFacet facet = AndroidFacet.getInstance(module);
+        AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
         if (facet != null) {
           return IntellijLintUtils.getResourceDirectories(facet);
         }

@@ -20,6 +20,7 @@ import com.android.resources.ResourceType;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -31,7 +32,6 @@ import com.intellij.util.xml.*;
 import org.jetbrains.android.dom.AdditionalConverter;
 import org.jetbrains.android.dom.AndroidResourceType;
 import org.jetbrains.android.dom.resources.ResourceValue;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.inspections.CreateFileResourceQuickFix;
 import org.jetbrains.android.inspections.CreateValueResourceQuickFix;
 import org.jetbrains.android.resourceManagers.FileResourceProcessor;
@@ -41,6 +41,7 @@ import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -116,7 +117,7 @@ public class ResourceReferenceConverter extends ResolvingConverter<ResourceValue
     Set<ResourceValue> result = new HashSet<ResourceValue>();
     Module module = context.getModule();
     if (module == null) return result;
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) return result;
 
     final Set<String> recommendedTypes = getResourceTypes(context);
@@ -182,7 +183,7 @@ public class ResourceReferenceConverter extends ResolvingConverter<ResourceValue
     return result;
   }
 
-  private void addVariantsForIdDeclaration(Set<ResourceValue> result, AndroidFacet facet, char prefix, String value) {
+  private void addVariantsForIdDeclaration(Set<ResourceValue> result, AndroidModuleExtension facet, char prefix, String value) {
     for (String name : facet.getLocalResourceManager().getIds(false)) {
       final ResourceValue ref = referenceTo(prefix, "+id", null, name, true);
 
@@ -192,7 +193,7 @@ public class ResourceReferenceConverter extends ResolvingConverter<ResourceValue
     }
   }
 
-  private static void completeAttributeReferences(String value, AndroidFacet facet, Set<ResourceValue> result) {
+  private static void completeAttributeReferences(String value, AndroidModuleExtension facet, Set<ResourceValue> result) {
     if (StringUtil.startsWith(value, "?attr/")) {
       addResourceReferenceValues(facet, '?', ResourceType.ATTR.getName(), null, result, true);
     }
@@ -208,7 +209,7 @@ public class ResourceReferenceConverter extends ResolvingConverter<ResourceValue
   }
 
   @NotNull
-  public static Set<String> getResourceTypesInCurrentModule(@NotNull AndroidFacet facet) {
+  public static Set<String> getResourceTypesInCurrentModule(@NotNull AndroidModuleExtension facet) {
     final Set<String> result = new HashSet<String>();
     final LocalResourceManager manager = facet.getLocalResourceManager();
 
@@ -256,7 +257,7 @@ public class ResourceReferenceConverter extends ResolvingConverter<ResourceValue
     return types;
   }
 
-  private static void addResourceReferenceValues(AndroidFacet facet,
+  private static void addResourceReferenceValues(AndroidModuleExtension facet,
                                                  char prefix,
                                                  String type,
                                                  @Nullable String resPackage,
@@ -383,7 +384,7 @@ public class ResourceReferenceConverter extends ResolvingConverter<ResourceValue
 
   @Override
   public LocalQuickFix[] getQuickFixes(ConvertContext context) {
-    AndroidFacet facet = AndroidFacet.getInstance(context);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(context.getModule(), AndroidModuleExtension.class);
     if (facet != null) {
       final DomElement domElement = context.getInvocationElement();
 
@@ -429,7 +430,7 @@ public class ResourceReferenceConverter extends ResolvingConverter<ResourceValue
 
     Module module = context.getModule();
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         ResourceValue resValue = value.getValue();
         if (resValue != null && resValue.isReference()) {

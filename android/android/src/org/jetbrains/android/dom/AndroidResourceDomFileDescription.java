@@ -18,17 +18,17 @@ package org.jetbrains.android.dom;
 
 import com.android.SdkConstants;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileDescription;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,7 +48,7 @@ public abstract class AndroidResourceDomFileDescription<T extends DomElement> ex
   }
 
   @Override
-  public boolean isMyFile(@NotNull final XmlFile file, @Nullable Module module) {
+  public boolean isMyFile(@NotNull final XmlFile file) {
     return doIsMyFile(file, myResourceTypes);
   }
 
@@ -61,7 +61,7 @@ public abstract class AndroidResourceDomFileDescription<T extends DomElement> ex
         }
         for (String resourceType : resourceTypes) {
           if (AndroidResourceUtil.isInResourceSubdirectory(file, resourceType)) {
-            return AndroidFacet.getInstance(file) != null;
+            return ModuleUtilCore.getExtension(file, AndroidModuleExtension.class) != null;
           }
         }
         return false;

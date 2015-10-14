@@ -24,6 +24,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,11 +33,11 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.components.JBScrollPane;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.ResourceFolderManager;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,7 +60,7 @@ public class AndroidLayoutPreviewToolWindowForm implements Disposable, Configura
   private JPanel myFirstToolbarPanel;
   private PsiFile myFile;
   private Configuration myConfiguration;
-  private AndroidFacet myFacet;
+  private AndroidModuleExtension myFacet;
   private final AndroidLayoutPreviewToolWindowManager myToolWindowManager;
   private final ActionToolbar myActionToolBar;
   private final HoverOverlay myHover = new HoverOverlay(this);
@@ -154,7 +155,7 @@ public class AndroidLayoutPreviewToolWindowForm implements Disposable, Configura
       if (file != null) {
         final VirtualFile virtualFile = file.getVirtualFile();
         if (virtualFile != null) {
-          myFacet = AndroidFacet.getInstance(file);
+          myFacet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
           if (myFacet != null) {
             myFacet.getResourceFolderManager().removeListener(this);
             myFacet.getResourceFolderManager().addListener(this);
@@ -254,7 +255,7 @@ public class AndroidLayoutPreviewToolWindowForm implements Disposable, Configura
   @Override
   public Module getModule() {
     if (myFile != null) {
-      final AndroidFacet facet = AndroidFacet.getInstance(myFile);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(myFile, AndroidModuleExtension.class);
       if (facet != null) {
         return facet.getModule();
       }
@@ -410,7 +411,7 @@ public class AndroidLayoutPreviewToolWindowForm implements Disposable, Configura
   // ---- Implements ResourceFolderManager.ResourceFolderListener ----
 
   @Override
-  public void resourceFoldersChanged(@NotNull final AndroidFacet facet,
+  public void resourceFoldersChanged(@NotNull final AndroidModuleExtension facet,
                                      @NotNull final List<VirtualFile> folders,
                                      @NotNull final Collection<VirtualFile> added,
                                      @NotNull final Collection<VirtualFile> removed) {

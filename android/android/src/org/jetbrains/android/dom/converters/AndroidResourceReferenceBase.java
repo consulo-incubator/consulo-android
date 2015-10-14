@@ -20,13 +20,13 @@ import com.intellij.util.xml.GenericDomValue;
 import org.jetbrains.android.dom.resources.ResourceValue;
 import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper;
 import org.jetbrains.android.dom.wrappers.ResourceElementWrapper;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.resourceManagers.ValueResourceInfo;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,13 +36,13 @@ import java.util.List;
  * @author Eugene.Kudelevsky
  */
 public class AndroidResourceReferenceBase extends PsiReferenceBase.Poly<XmlElement> {
-  protected final AndroidFacet myFacet;
+  protected final AndroidModuleExtension myFacet;
   protected final ResourceValue myResourceValue;
 
   public AndroidResourceReferenceBase(@NotNull GenericDomValue value,
                                       @Nullable TextRange range,
                                       @NotNull ResourceValue resourceValue,
-                                      @NotNull AndroidFacet facet) {
+                                      @NotNull AndroidModuleExtension facet) {
     super(DomUtil.getValueElement(value), range, true);
     myResourceValue = resourceValue;
     myFacet = facet;
@@ -135,7 +135,7 @@ public class AndroidResourceReferenceBase extends PsiReferenceBase.Poly<XmlEleme
     return result.toArray(new ResolveResult[result.size()]);
   }
 
-  private void collectTargets(AndroidFacet facet, ResourceValue resValue, List<PsiElement> elements, boolean attrReference) {
+  private void collectTargets(AndroidModuleExtension facet, ResourceValue resValue, List<PsiElement> elements, boolean attrReference) {
     ResourceType resType = resValue.getType();
     if (resType == null) {
       return;

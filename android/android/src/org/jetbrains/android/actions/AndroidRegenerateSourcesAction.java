@@ -16,7 +16,6 @@
 package org.jetbrains.android.actions;
 
 import com.intellij.compiler.impl.ModuleCompileScope;
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
@@ -24,14 +23,17 @@ import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.android.compiler.AndroidAutogenerator;
 import org.jetbrains.android.compiler.AndroidAutogeneratorMode;
 import org.jetbrains.android.compiler.AndroidCompileUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -49,22 +51,22 @@ public class AndroidRegenerateSourcesAction extends AnAction {
   public void update(AnActionEvent e) {
     final Module module = e.getData(DataKeys.MODULE);
     final Project project = e.getData(DataKeys.PROJECT);
-    boolean visible = project != null && ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID).size() > 0;
+    boolean visible = project != null && ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class).size() > 0;
     String title = TITLE;
 
     if (visible) {
       visible = false;
 
       if (module != null) {
-        AndroidFacet facet = AndroidFacet.getInstance(module);
+        AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
         if (facet != null) {
           visible = AndroidAutogenerator.supportsAutogeneration(facet);
           title = TITLE + " for '" + module.getName() + "'";
         }
       }
       else {
-        List<AndroidFacet> facets = ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID);
-        for (AndroidFacet facet : facets) {
+        Collection<AndroidModuleExtension> facets = ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class);
+        for (AndroidModuleExtension facet : facets) {
           if (AndroidAutogenerator.supportsAutogeneration(facet)) {
             visible = true;
             break;
@@ -86,9 +88,9 @@ public class AndroidRegenerateSourcesAction extends AnAction {
       return;
     }
     assert project != null;
-    List<AndroidFacet> facets = ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID);
+    Collection<AndroidModuleExtension> facets = ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class);
     List<Module> modulesToProcess = new ArrayList<Module>();
-    for (AndroidFacet facet : facets) {
+    for (AndroidModuleExtension facet : facets) {
       module = facet.getModule();
       if (AndroidAutogenerator.supportsAutogeneration(facet)) {
         modulesToProcess.add(module);
@@ -106,7 +108,7 @@ public class AndroidRegenerateSourcesAction extends AnAction {
         // todo: compatibility with background autogenerating
 
         for (Module module : modules) {
-          final AndroidFacet facet = AndroidFacet.getInstance(module);
+          final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
           if (facet != null) {
             for (AndroidAutogeneratorMode mode : AndroidAutogeneratorMode.values()) {

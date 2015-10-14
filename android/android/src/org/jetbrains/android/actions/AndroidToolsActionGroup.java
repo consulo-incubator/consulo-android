@@ -15,12 +15,12 @@
  */
 package org.jetbrains.android.actions;
 
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.android.facet.AndroidFacet;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 /**
  * @author Eugene.Kudelevsky
@@ -30,6 +30,6 @@ public class AndroidToolsActionGroup extends DefaultActionGroup {
   public void update(AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     e.getPresentation().setVisible(project != null && !project.isDisposed()
-                                   && ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID).size() > 0);
+                                   && ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class).size() > 0);
   }
 }

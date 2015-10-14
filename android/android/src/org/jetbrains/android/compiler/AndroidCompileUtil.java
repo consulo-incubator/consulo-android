@@ -478,7 +478,7 @@ public class AndroidCompileUtil {
     return ArrayUtil.find(context.getCompileScope().getAffectedModules(), module) >= 0;
   }
 
-  public static void generate(AndroidFacet facet,
+  public static void generate(AndroidModuleExtension facet,
                               AndroidAutogeneratorMode mode,
                               final CompileContext context,
                               boolean force) {
@@ -834,18 +834,18 @@ public class AndroidCompileUtil {
   }
 
   @Nullable
-  public static Module findCircularDependencyOnLibraryWithSamePackage(@NotNull AndroidFacet facet) {
+  public static Module findCircularDependencyOnLibraryWithSamePackage(@NotNull AndroidModuleExtension facet) {
     final Manifest manifest = facet.getManifest();
     final String aPackage = manifest != null ? manifest.getPackage().getValue() : null;
     if (aPackage == null) {
       return null;
     }
 
-    for (AndroidFacet depFacet : AndroidUtils.getAllAndroidDependencies(facet.getModule(), true)) {
+    for (AndroidModuleExtension depFacet : AndroidUtils.getAllAndroidDependencies(facet.getModule(), true)) {
       final Manifest depManifest = depFacet.getManifest();
       final String depPackage = depManifest != null ? depManifest.getPackage().getValue() : null;
       if (aPackage.equals(depPackage)) {
-        final List<AndroidFacet> depDependencies = AndroidUtils.getAllAndroidDependencies(depFacet.getModule(), false);
+        final List<AndroidModuleExtension> depDependencies = AndroidUtils.getAllAndroidDependencies(depFacet.getModule(), false);
 
         if (depDependencies.contains(facet)) {
           // circular dependency on library with the same package
@@ -874,12 +874,12 @@ public class AndroidCompileUtil {
 
   // support for lib<->lib and app<->lib circular dependencies
   // see IDEA-79737 for details
-  public static boolean isLibraryWithBadCircularDependency(@NotNull AndroidFacet facet) {
+  public static boolean isLibraryWithBadCircularDependency(@NotNull AndroidModuleExtension facet) {
     if (!facet.isLibraryProject()) {
       return false;
     }
 
-    final List<AndroidFacet> dependencies = AndroidUtils.getAllAndroidDependencies(facet.getModule(), false);
+    final List<AndroidModuleExtension> dependencies = AndroidUtils.getAllAndroidDependencies(facet.getModule(), false);
 
     final Manifest manifest = facet.getManifest();
     if (manifest == null) {
@@ -891,8 +891,8 @@ public class AndroidCompileUtil {
       return false;
     }
 
-    for (AndroidFacet depFacet : dependencies) {
-      final List<AndroidFacet> depDependencies = AndroidUtils.getAllAndroidDependencies(depFacet.getModule(), true);
+    for (AndroidModuleExtension depFacet : dependencies) {
+      final List<AndroidModuleExtension> depDependencies = AndroidUtils.getAllAndroidDependencies(depFacet.getModule(), true);
 
       if (depDependencies.contains(facet) &&
           dependencies.contains(depFacet) &&
@@ -905,7 +905,7 @@ public class AndroidCompileUtil {
   }
 
   @Nullable
-  public static String getUnsignedApkPath(@NotNull AndroidFacet facet) {
+  public static String getUnsignedApkPath(@NotNull AndroidModuleExtension facet) {
     return AndroidRootUtil.getApkPath(facet);
   }
 
@@ -914,7 +914,7 @@ public class AndroidCompileUtil {
   }
 
   @Nullable
-  public static String getAaptManifestPackage(@NotNull AndroidFacet facet) {
+  public static String getAaptManifestPackage(@NotNull AndroidModuleExtension facet) {
     if (facet.getProperties().USE_CUSTOM_MANIFEST_PACKAGE) {
       return facet.getProperties().CUSTOM_MANIFEST_PACKAGE;
     }

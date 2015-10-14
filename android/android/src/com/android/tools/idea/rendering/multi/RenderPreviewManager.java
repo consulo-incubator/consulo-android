@@ -21,12 +21,12 @@ import com.android.ide.common.rendering.api.Features;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.ide.common.resources.LocaleManager;
 import com.android.ide.common.resources.configuration.*;
-import com.android.sdklib.SdkVersionInfo;
 import com.android.resources.Density;
 import com.android.resources.LayoutDirection;
 import com.android.resources.ResourceType;
 import com.android.resources.ScreenSize;
 import com.android.sdklib.IAndroidTarget;
+import com.android.sdklib.SdkVersionInfo;
 import com.android.sdklib.devices.Device;
 import com.android.sdklib.devices.Screen;
 import com.android.sdklib.devices.State;
@@ -42,6 +42,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
@@ -50,9 +51,9 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.containers.IntArrayList;
 import com.intellij.util.ui.Animator;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -936,7 +937,7 @@ public class RenderPreviewManager implements Disposable {
     if (module == null) {
       return;
     }
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       return;
     }

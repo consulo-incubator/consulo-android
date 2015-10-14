@@ -1,6 +1,7 @@
 package org.jetbrains.android.dom.converters;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -13,10 +14,10 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.xml.*;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Set;
 
@@ -112,7 +113,7 @@ public class InstrumentationTargetPackageConverter extends Converter<String> imp
 
     private void processApkPackageAttrs(@NotNull Processor<GenericAttributeValue<String>> processor) {
       for (Module depModule : ModuleRootManager.getInstance(myModule).getDependencies()) {
-        final AndroidFacet depFacet = AndroidFacet.getInstance(depModule);
+        final AndroidModuleExtension depFacet = ModuleUtilCore.getExtension(depModule, AndroidModuleExtension.class);
 
         if (depFacet != null && !depFacet.isLibraryProject()) {
           final Manifest manifest = depFacet.getManifest();

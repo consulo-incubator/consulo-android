@@ -17,9 +17,7 @@ package com.android.tools.idea.editors.strings.table;
 
 import com.android.tools.idea.configurations.LocaleMenuAction;
 import com.android.tools.idea.editors.strings.StringResourceData;
-import com.android.tools.idea.editors.strings.StringResourceViewPanel;
 import com.android.tools.idea.rendering.Locale;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

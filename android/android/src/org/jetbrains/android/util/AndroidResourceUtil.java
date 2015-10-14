@@ -60,7 +60,6 @@ import org.jetbrains.android.dom.resources.ResourceElement;
 import org.jetbrains.android.dom.resources.Resources;
 import org.jetbrains.android.dom.resources.ScalarResourceElement;
 import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -681,7 +680,7 @@ public class AndroidResourceUtil {
     final Module module = ModuleUtil.findModuleForFile(dir, project);
 
     if (module != null) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       return facet != null && facet.getLocalResourceManager().isResourceDir(dir);
     }
     return false;

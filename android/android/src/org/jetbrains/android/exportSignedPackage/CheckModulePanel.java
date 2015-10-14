@@ -18,7 +18,7 @@ package org.jetbrains.android.exportSignedPackage;
 
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.VerticalFlowLayout;
-import org.jetbrains.android.facet.AndroidFacet;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 
@@ -33,7 +33,7 @@ public class CheckModulePanel extends JPanel {
     super(new VerticalFlowLayout(VerticalFlowLayout.TOP));
   }
 
-  public void updateMessages(AndroidFacet facet) {
+  public void updateMessages(AndroidModuleExtension facet) {
     clearMessages();
     revalidate();
   }

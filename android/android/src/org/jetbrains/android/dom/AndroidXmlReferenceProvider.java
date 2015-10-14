@@ -17,9 +17,10 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.Processor;
-import org.jetbrains.android.facet.AndroidFacet;
+import org.consulo.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class AndroidXmlReferenceProvider extends PsiReferenceProvider {
     }
     final Module module = ModuleUtilCore.findModuleForPsiElement(element);
 
-    if (module == null || AndroidFacet.getInstance(module) == null) {
+    if (module == null || ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) == null) {
       return PsiReference.EMPTY_ARRAY;
     }
     final ASTNode startTagName = XmlChildRole.START_TAG_NAME_FINDER.findChild(element.getNode());

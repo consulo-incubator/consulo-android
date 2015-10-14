@@ -25,10 +25,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -103,7 +104,7 @@ public abstract class DeveloperServiceCreator {
    */
   @Nullable
   public final DeveloperService createService(@NotNull Module module) {
-    if (AndroidFacet.getInstance(module) == null) {
+    if (ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) == null) {
       throw new IllegalArgumentException(
         String.format("Developer service cannot be associated with non-Android module %s", module.getName()));
     }

@@ -35,6 +35,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.UIUtil;
@@ -44,6 +45,7 @@ import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -263,7 +265,7 @@ public class GradleInvoker {
       return;
     }
 
-    AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (androidFacet != null) {
       JpsAndroidModuleProperties properties = androidFacet.getProperties();
       switch (buildMode) {

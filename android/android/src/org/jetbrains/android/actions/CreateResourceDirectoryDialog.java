@@ -21,6 +21,7 @@ import com.android.resources.ResourceFolderType;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidator;
@@ -28,12 +29,12 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.components.JBLabel;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.uipreview.DeviceConfiguratorPanel;
 import org.jetbrains.android.uipreview.InvalidOptionValueException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -104,7 +105,7 @@ public abstract class CreateResourceDirectoryDialog extends DialogWrapper {
       myResourceTypeComboBox.setSelectedItem(ResourceFolderType.VALUES);
     }
 
-    AndroidFacet facet = module != null ? AndroidFacet.getInstance(module) : null;
+    AndroidModuleExtension facet = module != null ? ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) : null;
     CreateResourceActionBase.updateSourceSetCombo(mySourceSetLabel, mySourceSetCombo, facet, myResDirectory);
 
     myDeviceConfiguratorPanel.updateAll();

@@ -15,18 +15,17 @@
  */
 package org.jetbrains.android.dom.manifest;
 
-import com.android.SdkConstants;
 import com.android.xml.AndroidManifest;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.DomFileDescription;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import static com.android.SdkConstants.FN_ANDROID_MANIFEST_XML;
 import static com.android.SdkConstants.NS_RESOURCES;
@@ -40,8 +39,8 @@ public class ManifestDomFileDescription extends DomFileDescription<Manifest> {
   }
 
   @Override
-  public boolean isMyFile(@NotNull XmlFile file, @Nullable Module module) {
-    return (module == null) ? isManifestFile(file) : isManifestFile(file, module);
+  public boolean isMyFile(@NotNull XmlFile file) {
+    return isManifestFile(file);
   }
 
   public static boolean isManifestFile(@NotNull XmlFile file) {
@@ -51,7 +50,7 @@ public class ManifestDomFileDescription extends DomFileDescription<Manifest> {
 
   public static boolean isManifestFile(@NotNull XmlFile file, @Nullable Module module) {
     if (module != null && !module.isDisposed()) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         return isManifestFile(file, facet);
       }
@@ -60,12 +59,12 @@ public class ManifestDomFileDescription extends DomFileDescription<Manifest> {
     return file.getName().equals(FN_ANDROID_MANIFEST_XML);
   }
 
-  public static boolean isManifestFile(@NotNull XmlFile file, @NotNull AndroidFacet facet) {
+  public static boolean isManifestFile(@NotNull XmlFile file, @NotNull AndroidModuleExtension facet) {
     return file.getName().equals(FN_ANDROID_MANIFEST_XML) ||
            facet.isGradleProject() && IdeaSourceProvider.isManifestFile(facet, file.getVirtualFile());
   }
 
-  public static boolean isManifestFile(@NotNull VirtualFile file, @NotNull AndroidFacet facet) {
+  public static boolean isManifestFile(@NotNull VirtualFile file, @NotNull AndroidModuleExtension facet) {
     return file.getName().equals(FN_ANDROID_MANIFEST_XML) || facet.isGradleProject() && IdeaSourceProvider.isManifestFile(facet, file);
   }
 

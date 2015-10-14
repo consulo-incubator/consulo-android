@@ -19,8 +19,11 @@ import com.google.common.collect.Lists;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
@@ -30,6 +33,7 @@ import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -1483,7 +1487,7 @@ public class AndroidLintInspectionToolProvider {
 
     private static int getHighestApi(PsiElement element) {
       int max = SdkVersionInfo.HIGHEST_KNOWN_STABLE_API;
-      AndroidFacet instance = AndroidFacet.getInstance(element);
+      AndroidModuleExtension instance = ModuleUtilCore.getExtension(element, AndroidModuleExtension.class);
       if (instance != null) {
         AndroidSdkData sdkData = instance.getSdkData();
         if (sdkData != null) {

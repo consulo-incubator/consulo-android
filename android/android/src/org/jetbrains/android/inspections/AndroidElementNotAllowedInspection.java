@@ -4,6 +4,7 @@ import com.android.resources.ResourceFolderType;
 import com.android.tools.idea.rendering.ResourceHelper;
 import com.intellij.codeInsight.daemon.XmlErrorMessages;
 import com.intellij.codeInspection.*;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlFile;
@@ -12,10 +13,10 @@ import com.intellij.psi.xml.XmlToken;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.util.XmlTagUtil;
 import org.jetbrains.android.dom.AndroidAnyTagDescriptor;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class AndroidElementNotAllowedInspection extends LocalInspectionTool {
     if (!(file instanceof XmlFile)) {
       return ProblemDescriptor.EMPTY_ARRAY;
     }
-    AndroidFacet facet = AndroidFacet.getInstance(file);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     if (facet == null) {
       return ProblemDescriptor.EMPTY_ARRAY;
     }

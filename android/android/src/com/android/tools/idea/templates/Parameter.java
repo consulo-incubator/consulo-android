@@ -29,6 +29,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -36,12 +37,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 import org.w3c.dom.Element;
 
 import java.io.File;
@@ -487,7 +488,7 @@ public class Parameter {
     }
     if (constraints.contains(Constraint.SOURCE_SET_FOLDER)) {
       if (module != null) {
-        AndroidFacet facet = AndroidFacet.getInstance(module);
+        AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
         if (facet != null) {
           String modulePath = AndroidRootUtil.getModuleDirPath(module);
           if (modulePath != null) {
@@ -523,7 +524,7 @@ public class Parameter {
     if (name == null || name.isEmpty() || module == null) {
       return false;
     }
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet != null) {
       AppResourceRepository repository = facet.getAppResources(true);
       return repository.hasResourceItem(resourceType, name);
@@ -537,7 +538,7 @@ public class Parameter {
     if (name == null || name.isEmpty() || sourceProvider == null) {
       return false;
     }
-    AndroidFacet facet = module != null ? AndroidFacet.getInstance(module) : null;
+    AndroidModuleExtension facet = module != null ? ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) : null;
     for (File resDir : sourceProvider.getResDirectories()) {
       if (facet != null) {
         VirtualFile virtualResDir = VfsUtil.findFileByIoFile(resDir, false);

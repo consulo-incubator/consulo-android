@@ -32,22 +32,24 @@ import com.google.common.io.Files;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 import org.w3c.dom.*;
 
 import java.awt.*;
 import java.io.File;
 import java.util.*;
 import java.util.List;
+import java.util.Queue;
 
 import static com.android.SdkConstants.*;
 import static com.android.ide.common.resources.ResourceResolver.MAX_RESOURCE_INDIRECTION;
@@ -716,7 +718,7 @@ public class ResourceHelper {
   @Nullable
   public static String prependResourcePrefix(@Nullable Module module, @Nullable String name) {
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         IdeaAndroidProject p = facet.getIdeaAndroidProject();
         if (p != null) {

@@ -20,13 +20,14 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 
@@ -60,7 +61,7 @@ public abstract class AbstractProjectStructureAction extends AnAction {
   @Nullable
   protected Module getSelectedAndroidModule(@NotNull AnActionEvent e) {
     Module module = getSelectedGradleModule(e);
-    if (module != null && AndroidFacet.getInstance(module) != null) {
+    if (module != null && ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) != null) {
       return module;
     }
     return null;

@@ -44,6 +44,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.lang.reflect.*;
 import java.util.EnumMap;
@@ -69,7 +70,7 @@ public class ViewLoader {
   @NotNull private final LayoutLibrary myLayoutLibrary;
   @Nullable private ModuleClassLoader myModuleClassLoader;
 
-  public ViewLoader(@NotNull LayoutLibrary layoutLib, @NotNull AndroidFacet facet, @NotNull RenderLogger logger,
+  public ViewLoader(@NotNull LayoutLibrary layoutLib, @NotNull AndroidModuleExtension facet, @NotNull RenderLogger logger,
                     @Nullable Object credential) {
     myLayoutLibrary = layoutLib;
     myModule = facet.getModule();

@@ -28,6 +28,7 @@ import com.intellij.ide.actions.TemplateKindCombo;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -199,7 +200,7 @@ public class CreateResourceFileDialog extends DialogWrapper {
 
     final Set<Module> modulesSet = new HashSet<Module>();
     modulesSet.add(module);
-    for (AndroidFacet depFacet : AndroidUtils.getAllAndroidDependencies(module, true)) {
+    for (AndroidModuleExtension depFacet : AndroidUtils.getAllAndroidDependencies(module, true)) {
       modulesSet.add(depFacet.getModule());
     }
 
@@ -212,7 +213,7 @@ public class CreateResourceFileDialog extends DialogWrapper {
     myModuleCombo.setSelectedModule(module);
 
    CreateResourceActionBase.updateSourceSetCombo(mySourceSetLabel, mySourceSetCombo,
-                                                 modulesSet.size() == 1 ? AndroidFacet.getInstance(modulesSet.iterator().next()) : null,
+                                                 modulesSet.size() == 1 ? ModuleUtilCore.getExtension(modulesSet.iterator().next(), AndroidModuleExtension.class) : null,
                                                  myResDirectory);
 
     myDeviceConfiguratorPanel.updateAll();

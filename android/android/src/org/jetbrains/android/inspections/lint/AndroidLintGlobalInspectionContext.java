@@ -10,7 +10,6 @@ import com.intellij.codeInspection.GlobalInspectionContext;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.Tools;
 import com.intellij.codeInspection.lang.GlobalInspectionContextExtension;
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -29,12 +28,16 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.util.containers.HashMap;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Eugene.Kudelevsky
@@ -53,7 +56,7 @@ class AndroidLintGlobalInspectionContext implements GlobalInspectionContextExten
   public void performPreRunActivities(@NotNull List<Tools> globalTools, @NotNull List<Tools> localTools, @NotNull final GlobalInspectionContext context) {
     final Project project = context.getProject();
 
-    if (!ProjectFacetManager.getInstance(project).hasFacets(AndroidFacet.ID)) {
+    if (!ModuleExtensionHelper.getInstance(project).hasModuleExtension(AndroidModuleExtension.class)) {
       return;
     }
 

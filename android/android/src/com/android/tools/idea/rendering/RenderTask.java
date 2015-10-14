@@ -46,10 +46,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import org.intellij.lang.annotations.MagicConstant;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 import org.w3c.dom.Element;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -140,7 +140,7 @@ public class RenderTask implements IImageFactory {
     myCredential = credential;
     myConfiguration = configuration;
 
-    AndroidFacet facet = renderService.getFacet();
+    AndroidModuleExtension facet = renderService.getFacet();
     Module module = facet.getModule();
     myAssetRepository = new AssetRepositoryImpl(facet);
     myHardwareConfigHelper = new HardwareConfigHelper(device);

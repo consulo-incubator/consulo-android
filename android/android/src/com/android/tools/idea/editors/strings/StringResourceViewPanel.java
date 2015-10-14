@@ -45,9 +45,9 @@ import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.ui.table.JBTable;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -66,7 +66,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class StringResourceViewPanel implements HyperlinkListener {
   private static final boolean HIDE_TRANSLATION_ORDER_LINK = Boolean.getBoolean("hide.order.translations");
 
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
   private JPanel myContainer;
   private JBLoadingPanel myLoadingPanel;
   private JBTable myTable;
@@ -85,7 +85,7 @@ public class StringResourceViewPanel implements HyperlinkListener {
   private StringResourceData myData;
   private final StringResourceTableModel myTableModel;
 
-  public StringResourceViewPanel(AndroidFacet facet, Disposable parentDisposable) {
+  public StringResourceViewPanel(AndroidModuleExtension facet, Disposable parentDisposable) {
     myFacet = facet;
 
     myLoadingPanel = new JBLoadingPanel(new BorderLayout(), parentDisposable, 200);
@@ -294,8 +294,6 @@ public class StringResourceViewPanel implements HyperlinkListener {
     ApplicationInfo ideInfo = ApplicationInfo.getInstance();
     sb.append(ideInfo.getMajorVersion()).append('.')
       .append(ideInfo.getMinorVersion()).append('.')
-      .append(ideInfo.getMicroVersion()).append('.')
-      .append(ideInfo.getPatchVersion());
 
 
     // Package name

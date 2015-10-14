@@ -17,6 +17,7 @@
 package org.jetbrains.android.dom;
 
 import com.android.SdkConstants;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -30,16 +31,15 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.SimpleClassMapConstructor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -82,7 +82,7 @@ public class AndroidXmlTagDescriptor implements XmlElementDescriptor, PsiPresent
     if (myBaseClassName == null || context == null) {
       return descriptors;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(context);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(context, AndroidModuleExtension.class);
 
     if (facet == null) {
       return descriptors;

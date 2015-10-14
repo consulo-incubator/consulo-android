@@ -36,10 +36,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -119,7 +119,7 @@ public class StringsWriteUtils {
    * @return the resource item that was created, null if it wasn't created or could not be read back
    */
   @Nullable
-  public static ResourceItem createItem(@NotNull final AndroidFacet facet,
+  public static ResourceItem createItem(@NotNull final AndroidModuleExtension facet,
                                         @NotNull VirtualFile resFolder,
                                         @Nullable final Locale locale,
                                         @NotNull final String name,
@@ -161,7 +161,7 @@ public class StringsWriteUtils {
   }
 
   @Nullable
-  private static ResourceItem getStringResourceItem(@NotNull AndroidFacet facet, @NotNull String key, @Nullable Locale locale) {
+  private static ResourceItem getStringResourceItem(@NotNull AndroidModuleExtension facet, @NotNull String key, @Nullable Locale locale) {
     LocalResourceRepository repository = facet.getModuleResources(true);
     // Ensure that items *just* created are processed by the resource repository
     repository.sync();

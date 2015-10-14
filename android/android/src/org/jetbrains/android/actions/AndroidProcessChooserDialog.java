@@ -29,7 +29,6 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.remote.RemoteConfiguration;
 import com.intellij.execution.remote.RemoteConfigurationType;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -55,12 +54,13 @@ import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
 import org.jetbrains.android.compiler.AndroidCompileUtil;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidSdkUtils;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -72,7 +72,6 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -356,10 +355,10 @@ public class AndroidProcessChooserDialog extends DialogWrapper {
 
   @NotNull
   private static Set<String> collectAllProcessNames(Project project) {
-    final List<AndroidFacet> facets = ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID);
+    final Collection<AndroidModuleExtension> facets = ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class);
     final Set<String> result = new HashSet<String>();
 
-    for (AndroidFacet facet : facets) {
+    for (AndroidModuleExtension facet : facets) {
       final String packageName = AndroidCompileUtil.getAaptManifestPackage(facet);
 
       if (packageName != null) {

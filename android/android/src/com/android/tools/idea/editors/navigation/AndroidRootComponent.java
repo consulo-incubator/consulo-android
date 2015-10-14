@@ -15,7 +15,8 @@
  */
 package com.android.tools.idea.editors.navigation;
 
-import com.android.ide.common.rendering.api.*;
+import com.android.ide.common.rendering.api.RenderSession;
+import com.android.ide.common.rendering.api.Result;
 import com.android.tools.idea.configurations.Configuration;
 import com.android.tools.idea.rendering.*;
 import com.android.tools.swing.layoutlib.FakeImageFactory;
@@ -30,9 +31,9 @@ import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.GraphicsUtil;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -194,7 +195,7 @@ public class AndroidRootComponent extends JComponent {
       return;
     }
     Project project = myRenderingParameters.project;
-    final AndroidFacet facet = myRenderingParameters.facet;
+    final AndroidModuleExtension facet = myRenderingParameters.facet;
     final Configuration configuration = myRenderingParameters.configuration;
 
     if (project.isDisposed()) {

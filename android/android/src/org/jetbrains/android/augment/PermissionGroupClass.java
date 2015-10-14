@@ -4,9 +4,9 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.android.dom.manifest.Manifest;
 import org.jetbrains.android.dom.manifest.PermissionGroup;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author Eugene.Kudelevsky
  */
 class PermissionGroupClass extends ManifestInnerClass {
-  PermissionGroupClass(@NotNull AndroidFacet facet, @NotNull PsiClass context) {
+  PermissionGroupClass(@NotNull AndroidModuleExtension facet, @NotNull PsiClass context) {
     super(facet, "permission_group", context);
   }
 

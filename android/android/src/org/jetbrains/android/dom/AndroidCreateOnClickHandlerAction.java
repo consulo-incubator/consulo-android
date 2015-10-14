@@ -8,6 +8,7 @@ import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeClassChooserFactory;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
@@ -28,11 +29,11 @@ import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericAttributeValue;
 import org.jetbrains.android.dom.converters.OnClickConverter;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -49,7 +50,7 @@ public class AndroidCreateOnClickHandlerAction extends AbstractIntentionAction i
     if (editor == null || !(file instanceof XmlFile)) {
       return false;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(file);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
 
     if (facet == null) {
       return false;
@@ -82,7 +83,7 @@ public class AndroidCreateOnClickHandlerAction extends AbstractIntentionAction i
 
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-    final AndroidFacet facet = AndroidFacet.getInstance(file);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     assert facet != null;
 
     final XmlAttributeValue attrValue = getXmlAttributeValue(file, editor);

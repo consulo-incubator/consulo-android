@@ -15,13 +15,13 @@
  */
 package org.jetbrains.android.actions;
 
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidSdkUtils;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 /**
  * @author Eugene.Kudelevsky
@@ -48,6 +48,6 @@ public class AndroidConnectDebuggerAction extends AnAction {
     super.update(e);
     final Project project = e.getData(CommonDataKeys.PROJECT);
     e.getPresentation().setVisible(project != null &&
-                                   ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID).size() > 0);
+                                   ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class).size() > 0);
   }
 }

@@ -2,6 +2,7 @@ package org.jetbrains.android.augment;
 
 import com.android.resources.ResourceType;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -15,6 +16,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -44,7 +46,7 @@ public class AndroidPsiAugmentProvider extends PsiAugmentProvider {
       return Collections.emptyList();
     }
 
-    final AndroidFacet facet = AndroidFacet.getInstance(element);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(element, AndroidModuleExtension.class);
     if (facet == null) {
       if (rClassAugment) {
         LOG.debug("R_CLASS_AUGMENT: empty because no facet");

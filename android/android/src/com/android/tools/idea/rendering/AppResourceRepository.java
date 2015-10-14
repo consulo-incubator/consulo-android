@@ -35,7 +35,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectIntHashMap;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +53,7 @@ import static org.jetbrains.android.facet.ResourceFolderManager.addAarsFromModul
  * in a project
  */
 public class AppResourceRepository extends MultiResourceRepository {
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
   private List<FileResourceRepository> myLibraries;
   private long myIdsModificationCount;
 
@@ -67,7 +66,7 @@ public class AppResourceRepository extends MultiResourceRepository {
   private final LinkedList<FileResourceRepository> myAarLibraries = new LinkedList<FileResourceRepository>();
   private Set<String> myIds;
 
-  protected AppResourceRepository(@NotNull AndroidFacet facet,
+  protected AppResourceRepository(@NotNull AndroidModuleExtension facet,
                                 @NotNull List<? extends LocalResourceRepository> delegates,
                                 @NotNull List<FileResourceRepository> libraries) {
     super(facet.getModule().getName() + " with modules and libraries", delegates);
@@ -113,7 +112,7 @@ public class AppResourceRepository extends MultiResourceRepository {
   }
 
   @NotNull
-  public static AppResourceRepository create(@NotNull final AndroidFacet facet) {
+  public static AppResourceRepository create(@NotNull final AndroidModuleExtension facet) {
     List<FileResourceRepository> libraries = computeLibraries(facet);
     List<LocalResourceRepository> delegates = computeRepositories(facet, libraries);
     final AppResourceRepository repository = new AppResourceRepository(facet, delegates, libraries);
@@ -141,7 +140,7 @@ public class AppResourceRepository extends MultiResourceRepository {
     return repository;
   }
 
-  private static List<LocalResourceRepository> computeRepositories(@NotNull final AndroidFacet facet,
+  private static List<LocalResourceRepository> computeRepositories(@NotNull final AndroidModuleExtension facet,
                                                                  List<FileResourceRepository> libraries) {
     List<LocalResourceRepository> repositories = Lists.newArrayListWithExpectedSize(10);
     LocalResourceRepository resources = ProjectResourceRepository.getProjectResources(facet, true);
@@ -150,8 +149,8 @@ public class AppResourceRepository extends MultiResourceRepository {
     return repositories;
   }
 
-  private static List<FileResourceRepository> computeLibraries(@NotNull final AndroidFacet facet) {
-    List<AndroidFacet> dependentFacets = AndroidUtils.getAllAndroidDependencies(facet.getModule(), true);
+  private static List<FileResourceRepository> computeLibraries(@NotNull final AndroidModuleExtension facet) {
+    List<AndroidModuleExtension> dependentFacets = AndroidUtils.getAllAndroidDependencies(facet.getModule(), true);
     List<File> aarDirs = findAarLibraries(facet, dependentFacets);
     if (aarDirs.isEmpty()) {
       return Collections.emptyList();
@@ -165,13 +164,13 @@ public class AppResourceRepository extends MultiResourceRepository {
   }
 
   @NotNull
-  private static List<File> findAarLibraries(AndroidFacet facet, List<AndroidFacet> dependentFacets) {
+  private static List<File> findAarLibraries(AndroidModuleExtension facet, List<AndroidModuleExtension> dependentFacets) {
     // Use the gradle model if available, but if not, fall back to using plain IntelliJ library dependencies
     // which have been persisted since the most recent sync
     if (facet.isGradleProject() && facet.getIdeaAndroidProject() != null) {
       List<AndroidLibrary> libraries = Lists.newArrayList();
       addGradleLibraries(libraries, facet);
-      for (AndroidFacet f : dependentFacets) {
+      for (AndroidModuleExtension f : dependentFacets) {
         addGradleLibraries(libraries, f);
       }
       return findAarLibrariesFromGradle(dependentFacets, libraries);
@@ -185,9 +184,9 @@ public class AppResourceRepository extends MultiResourceRepository {
     if (facet.isGradleProject()) {
       IdeaAndroidProject project = facet.getIdeaAndroidProject();
       if (project != null) {
-        List<AndroidFacet> dependentFacets = AndroidUtils.getAllAndroidDependencies(facet.getModule(), true);
+        List<AndroidModuleExtension> dependentFacets = AndroidUtils.getAllAndroidDependencies(facet.getModule(), true);
         addGradleLibraries(libraries, facet);
-        for (AndroidFacet dependentFacet : dependentFacets) {
+        for (AndroidModuleExtension dependentFacet : dependentFacets) {
           addGradleLibraries(libraries, dependentFacet);
         }
       }
@@ -199,11 +198,11 @@ public class AppResourceRepository extends MultiResourceRepository {
    *  Reads IntelliJ library definitions ({@link com.intellij.openapi.roots.LibraryOrSdkOrderEntry}) and if possible, finds a corresponding
    * {@code .aar} resource library to include. This works before the Gradle project has been initialized.
    */
-  private static List<File> findAarLibrariesFromIntelliJ(AndroidFacet facet, List<AndroidFacet> dependentFacets) {
+  private static List<File> findAarLibrariesFromIntelliJ(AndroidModuleExtension facet, List<AndroidModuleExtension> dependentFacets) {
     // Find .aar libraries from old IntelliJ library definitions
     Set<File> dirs = Sets.newHashSet();
     addAarsFromModuleLibraries(facet, dirs);
-    for (AndroidFacet f : dependentFacets) {
+    for (AndroidModuleExtension f : dependentFacets) {
       addAarsFromModuleLibraries(f, dirs);
     }
     List<File> sorted = new ArrayList<File>(dirs);
@@ -218,12 +217,12 @@ public class AppResourceRepository extends MultiResourceRepository {
    * resource directories.
    */
   @NotNull
-  private static List<File> findAarLibrariesFromGradle(List<AndroidFacet> dependentFacets, List<AndroidLibrary> libraries) {
+  private static List<File> findAarLibrariesFromGradle(List<AndroidModuleExtension> dependentFacets, List<AndroidLibrary> libraries) {
     // Pull out the unique directories, in case multiple modules point to the same .aar folder
     Set<File> files = Sets.newHashSetWithExpectedSize(dependentFacets.size());
 
     Set<String> moduleNames = Sets.newHashSet();
-    for (AndroidFacet f : dependentFacets) {
+    for (AndroidModuleExtension f : dependentFacets) {
       moduleNames.add(f.getModule().getName());
     }
     for (AndroidLibrary library : libraries) {
@@ -271,7 +270,7 @@ public class AppResourceRepository extends MultiResourceRepository {
     return dirs;
   }
 
-  private static void addGradleLibraries(List<AndroidLibrary> list, AndroidFacet facet) {
+  private static void addGradleLibraries(List<AndroidLibrary> list, AndroidModuleExtension facet) {
     IdeaAndroidProject gradleProject = facet.getIdeaAndroidProject();
     if (gradleProject != null) {
       Collection<AndroidLibrary> libraries = gradleProject.getSelectedVariant().getMainArtifact().getDependencies().getLibraries();
@@ -354,7 +353,7 @@ public class AppResourceRepository extends MultiResourceRepository {
 
   @VisibleForTesting
   @NotNull
-  static AppResourceRepository createForTest(AndroidFacet facet,
+  static AppResourceRepository createForTest(AndroidModuleExtension facet,
                                              List<LocalResourceRepository> modules,
                                              List<FileResourceRepository> libraries) {
     assert modules.containsAll(libraries);

@@ -24,6 +24,7 @@ import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Computable;
@@ -41,13 +42,13 @@ import org.jetbrains.android.AndroidFileTemplateProvider;
 import org.jetbrains.android.dom.manifest.Action;
 import org.jetbrains.android.dom.manifest.*;
 import org.jetbrains.android.dom.resources.ResourceValue;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -152,7 +153,7 @@ public class NewAndroidComponentDialog extends DialogWrapper {
     }
     Module module = ModuleUtil.findModuleForFile(directory.getVirtualFile(), project);
     if (module != null) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       assert facet != null;
       if (element instanceof PsiClass) {
         registerComponent(templateName, (PsiClass)element, JavaDirectoryService.getInstance().getPackage(directory), facet,
@@ -178,11 +179,11 @@ public class NewAndroidComponentDialog extends DialogWrapper {
     return element;
   }
 
-  private static void createLayoutFileForActivityOrFragment(@NotNull final AndroidFacet facet,
+  private static void createLayoutFileForActivityOrFragment(@NotNull final AndroidModuleExtension facet,
                                                             @NotNull PsiClass activityClass,
                                                             @NotNull final String appPackage,
                                                             boolean activity) {
-    if (facet.isDisposed() || !activityClass.isValid()) {
+    if (!activityClass.isValid()) {
       return;
     }
     final String className = activityClass.getName();
@@ -259,8 +260,8 @@ public class NewAndroidComponentDialog extends DialogWrapper {
 
   protected static void registerComponent(String templateName,
                                           PsiClass aClass,
-                                          PsiPackage aPackage,
-                                          AndroidFacet facet,
+                                          PsiJavaPackage aPackage,
+                                          AndroidModuleExtension facet,
                                           String label,
                                           boolean startupActivity) {
 

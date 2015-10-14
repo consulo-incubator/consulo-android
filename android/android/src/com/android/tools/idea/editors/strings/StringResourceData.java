@@ -27,21 +27,21 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlTag;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
 public class StringResourceData {
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
   private final List<String> myKeys;
   private final Set<String> myUntranslatableKeys;
   private final List<Locale> myLocales;
   private final Map<String, ResourceItem> myDefaultValues;
   private final HashBasedTable<String, Locale, ResourceItem> myTranslations;
 
-  public StringResourceData(@NotNull AndroidFacet facet,
+  public StringResourceData(@NotNull AndroidModuleExtension facet,
                             @NotNull List<String> keys,
                             @NotNull Collection<String> untranslatableKeys,
                             @NotNull Collection<Locale> locales,

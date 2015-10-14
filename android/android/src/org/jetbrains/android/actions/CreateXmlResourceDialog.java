@@ -22,6 +22,7 @@ import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
 import com.android.tools.idea.rendering.ResourceHelper;
 import com.intellij.CommonBundle;
+import com.intellij.application.options.ModulesComboBox;
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -31,7 +32,6 @@ import com.intellij.openapi.fileChooser.actions.VirtualFileDeleteProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.application.options.ModulesComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -55,6 +55,7 @@ import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -123,7 +124,7 @@ public class CreateXmlResourceDialog extends DialogWrapper {
     final Set<Module> modulesSet = new HashSet<Module>();
     modulesSet.add(module);
 
-    for (AndroidFacet depFacet : AndroidUtils.getAllAndroidDependencies(module, true)) {
+    for (AndroidModuleExtension depFacet : AndroidUtils.getAllAndroidDependencies(module, true)) {
       modulesSet.add(depFacet.getModule());
     }
 
@@ -142,7 +143,7 @@ public class CreateXmlResourceDialog extends DialogWrapper {
 
     ApplicationManager.getApplication().assertReadAccessAllowed();
     CreateResourceActionBase.updateSourceSetCombo(mySourceSetLabel, mySourceSetCombo,
-                                                  modulesSet.size() == 1 ? AndroidFacet.getInstance(modulesSet.iterator().next()) : null,
+                                                  modulesSet.size() == 1 ? ModuleUtilCore.getExtension(modulesSet.iterator().next(), AndroidModuleExtension.class) : null,
                                                   myResourceDir != null ? PsiManager.getInstance(module.getProject()).findDirectory(myResourceDir) : null);
 
     if (defaultFile == null) {
@@ -316,7 +317,7 @@ public class CreateXmlResourceDialog extends DialogWrapper {
     List<VirtualFile> valuesDirs = Collections.emptyList();
 
     if (module != null) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
       if (facet != null) {
         myResourceDir = facet.getPrimaryResourceDir();

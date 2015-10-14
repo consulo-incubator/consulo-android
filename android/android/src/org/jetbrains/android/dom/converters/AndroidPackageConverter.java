@@ -16,6 +16,7 @@
 package org.jetbrains.android.dom.converters;
 
 import com.android.tools.idea.gradle.IdeaAndroidProject;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
@@ -26,11 +27,13 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
 import com.intellij.util.xml.*;
+import org.consulo.psi.PsiPackage;
 import org.jetbrains.android.AndroidApplicationPackageRenameProcessor;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -75,7 +78,7 @@ public class AndroidPackageConverter extends Converter<String> implements Custom
       // the package in any way, then the package attribute in the manifest should
       // be taken to be a normal package reference, and should participate in normal
       // package rename refactoring
-      AndroidFacet facet = AndroidFacet.getInstance(getElement());
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(getElement(), AndroidModuleExtension.class);
       if (facet != null) {
         IdeaAndroidProject project = facet.getIdeaAndroidProject();
         if (project != null && project.overridesManifestPackage()) {

@@ -18,10 +18,11 @@ package com.android.tools.idea.editors;
 import com.android.resources.ResourceType;
 import com.android.tools.idea.model.ManifestInfo;
 import com.intellij.codeInsight.ImportFilter;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import static com.android.SdkConstants.CLASS_R;
 import static com.android.SdkConstants.CLASS_R_PREFIX;
@@ -54,7 +55,7 @@ public class AndroidImportFilter extends ImportFilter {
 
   @Nullable
   private static String getApplicationPackage(@NotNull PsiFile targetFile) {
-    AndroidFacet facet = AndroidFacet.getInstance(targetFile);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(targetFile, AndroidModuleExtension.class);
     if (facet != null) {
       // We need the manifest package here, not the Gradle effective package (which can vary by flavor and build type)
       return ManifestInfo.get(facet.getModule(), false).getPackage();

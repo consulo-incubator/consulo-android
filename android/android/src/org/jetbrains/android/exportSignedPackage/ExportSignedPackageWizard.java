@@ -60,6 +60,7 @@ import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.io.File;
@@ -82,7 +83,7 @@ public class ExportSignedPackageWizard extends AbstractWizard<ExportSignedPackag
 
   private final Project myProject;
 
-  private AndroidFacet myFacet;
+  private AndroidModuleExtension myFacet;
   private PrivateKey myPrivateKey;
   private X509Certificate myCertificate;
 
@@ -95,7 +96,7 @@ public class ExportSignedPackageWizard extends AbstractWizard<ExportSignedPackag
   private List<String> myFlavors;
   private GradleSigningInfo myGradleSigningInfo;
 
-  public ExportSignedPackageWizard(Project project, List<AndroidFacet> facets, boolean signed) {
+  public ExportSignedPackageWizard(Project project, List<AndroidModuleExtension> facets, boolean signed) {
     super(AndroidBundle.message("android.export.package.wizard.title"), project);
     myProject = project;
     mySigned = signed;
@@ -346,11 +347,11 @@ public class ExportSignedPackageWizard extends AbstractWizard<ExportSignedPackag
     return myProject;
   }
 
-  public void setFacet(@NotNull AndroidFacet facet) {
+  public void setFacet(@NotNull AndroidModuleExtension facet) {
     myFacet = facet;
   }
 
-  public AndroidFacet getFacet() {
+  public AndroidModuleExtension getFacet() {
     return myFacet;
   }
 

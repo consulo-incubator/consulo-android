@@ -3,6 +3,7 @@ package org.jetbrains.android.formatter;
 import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.xml.XmlFormattingModelBuilder;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -19,9 +20,9 @@ import org.jetbrains.android.dom.drawable.DrawableStateListDomFileDescription;
 import org.jetbrains.android.dom.layout.LayoutDomFileDescription;
 import org.jetbrains.android.dom.manifest.ManifestDomFileDescription;
 import org.jetbrains.android.dom.resources.ResourcesDomFileDescription;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -81,7 +82,7 @@ public class AndroidXmlFormattingModelBuilder implements CustomFormattingModelBu
     final PsiFile file = context.getContainingFile();
 
     if (!(file instanceof XmlFile) ||
-        AndroidFacet.getInstance(file) == null) {
+        ModuleUtilCore.getExtension(file, AndroidModuleExtension.class) == null) {
       return null;
     }
     final DomFileDescription<?> description = DomManager.getDomManager(

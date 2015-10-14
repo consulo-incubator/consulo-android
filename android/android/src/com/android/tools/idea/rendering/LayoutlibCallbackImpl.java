@@ -32,6 +32,7 @@ import com.google.common.io.Files;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -40,12 +41,12 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.android.dom.layout.AndroidLayoutUtil;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.uipreview.RecyclerViewHelper;
 import org.jetbrains.android.uipreview.ViewLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.kxml2.io.KXmlParser;
+import org.must.android.module.extension.AndroidModuleExtension;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -111,7 +112,7 @@ public class LayoutlibCallbackImpl extends LayoutlibCallback {
                                @NotNull LayoutLibrary layoutLib,
                                @NotNull AppResourceRepository projectRes,
                                @NotNull Module module,
-                               @NotNull AndroidFacet facet,
+                               @NotNull AndroidModuleExtension facet,
                                @NotNull RenderLogger logger,
                                @Nullable Object credential,
                                @Nullable ActionBarHandler actionBarHandler) {
@@ -170,7 +171,7 @@ public class LayoutlibCallbackImpl extends LayoutlibCallback {
       // no package name) but isn't recognized.
       boolean token = RenderSecurityManager.enterSafeRegion(myCredential);
       try {
-        AndroidFacet facet = AndroidFacet.getInstance(myModule);
+        AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
         if (facet != null) {
           List<String> known = AndroidLayoutUtil.getPossibleRoots(facet);
           if (known.contains(className)) {
@@ -219,7 +220,7 @@ public class LayoutlibCallbackImpl extends LayoutlibCallback {
         @Nullable
         @Override
         public String compute() {
-          final AndroidFacet facet = AndroidFacet.getInstance(myModule);
+          final AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
           if (facet == null) {
             return null;
           }

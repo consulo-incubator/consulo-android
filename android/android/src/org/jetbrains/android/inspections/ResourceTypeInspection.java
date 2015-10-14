@@ -58,7 +58,6 @@ import gnu.trove.THashSet;
 import lombok.ast.BinaryOperator;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.inspections.lint.LombokPsiParser;
 import org.jetbrains.android.util.AndroidUtils;

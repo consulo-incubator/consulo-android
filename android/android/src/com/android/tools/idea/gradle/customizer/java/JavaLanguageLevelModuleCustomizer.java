@@ -21,12 +21,14 @@ import com.android.tools.idea.gradle.customizer.ModuleCustomizer;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.LanguageLevelModuleExtensionImpl;
 import com.intellij.pom.java.LanguageLevel;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -99,7 +101,7 @@ public class JavaLanguageLevelModuleCustomizer implements ModuleCustomizer<IdeaJ
 
   @Nullable
   private static LanguageLevel getLanguageLevelForAndroidModule(@NotNull Module module) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet != null) {
       IdeaAndroidProject androidProject = facet.getIdeaAndroidProject();
       if (androidProject != null) {

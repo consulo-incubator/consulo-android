@@ -34,9 +34,9 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.ClassUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.TypeConversionUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -348,7 +348,7 @@ public class IntellijLintUtils {
 
   /** Returns the resource directories to use for the given module */
   @NotNull
-  public static List<File> getResourceDirectories(@NotNull AndroidFacet facet) {
+  public static List<File> getResourceDirectories(@NotNull AndroidModuleExtension facet) {
     if (facet.isGradleProject()) {
       List<File> resDirectories = new ArrayList<File>();
       resDirectories.addAll(facet.getMainSourceProvider().getResDirectories());

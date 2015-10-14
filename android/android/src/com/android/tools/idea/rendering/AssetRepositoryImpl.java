@@ -17,7 +17,6 @@ package com.android.tools.idea.rendering;
 
 import com.android.ide.common.rendering.api.AssetRepository;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

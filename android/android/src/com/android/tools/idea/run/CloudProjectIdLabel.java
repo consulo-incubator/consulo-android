@@ -21,9 +21,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.run.AndroidRunConfigurationBase;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.awt.*;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class CloudProjectIdLabel extends JBLabel {
     rememberChosenProjectId();
   }
 
-  public void setFacet(@NotNull AndroidFacet facet) {
+  public void setFacet(@NotNull AndroidModuleExtension facet) {
     myCurrentModule = facet.getModule();
     restoreChosenProjectId();
   }

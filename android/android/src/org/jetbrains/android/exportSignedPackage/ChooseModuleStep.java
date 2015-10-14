@@ -16,6 +16,7 @@
 
 package org.jetbrains.android.exportSignedPackage;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.wizard.CommitStepException;
 import com.intellij.openapi.module.Module;
@@ -24,6 +25,7 @@ import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.ListCellRendererWrapper;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -42,14 +44,14 @@ class ChooseModuleStep extends ExportSignedPackageWizardStep {
 
   private final ExportSignedPackageWizard myWizard;
 
-  protected ChooseModuleStep(ExportSignedPackageWizard wizard, List<AndroidFacet> facets) {
+  protected ChooseModuleStep(ExportSignedPackageWizard wizard, List<AndroidModuleExtension> facets) {
     myWizard = wizard;
     assert facets.size() > 0;
 
-    AndroidFacet selection = facets.get(0);
+    AndroidModuleExtension selection = facets.get(0);
     String module = PropertiesComponent.getInstance(wizard.getProject()).getValue(MODULE_PROPERTY);
     if (module != null) {
-      for (AndroidFacet facet : facets) {
+      for (AndroidModuleExtension facet : facets) {
         if (module.equals(facet.getModule().getName())) {
           selection = facet;
           break;
@@ -58,12 +60,12 @@ class ChooseModuleStep extends ExportSignedPackageWizardStep {
     }
 
     myModuleCombo.setModel(new CollectionComboBoxModel(facets, selection));
-    myModuleCombo.setRenderer(new ListCellRendererWrapper<AndroidFacet>() {
+    myModuleCombo.setRenderer(new ListCellRendererWrapper<AndroidModuleExtension>() {
       @Override
-      public void customize(JList list, AndroidFacet value, int index, boolean selected, boolean hasFocus) {
+      public void customize(JList list, AndroidModuleExtension value, int index, boolean selected, boolean hasFocus) {
         final Module module = value.getModule();
         setText(module.getName());
-        setIcon(ModuleType.get(module).getIcon());
+        setIcon(AllIcons.Nodes.Module);
       }
     });
     myModuleCombo.addActionListener(new ActionListener() {
@@ -75,8 +77,8 @@ class ChooseModuleStep extends ExportSignedPackageWizardStep {
     myCheckModulePanel.updateMessages(getSelectedFacet());
   }
 
-  private AndroidFacet getSelectedFacet() {
-    return (AndroidFacet)myModuleCombo.getSelectedItem();
+  private AndroidModuleExtension getSelectedFacet() {
+    return (AndroidModuleExtension)myModuleCombo.getSelectedItem();
   }
 
   @Override
@@ -89,7 +91,7 @@ class ChooseModuleStep extends ExportSignedPackageWizardStep {
     if (myCheckModulePanel.hasError()) {
       throw new CommitStepException(AndroidBundle.message("android.project.contains.errors.error"));
     }
-    AndroidFacet selectedFacet = getSelectedFacet();
+    AndroidModuleExtension selectedFacet = getSelectedFacet();
     assert selectedFacet != null;
     myWizard.setFacet(selectedFacet);
   }

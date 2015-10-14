@@ -16,6 +16,7 @@
 
 package org.jetbrains.android.dom;
 
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Pair;
@@ -37,11 +38,11 @@ import icons.AndroidIcons;
 import org.jetbrains.android.dom.layout.LayoutViewElement;
 import org.jetbrains.android.dom.xml.AndroidXmlResourcesUtil;
 import org.jetbrains.android.dom.xml.XmlResourceElement;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.SimpleClassMapConstructor;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class AndroidDomElementDescriptorProvider implements XmlElementDescriptor
 
   @Nullable
   private static XmlElementDescriptor getDescriptor(DomElement domElement, XmlTag tag, @Nullable String baseClassName) {
-    AndroidFacet facet = AndroidFacet.getInstance(domElement);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(domElement.getXmlElement(), AndroidModuleExtension.class);
     if (facet == null) return null;
     final String name = domElement.getXmlTag().getName();
     final PsiClass aClass = baseClassName != null

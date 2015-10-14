@@ -27,8 +27,8 @@ import com.google.common.collect.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.xml.XmlTag;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class StringResourceParser {
-  public static StringResourceData parse(@NotNull final AndroidFacet facet, @NotNull final LocalResourceRepository repository) {
+  public static StringResourceData parse(@NotNull final AndroidModuleExtension facet, @NotNull final LocalResourceRepository repository) {
     if (ApplicationManager.getApplication().isReadAccessAllowed()) {
       return parseUnderReadLock(facet, repository);
     } else {
@@ -49,7 +49,7 @@ public class StringResourceParser {
     }
   }
 
-  private static StringResourceData parseUnderReadLock(AndroidFacet facet, LocalResourceRepository repository) {
+  private static StringResourceData parseUnderReadLock(AndroidModuleExtension facet, LocalResourceRepository repository) {
     List<String> keys = Lists.newArrayList(repository.getItemsOfType(ResourceType.STRING));
     Collections.sort(keys);
 

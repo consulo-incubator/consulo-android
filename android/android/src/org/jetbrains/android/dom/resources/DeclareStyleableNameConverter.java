@@ -2,6 +2,7 @@ package org.jetbrains.android.dom.resources;
 
 import com.intellij.codeInsight.completion.JavaLookupElementBuilder;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.PsiShortNamesCache;
@@ -9,11 +10,11 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.xml.*;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Set;
 
@@ -36,7 +37,7 @@ public class DeclareStyleableNameConverter extends Converter<String> implements 
   public PsiReference[] createReferences(GenericDomValue<String> value, PsiElement element, ConvertContext context) {
     final Module module = context.getModule();
     if (module != null) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         return new PsiReference[]{new MyReference(facet, value)};
       }
@@ -46,9 +47,9 @@ public class DeclareStyleableNameConverter extends Converter<String> implements 
 
   private static class MyReference extends PsiPolyVariantReferenceBase<PsiElement> {
     private final GenericDomValue<String> myValue;
-    private final AndroidFacet myFacet;
+    private final AndroidModuleExtension myFacet;
 
-    public MyReference(@NotNull AndroidFacet facet, @NotNull GenericDomValue<String> value) {
+    public MyReference(@NotNull AndroidModuleExtension facet, @NotNull GenericDomValue<String> value) {
       super(DomUtil.getValueElement(value), true);
       myFacet = facet;
       myValue = value;

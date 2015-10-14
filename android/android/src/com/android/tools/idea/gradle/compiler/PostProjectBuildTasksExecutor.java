@@ -36,6 +36,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.externalSystem.util.DisposeAwareProjectChange;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.LanguageLevelProjectExtension;
@@ -47,10 +48,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.util.messages.Topic;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.Collection;
@@ -220,14 +221,14 @@ public class PostProjectBuildTasksExecutor {
     }
 
     for (Module module : moduleManager.getModules()) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null && facet.isGradleProject()) {
         excludeOutputFolders(facet);
       }
     }
   }
 
-  private static void excludeOutputFolders(@NotNull AndroidFacet facet) {
+  private static void excludeOutputFolders(@NotNull AndroidModuleExtension facet) {
     IdeaAndroidProject androidProject = facet.getIdeaAndroidProject();
     if (androidProject == null) {
       return;
@@ -360,7 +361,7 @@ public class PostProjectBuildTasksExecutor {
 
     Module[] modules = ModuleManager.getInstance(myProject).getModules();
     for (Module module : modules) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet == null) {
         continue;
       }

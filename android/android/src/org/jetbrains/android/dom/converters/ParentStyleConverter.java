@@ -16,6 +16,7 @@
 package org.jetbrains.android.dom.converters;
 
 import com.android.resources.ResourceType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -28,6 +29,7 @@ import org.jetbrains.android.dom.resources.ResourceValue;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +61,7 @@ public class ParentStyleConverter extends ResourceReferenceConverter {
     if (resValue == null || resValue.getPackage() != null) {
       return refsFromSuper;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(context);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(context.getXmlElement(), AndroidModuleExtension.class);
 
     if (facet != null) {
       final PsiReference[] refs = getReferencesInStyleName(value, facet);
@@ -72,7 +74,7 @@ public class ParentStyleConverter extends ResourceReferenceConverter {
   }
 
   @NotNull
-  private static PsiReference[] getReferencesInStyleName(@NotNull GenericDomValue<?> value, @NotNull AndroidFacet facet) {
+  private static PsiReference[] getReferencesInStyleName(@NotNull GenericDomValue<?> value, @NotNull AndroidModuleExtension facet) {
     String s = value.getStringValue();
 
     if (s == null) {

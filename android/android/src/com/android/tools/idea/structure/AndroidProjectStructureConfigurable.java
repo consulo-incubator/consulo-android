@@ -51,6 +51,7 @@ import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.*;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -72,11 +73,11 @@ import com.intellij.util.ThreeState;
 import com.intellij.util.io.storage.HeavyProcessLatch;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -344,7 +345,7 @@ public class AndroidProjectStructureConfigurable extends BaseConfigurable implem
         DefaultComboBoxModel moduleList = new DefaultComboBoxModel();
         for (AndroidModuleConfigurable moduleConfigurable : moduleConfigurables) {
           // Collect only Android modules
-          if (AndroidFacet.getInstance(moduleConfigurable.getModule()) != null) {
+          if (ModuleUtilCore.getExtension(moduleConfigurable.getModule(), AndroidModuleExtension.class) != null) {
             moduleList.addElement(moduleConfigurable.getModule());
           }
         }

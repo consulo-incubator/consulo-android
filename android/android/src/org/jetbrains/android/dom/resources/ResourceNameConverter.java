@@ -5,8 +5,9 @@ import com.android.resources.ResourceType;
 import com.android.tools.idea.rendering.ResourceNameValidator;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
-import com.intellij.lang.java.lexer.JavaLexer;
+import com.intellij.lexer.JavaLexer;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.java.LanguageLevel;
@@ -15,7 +16,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.xml.*;
 import org.jetbrains.android.dom.converters.AndroidResourceReferenceBase;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.inspections.CreateValueResourceQuickFix;
 import org.jetbrains.android.resourceManagers.LocalResourceManager;
 import org.jetbrains.android.resourceManagers.ValueResourceInfoImpl;
@@ -24,6 +24,7 @@ import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -105,7 +106,7 @@ public class ResourceNameConverter extends ResolvingConverter<String> implements
     if (module == null) {
       return PsiReference.EMPTY_ARRAY;
     }
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
     if (facet == null) {
       return PsiReference.EMPTY_ARRAY;
@@ -120,7 +121,7 @@ public class ResourceNameConverter extends ResolvingConverter<String> implements
 
   private static PsiReference[] getReferencesInStyleName(@NotNull Style style,
                                                          @NotNull GenericDomValue<String> value,
-                                                         @NotNull AndroidFacet facet) {
+                                                         @NotNull AndroidModuleExtension facet) {
     final String s = value.getStringValue();
 
     if (s == null) {
@@ -149,7 +150,7 @@ public class ResourceNameConverter extends ResolvingConverter<String> implements
     return result.toArray(new PsiReference[result.size()]);
   }
 
-  public static boolean hasExplicitParent(@NotNull AndroidFacet facet, @NotNull String localStyleName) {
+  public static boolean hasExplicitParent(@NotNull AndroidModuleExtension facet, @NotNull String localStyleName) {
     final List<ValueResourceInfoImpl> styles = facet.getLocalResourceManager().
       findValueResourceInfos(ResourceType.STYLE.getName(), localStyleName, true, false);
 
@@ -172,7 +173,7 @@ public class ResourceNameConverter extends ResolvingConverter<String> implements
     public MyParentStyleReference(@NotNull GenericDomValue value,
                                   @Nullable TextRange range,
                                   @NotNull ResourceValue resourceValue,
-                                  @NotNull AndroidFacet facet) {
+                                  @NotNull AndroidModuleExtension facet) {
       super(value, range, resourceValue, facet);
     }
 

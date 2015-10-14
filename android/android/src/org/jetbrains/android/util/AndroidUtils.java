@@ -45,6 +45,7 @@ import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.ide.wizard.CommitStepException;
 import com.intellij.lang.java.JavaParserDefinition;
 import com.intellij.lang.java.lexer.JavaLexer;
+import com.intellij.lexer.JavaLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -55,6 +56,7 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.DependencyScope;
@@ -108,6 +110,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -701,10 +704,10 @@ public class AndroidUtils {
   }
 
   @NotNull
-  public static List<AndroidFacet> getApplicationFacets(@NotNull Project project) {
-    final List<AndroidFacet> result = new ArrayList<AndroidFacet>();
+  public static List<AndroidModuleExtension> getApplicationFacets(@NotNull Project project) {
+    final List<AndroidModuleExtension> result = new ArrayList<AndroidModuleExtension>();
 
-    for (AndroidFacet facet : ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID)) {
+    for (AndroidModuleExtension facet : ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class)) {
       if (!facet.isLibraryProject()) {
         result.add(facet);
       }
@@ -713,8 +716,8 @@ public class AndroidUtils {
   }
 
   @NotNull
-  public static List<AndroidFacet> getAndroidLibraryDependencies(@NotNull Module module) {
-    final List<AndroidFacet> depFacets = new ArrayList<AndroidFacet>();
+  public static List<AndroidModuleExtension> getAndroidLibraryDependencies(@NotNull Module module) {
+    final List<AndroidModuleExtension> depFacets = new ArrayList<AndroidModuleExtension>();
 
     for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
       if (orderEntry instanceof ModuleOrderEntry) {
@@ -724,7 +727,7 @@ public class AndroidUtils {
           final Module depModule = moduleOrderEntry.getModule();
 
           if (depModule != null) {
-            final AndroidFacet depFacet = AndroidFacet.getInstance(depModule);
+            final AndroidModuleExtension depFacet = ModuleUtilCore.getExtension(depModule, AndroidModuleExtension.class);
 
             if (depFacet != null && depFacet.isLibraryProject()) {
               depFacets.add(depFacet);
@@ -737,7 +740,7 @@ public class AndroidUtils {
   }
 
   @NotNull
-  public static List<AndroidFacet> getAllAndroidDependencies(@NotNull Module module, boolean androidLibrariesOnly) {
+  public static List<AndroidModuleExtension> getAllAndroidDependencies(@NotNull Module module, boolean androidLibrariesOnly) {
     return AndroidDependenciesCache.getInstance(module).getAllAndroidDependencies(androidLibrariesOnly);
   }
 
@@ -747,7 +750,7 @@ public class AndroidUtils {
     final HashSet<Module> visited = new HashSet<Module>();
 
     if (visited.add(module)) {
-      for (AndroidFacet depFacet : getAllAndroidDependencies(module, true)) {
+      for (AndroidModuleExtension depFacet : getAllAndroidDependencies(module, true)) {
         final Manifest manifest = depFacet.getManifest();
 
         if (manifest != null) {
@@ -900,7 +903,7 @@ public class AndroidUtils {
     // (the code wouldn't have compiled)
 
     ApplicationManager.getApplication().assertReadAccessAllowed();
-    Lexer lexer = JavaParserDefinition.createLexer(LanguageLevel.JDK_1_5);
+    Lexer lexer = new JavaLexer(LanguageLevel.JDK_1_5);
     int index = 0;
     while (true) {
       int index1 = name.indexOf('.', index);

@@ -30,6 +30,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,13 +51,13 @@ public class KeystoreUtils {
    * @throws Exception if the keystore file could not be obtained.
    */
   @NotNull
-  public static File getDebugKeystore(@NotNull AndroidFacet facet) throws Exception {
+  public static File getDebugKeystore(@NotNull AndroidModuleExtension facet) throws Exception {
     File gradleDebugKeystore = getGradleDebugKeystore(facet);
     if (gradleDebugKeystore != null) {
       return gradleDebugKeystore;
     }
 
-    JpsAndroidModuleProperties state = facet.getConfiguration().getState();
+    JpsAndroidModuleProperties state = facet.getProperties();
     if (state != null && !Strings.isNullOrEmpty(state.CUSTOM_DEBUG_KEYSTORE_PATH)) {
       return new File(state.CUSTOM_DEBUG_KEYSTORE_PATH);
     }
@@ -93,7 +94,7 @@ public class KeystoreUtils {
    * @return null if there is no custom debug keystore configured, or if the project is not a Gradle project.
    */
   @Nullable
-  private static File getGradleDebugKeystore(@NotNull AndroidFacet facet) {
+  private static File getGradleDebugKeystore(@NotNull AndroidModuleExtension facet) {
     GradleSettingsFile gradleSettingsFile = GradleSettingsFile.get(facet.getModule().getProject());
     if (gradleSettingsFile == null) {
       return null;

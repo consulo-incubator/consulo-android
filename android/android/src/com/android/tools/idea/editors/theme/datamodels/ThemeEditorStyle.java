@@ -44,7 +44,6 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidTargetData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -288,7 +287,7 @@ public class ThemeEditorStyle {
           // copy this theme at the minimum api level for this parent
           ThemeEditorUtils.copyTheme(minAcceptableApi, apiInformation.toBeCopied);
 
-          AndroidFacet facet = AndroidFacet.getInstance(myConfiguration.getModule());
+          AndroidModuleExtension facet = ModuleUtilCore.getExtension(myConfiguration.getModule(), AndroidModuleExtension.class);
           if (facet != null) {
             facet.refreshResources();
           }

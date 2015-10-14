@@ -44,12 +44,12 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import org.jetbrains.android.compiler.AndroidCompileUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.groovy.GroovyFileType;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
@@ -76,7 +76,7 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
       return null;
     }
 
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null && !IntellijLintProject.hasAndroidModule(module.getProject())) {
       return null;
     }

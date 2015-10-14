@@ -24,9 +24,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.ListCellRendererWrapper;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.io.File;
@@ -45,7 +45,7 @@ public class NewStringKeyDialog extends DialogWrapper {
 
   private final ResourceNameValidator myResourceNameValidator;
 
-  public NewStringKeyDialog(@NotNull final AndroidFacet facet, @NotNull Set<String> existing) {
+  public NewStringKeyDialog(@NotNull final AndroidModuleExtension facet, @NotNull Set<String> existing) {
     super(facet.getModule().getProject(), false);
 
     final VirtualFile baseDir = facet.getModule().getProject().getBaseDir();

@@ -18,12 +18,11 @@ package com.android.tools.idea.editors.strings;
 import com.android.tools.idea.configurations.LocaleMenuAction;
 import com.android.tools.idea.rendering.Locale;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.components.JBLabel;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 
@@ -38,7 +37,7 @@ public class MultilineStringEditorDialog extends DialogWrapper {
   private String myDefaultValue;
   private String myTranslation;
 
-  public MultilineStringEditorDialog(@NotNull AndroidFacet facet,
+  public MultilineStringEditorDialog(@NotNull AndroidModuleExtension facet,
                                         @NotNull String key,
                                         @Nullable String value,
                                         @Nullable Locale locale,

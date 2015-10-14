@@ -19,6 +19,7 @@ import com.android.SdkConstants;
 import com.android.resources.ResourceType;
 import com.intellij.codeInspection.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlRecursiveElementVisitor;
@@ -33,10 +34,10 @@ import org.jetbrains.android.dom.AndroidResourceDomFileDescription;
 import org.jetbrains.android.dom.AndroidXmlTagDescriptor;
 import org.jetbrains.android.dom.manifest.ManifestDomFileDescription;
 import org.jetbrains.android.dom.xml.AndroidXmlResourcesUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,7 +75,7 @@ public class AndroidUnknownAttributeInspection extends LocalInspectionTool {
     if (!(file instanceof XmlFile)) {
       return ProblemDescriptor.EMPTY_ARRAY;
     }
-    AndroidFacet facet = AndroidFacet.getInstance(file);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     if (facet == null) {
       return ProblemDescriptor.EMPTY_ARRAY;
     }
@@ -86,7 +87,7 @@ public class AndroidUnknownAttributeInspection extends LocalInspectionTool {
     return ProblemDescriptor.EMPTY_ARRAY;
   }
 
-  static boolean isMyFile(@NotNull AndroidFacet facet, XmlFile file) {
+  static boolean isMyFile(@NotNull AndroidModuleExtension facet, XmlFile file) {
     String resourceType = facet.getLocalResourceManager().getFileResourceType(file);
     if (resourceType != null) {
       if (ourSupportedResourceTypes == null) {

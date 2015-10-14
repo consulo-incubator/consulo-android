@@ -19,7 +19,6 @@ import com.android.tools.idea.ddms.adb.AdbService;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -29,12 +28,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.run.AndroidDebugRunner;
 import org.jetbrains.android.run.AndroidSessionInfo;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -133,6 +133,6 @@ public class AndroidEnableAdbServiceAction extends ToggleAction {
   public void update(AnActionEvent e) {
     super.update(e);
     final Project project = e.getData(CommonDataKeys.PROJECT);
-    e.getPresentation().setEnabled(project != null && ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID).size() > 0);
+    e.getPresentation().setEnabled(project != null && ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class).size() > 0);
   }
 }

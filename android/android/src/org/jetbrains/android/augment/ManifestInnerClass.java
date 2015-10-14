@@ -9,8 +9,8 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlElement;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -19,9 +19,9 @@ import java.util.List;
 */
 abstract class ManifestInnerClass extends AndroidLightClass {
   private CachedValue<PsiField[]> myFieldsCache;
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
 
-  ManifestInnerClass(@NotNull AndroidFacet facet, @NotNull String name, @NotNull PsiClass context) {
+  ManifestInnerClass(@NotNull AndroidModuleExtension facet, @NotNull String name, @NotNull PsiClass context) {
     super(context, name);
     myFacet = facet;
   }

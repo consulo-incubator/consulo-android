@@ -49,7 +49,6 @@ import com.intellij.ui.SideBorder;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ArrayUtil;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.ResourceFolderManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -219,7 +218,7 @@ public class NavigationEditor extends UserDataHolderBase implements FileEditor {
     // Resource folder listener
     myResourceFolderListener = new ResourceFolderManager.ResourceFolderListener() {
       @Override
-      public void resourceFoldersChanged(@NotNull AndroidFacet facet,
+      public void resourceFoldersChanged(@NotNull AndroidModuleExtension facet,
                                          @NotNull List<VirtualFile> folders,
                                          @NotNull Collection<VirtualFile> added,
                                          @NotNull Collection<VirtualFile> removed) {
@@ -650,6 +649,12 @@ public class NavigationEditor extends UserDataHolderBase implements FileEditor {
   @Override
   public StructureViewBuilder getStructureViewBuilder() {
     return null;
+  }
+
+  @Nullable
+  @Override
+  public VirtualFile getVirtualFile() {
+    return myFile;
   }
 
   private void saveNavigationFile() {

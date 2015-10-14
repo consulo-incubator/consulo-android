@@ -1,13 +1,13 @@
 package org.jetbrains.android.augment;
 
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.projectRoots.SdkTable;
+import com.intellij.openapi.projectRoots.SdkTableListener;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.reference.SoftReference;
@@ -16,10 +16,11 @@ import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 import java.util.*;
 
@@ -35,9 +36,9 @@ public class AndroidPsiElementFinder extends PsiElementFinder {
 
   public AndroidPsiElementFinder(@NotNull Project project) {
     ApplicationManager.getApplication().getMessageBus().connect(project).subscribe(
-      ProjectJdkTable.JDK_TABLE_TOPIC, new ProjectJdkTable.Adapter() {
+        SdkTable.SDK_TABLE_TOPIC, new SdkTableListener.Adapter() {
         @Override
-        public void jdkRemoved(final Sdk sdk) {
+        public void sdkRemoved(final Sdk sdk) {
           synchronized (myLock) {
             myInternalRClasses.remove(sdk);
           }
@@ -47,7 +48,7 @@ public class AndroidPsiElementFinder extends PsiElementFinder {
 
   private boolean processInternalRClasses(@NotNull Project project, @NotNull GlobalSearchScope scope, Processor<PsiClass> processor) {
     for (Module module : ModuleManager.getInstance(project).getModules()) {
-      Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
+      Sdk sdk = ModuleUtilCore.getSdk(module, AndroidModuleExtension.class);
       AndroidPlatform platform = sdk == null ? null : AndroidPlatform.getInstance(sdk);
       PsiClass internalRClass = platform == null ? null : getOrCreateInternalRClass(project, sdk, platform);
       if (internalRClass != null && scope.contains(internalRClass.getContainingFile().getViewProvider().getVirtualFile())) {
@@ -82,7 +83,7 @@ public class AndroidPsiElementFinder extends PsiElementFinder {
   @Override
   public PsiClass[] findClasses(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
     Project project = scope.getProject();
-    if (project == null || !ProjectFacetManager.getInstance(project).hasFacets(AndroidFacet.ID)) {
+    if (project == null || !ModuleExtensionHelper.getInstance(project).hasModuleExtension(AndroidModuleExtension.class)) {
       return PsiClass.EMPTY_ARRAY;
     }
 
@@ -112,7 +113,7 @@ public class AndroidPsiElementFinder extends PsiElementFinder {
 
   @NotNull
   @Override
-  public Set<String> getClassNames(@NotNull PsiPackage psiPackage, @NotNull GlobalSearchScope scope) {
+  public Set<String> getClassNames(@NotNull PsiJavaPackage psiPackage, @NotNull GlobalSearchScope scope) {
     if (INTERNAL_PACKAGE_QNAME.equals(psiPackage.getQualifiedName())) {
       return Collections.singleton("R");
     }

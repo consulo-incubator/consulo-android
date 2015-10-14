@@ -22,13 +22,14 @@ import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.run.AndroidRunConfiguration;
 import org.jetbrains.android.run.AndroidRunConfigurationType;
 import org.jetbrains.android.run.TargetSelectionMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class RunConfigModuleCustomizer implements ModuleCustomizer<IdeaAndroidPr
                               @NotNull IdeModifiableModelsProvider modelsProvider,
                               @Nullable IdeaAndroidProject androidProject) {
     if (androidProject != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null && !facet.isLibraryProject()) {
         RunManager runManager = RunManager.getInstance(project);
         ConfigurationFactory configurationFactory = AndroidRunConfigurationType.getInstance().getFactory();

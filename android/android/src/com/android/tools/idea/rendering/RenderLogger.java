@@ -34,14 +34,15 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.HashSet;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.File;
@@ -81,7 +82,7 @@ public class RenderLogger extends LayoutLog {
   private final String myName;
   private Set<String> myFidelityWarningStrings;
   private boolean myHaveExceptions;
-  private Map<String,Integer> myTags;
+  private Map<String, Integer> myTags;
   private List<Throwable> myTraces;
   private List<RenderProblem> myMessages;
   private List<RenderProblem> myFidelityWarnings;
@@ -145,8 +146,8 @@ public class RenderLogger extends LayoutLog {
    */
   public boolean hasErrors() {
     return myHaveExceptions || myMessages != null ||
-           myClassesWithIncorrectFormat != null || myBrokenClasses != null || myMissingClasses != null ||
-           myMissingSize || myMissingFragments != null;
+        myClassesWithIncorrectFormat != null || myBrokenClasses != null || myMissingClasses != null ||
+        myMissingSize || myMissingFragments != null;
   }
 
   /**
@@ -194,10 +195,10 @@ public class RenderLogger extends LayoutLog {
 
     if (LayoutLog.TAG_RESOURCES_RESOLVE_THEME_ATTR.equals(tag) && myModule != null
         && BuildSettings.getInstance(myModule.getProject()).getBuildMode() == BuildMode.SOURCE_GEN) {
-      AndroidFacet facet = AndroidFacet.getInstance(myModule);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
       if (facet != null && facet.isGradleProject()) {
         description = "Still building project; theme resources from libraries may be missing. Layout should refresh when the " +
-                      "build is complete.\n\n" + description;
+            "build is complete.\n\n" + description;
         tag = TAG_STILL_BUILDING;
         addTag(tag);
       }
@@ -241,23 +242,24 @@ public class RenderLogger extends LayoutLog {
 
       if ("Unable to find the layout for Action Bar.".equals(description)) {
         description += "\nConsider updating to a more recent version of appcompat, or switch the rendering library in the IDE " +
-                       "down to API 21";
+            "down to API 21";
       }
 
       if (description.equals(throwable.getLocalizedMessage()) || description.equals(throwable.getMessage())) {
         description = "Exception raised during rendering: " + description;
-      } else if (message == null) {
+      }
+      else if (message == null) {
         // See if it looks like the known issue with CalendarView; if so, add a more intuitive message
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         if (stackTrace.length >= 2 &&
-          stackTrace[0].getClassName().equals("android.text.format.DateUtils") &&
-          stackTrace[1].getClassName().equals("android.widget.CalendarView")) {
+            stackTrace[0].getClassName().equals("android.text.format.DateUtils") &&
+            stackTrace[1].getClassName().equals("android.widget.CalendarView")) {
           RenderProblem.Html problem = RenderProblem.create(WARNING);
           problem.tag("59732");
           problem.throwable(throwable);
           HtmlBuilder builder = problem.getHtmlBuilder();
           builder.add("<CalendarView> and <DatePicker> are broken in this version of the rendering library. " +
-                          "Try updating your SDK in the SDK Manager when issue 59732 is fixed.");
+              "Try updating your SDK in the SDK Manager when issue 59732 is fixed.");
           builder.add(" (");
           builder.addLink("Open Issue 59732", "http://b.android.com/59732");
           builder.add(", ");
@@ -266,11 +268,12 @@ public class RenderLogger extends LayoutLog {
           builder.add(")");
           addMessage(problem);
           return;
-        } else if (stackTrace.length >= 2 &&
-                   stackTrace[0].getClassName().equals("android.support.v7.widget.RecyclerView") &&
-                   stackTrace[0].getMethodName().equals("onMeasure") &&
-                   stackTrace[1].getClassName().equals("android.view.View") &&
-                   throwable.toString().equals("java.lang.NullPointerException")) {
+        }
+        else if (stackTrace.length >= 2 &&
+            stackTrace[0].getClassName().equals("android.support.v7.widget.RecyclerView") &&
+            stackTrace[0].getMethodName().equals("onMeasure") &&
+            stackTrace[1].getClassName().equals("android.view.View") &&
+            throwable.toString().equals("java.lang.NullPointerException")) {
           RenderProblem.Html problem = RenderProblem.create(WARNING);
           String issue = "72117";
           problem.tag(issue);
@@ -288,7 +291,8 @@ public class RenderLogger extends LayoutLog {
           addMessage(problem);
           return;
         }
-      } else if (message.startsWith("Failed to configure parser for ") && message.endsWith(DOT_PNG)) {
+      }
+      else if (message.startsWith("Failed to configure parser for ") && message.endsWith(DOT_PNG)) {
         // See if it looks like a mismatched bitmap/color; if so, make a more intuitive error message
         StackTraceElement[] frames = throwable.getStackTrace();
         for (StackTraceElement frame : frames) {
@@ -328,11 +332,13 @@ public class RenderLogger extends LayoutLog {
 
             addMessage(problem);
             return;
-          } else if (frame.getClassName().startsWith("com.android.tools.")) {
+          }
+          else if (frame.getClassName().startsWith("com.android.tools.")) {
             break;
           }
         }
-      } else if (message.startsWith("Failed to parse file ") && throwable instanceof XmlPullParserException) {
+      }
+      else if (message.startsWith("Failed to parse file ") && throwable instanceof XmlPullParserException) {
         XmlPullParserException e = (XmlPullParserException)throwable;
         String msg = e.getMessage();
         if (msg.startsWith("Binary XML file ")) {
@@ -454,12 +460,13 @@ public class RenderLogger extends LayoutLog {
           return;
         }
       }
-    } else if (TAG_MISSING_FRAGMENT.equals(tag)) {
+    }
+    else if (TAG_MISSING_FRAGMENT.equals(tag)) {
       if (!ourIgnoreFragments) {
         if (myMissingFragments == null) {
           myMissingFragments = Lists.newArrayList();
         }
-        String name = data instanceof String ? (String) data : null;
+        String name = data instanceof String ? (String)data : null;
         myMissingFragments.add(name);
       }
       return;
@@ -517,7 +524,7 @@ public class RenderLogger extends LayoutLog {
     if (ourIgnoredFidelityWarnings == null) {
       ourIgnoredFidelityWarnings = new HashSet<String>();
     }
-    ourIgnoredFidelityWarnings.add((String) clientData);
+    ourIgnoredFidelityWarnings.add((String)clientData);
   }
 
   public static void ignoreAllFidelityWarnings() {
@@ -548,7 +555,8 @@ public class RenderLogger extends LayoutLog {
       Integer count = myTags.get(tag);
       if (count == null) {
         myTags.put(tag, 1);
-      } else {
+      }
+      else {
         myTags.put(tag, count + 1);
       }
     }
@@ -682,7 +690,7 @@ public class RenderLogger extends LayoutLog {
     problem.throwable(throwable);
     HtmlBuilder builder = problem.getHtmlBuilder();
     builder.add("There are some known bugs in this version of the rendering library. Until a new version is available, use the " +
-                "rendering library from L-preview.");
+        "rendering library from L-preview.");
     if (myModule == null) {
       // Shouldn't really happen, but just in case...
       return problem;
@@ -702,7 +710,7 @@ public class RenderLogger extends LayoutLog {
       builder.addLink(" Click ", "here", " to use L-preview.", getLinkManager().createRunnableLink(new Runnable() {
         @Override
         public void run() {
-          AndroidFacet facet = AndroidFacet.getInstance(myModule);
+          AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
           if (facet != null) {
             facet.getConfigurationManager().setTarget(targetL);
           }
@@ -714,21 +722,21 @@ public class RenderLogger extends LayoutLog {
       @Override
       public void run() {
         IPkgDesc lPreviewLib =
-          PkgDesc.Builder.newPlatform(new AndroidVersion(21, "L"), new MajorRevision(4), FullRevision.NOT_SPECIFIED).create();
+            PkgDesc.Builder.newPlatform(new AndroidVersion(21, "L"), new MajorRevision(4), FullRevision.NOT_SPECIFIED).create();
         List<IPkgDesc> requested = Lists.newArrayList(lPreviewLib);
         SdkQuickfixWizard wizard = new SdkQuickfixWizard(myModule.getProject(), myModule, requested);
         wizard.init();
         if (wizard.showAndGet()) {
           // Force target to be recomputed.
           sdkData.getLocalSdk().clearLocalPkg(EnumSet.of(PkgType.PKG_PLATFORM));
-          AndroidFacet facet = AndroidFacet.getInstance(myModule);
+          AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
           if (facet != null) {
             facet.getConfigurationManager().setTarget(null);
           }
           // http://b.android.com/76622
           Messages.showInfoMessage(myModule.getProject(),
-                                   "Note: Due to a bug, you may need to restart the IDE for the new LayoutLibrary to take full effect.",
-                                   "Restart Recommended");
+              "Note: Due to a bug, you may need to restart the IDE for the new LayoutLibrary to take full effect.",
+              "Restart Recommended");
         }
       }
     }));
@@ -740,11 +748,11 @@ public class RenderLogger extends LayoutLog {
    */
   private boolean checkForIssue164378(@Nullable Throwable throwable) {
     if (isIssue164378(throwable)) {
-        RenderProblem.Html problem = RenderProblem.create(ERROR);
-        HtmlBuilder builder = problem.getHtmlBuilder();
-        addHtmlForIssue164378(throwable, myModule, getLinkManager(), builder, true);
-        addMessage(problem);
-        return true;
+      RenderProblem.Html problem = RenderProblem.create(ERROR);
+      HtmlBuilder builder = problem.getHtmlBuilder();
+      addHtmlForIssue164378(throwable, myModule, getLinkManager(), builder, true);
+      addMessage(problem);
+      return true;
     }
     return false;
   }

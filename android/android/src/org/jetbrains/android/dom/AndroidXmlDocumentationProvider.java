@@ -1,6 +1,5 @@
 package org.jetbrains.android.dom;
 
-import com.android.SdkConstants;
 import com.android.ide.common.resources.ResourceUrl;
 import com.android.resources.ResourceType;
 import com.android.tools.idea.javadoc.AndroidJavaDocRenderer;
@@ -30,13 +29,13 @@ import org.jetbrains.android.dom.attrs.AttributeDefinitions;
 import org.jetbrains.android.dom.attrs.AttributeFormat;
 import org.jetbrains.android.dom.converters.AttributeValueDocumentationProvider;
 import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.resourceManagers.SystemResourceManager;
 import org.jetbrains.android.resourceManagers.ValueResourceInfo;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -76,7 +75,7 @@ public class AndroidXmlDocumentationProvider implements DocumentationProvider {
       if (module == null) {
         return null;
       }
-      AndroidFacet facet = AndroidFacet.getInstance(element);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(element, AndroidModuleExtension.class);
       if (facet == null) {
         return null;
       }
@@ -199,7 +198,7 @@ public class AndroidXmlDocumentationProvider implements DocumentationProvider {
         return cachedDoc.getValue();
       }
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(originalElement);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(originalElement, AndroidModuleExtension.class);
 
     if (facet == null) {
       return null;
@@ -240,7 +239,7 @@ public class AndroidXmlDocumentationProvider implements DocumentationProvider {
 
   @Nullable
   private static Pair<AttributeDefinition, String> findAttributeDefinition(@NotNull PsiElement originalElement,
-                                                                           @NotNull AndroidFacet facet,
+                                                                           @NotNull AndroidModuleExtension facet,
                                                                            @NotNull final String namespace,
                                                                            @NotNull final String localName) {
     if (!originalElement.isValid()) {
@@ -281,7 +280,7 @@ public class AndroidXmlDocumentationProvider implements DocumentationProvider {
   }
 
   @Nullable
-  private static AttributeDefinition findAttributeDefinitionGlobally(@NotNull AndroidFacet facet,
+  private static AttributeDefinition findAttributeDefinitionGlobally(@NotNull AndroidModuleExtension facet,
                                                                      @NotNull String namespace,
                                                                      @NotNull String localName) {
     ResourceManager resourceManager;

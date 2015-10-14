@@ -35,6 +35,7 @@ import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -51,7 +52,7 @@ public class AndroidAutogenerator {
   private AndroidAutogenerator() {
   }
 
-  private static boolean toRun(@NotNull AndroidAutogeneratorMode mode, @NotNull AndroidFacet facet, boolean force) {
+  private static boolean toRun(@NotNull AndroidAutogeneratorMode mode, @NotNull AndroidModuleExtension facet, boolean force) {
     if (!supportsAutogeneration(facet)) {
       return false;
     }
@@ -70,14 +71,14 @@ public class AndroidAutogenerator {
     }
   }
 
-  public static boolean supportsAutogeneration(@NotNull AndroidFacet facet) {
+  public static boolean supportsAutogeneration(@NotNull AndroidModuleExtension facet) {
     // This is a cheap way to figure out that a module has the Android-Gradle facet.
     // Don't generate anything if a module has an Android-Gradle facet.
     return !facet.isGradleProject();
   }
 
   public static void run(@NotNull AndroidAutogeneratorMode mode,
-                         @NotNull AndroidFacet facet,
+                         @NotNull AndroidModuleExtension facet,
                          @NotNull CompileContext context,
                          boolean force) {
     if (!toRun(mode, facet, force)) {
@@ -113,7 +114,7 @@ public class AndroidAutogenerator {
     }
   }
 
-  private static void runBuildConfigGenerator(@NotNull final AndroidFacet facet, @NotNull final CompileContext context) {
+  private static void runBuildConfigGenerator(@NotNull final AndroidModuleExtension facet, @NotNull final CompileContext context) {
     final Module module = facet.getModule();
 
     final BuildconfigAutogenerationItem item = ApplicationManager.getApplication().runReadAction(
@@ -198,7 +199,7 @@ public class AndroidAutogenerator {
     }
   }
 
-  private static void runAapt(@NotNull final AndroidFacet facet, @NotNull final CompileContext context, boolean force) {
+  private static void runAapt(@NotNull final AndroidModuleExtension facet, @NotNull final CompileContext context, boolean force) {
     final Module module = facet.getModule();
 
     final AptAutogenerationItem item = ApplicationManager.getApplication().runReadAction(new Computable<AptAutogenerationItem>() {
@@ -386,7 +387,7 @@ public class AndroidAutogenerator {
     }
   }
 
-  private static void patchAndMarkGeneratedFile(@NotNull AndroidFacet facet,
+  private static void patchAndMarkGeneratedFile(@NotNull AndroidModuleExtension facet,
                                                 @NotNull AndroidAutogeneratorMode mode,
                                                 @NotNull VirtualFile vFile) throws IOException {
     final File file = new File(vFile.getPath());
@@ -449,7 +450,7 @@ public class AndroidAutogenerator {
     });
   }
 
-  private static void runAidl(@NotNull final AndroidFacet facet, @NotNull final CompileContext context) {
+  private static void runAidl(@NotNull final AndroidModuleExtension facet, @NotNull final CompileContext context) {
     final Module module = facet.getModule();
     final ModuleCompileScope moduleCompileScope = new ModuleCompileScope(module, false);
     final VirtualFile[] files = moduleCompileScope.getFiles(AndroidIdlFileType.ourFileType, true);
@@ -560,7 +561,7 @@ public class AndroidAutogenerator {
     }
   }
 
-  private static void runRenderscript(@NotNull final AndroidFacet facet, @NotNull final CompileContext context) {
+  private static void runRenderscript(@NotNull final AndroidModuleExtension facet, @NotNull final CompileContext context) {
     final Module module = facet.getModule();
 
     final ModuleCompileScope moduleCompileScope = new ModuleCompileScope(module, false);

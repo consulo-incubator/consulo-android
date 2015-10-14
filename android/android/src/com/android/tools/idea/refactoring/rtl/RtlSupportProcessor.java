@@ -24,6 +24,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -38,12 +39,12 @@ import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.android.dom.layout.LayoutDomFileDescription;
 import org.jetbrains.android.dom.layout.LayoutViewElement;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.android.facet.ResourceFolderManager;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -156,7 +157,7 @@ public class RtlSupportProcessor extends BaseRefactoringProcessor {
   private void addManifestRefactoring(List<UsageInfo> list) {
     // For all non library modules in our project
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet == null || facet.isLibraryProject()) {
         continue;
       }
@@ -292,7 +293,7 @@ public class RtlSupportProcessor extends BaseRefactoringProcessor {
   private void addLayoutRefactoring(List<UsageInfo> list) {
     // For all non library modules in our project
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null && !facet.isLibraryProject()) {
         int minSdk = facet.getAndroidModuleInfo().getMinSdkVersion().getApiLevel();
 

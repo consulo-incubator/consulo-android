@@ -22,13 +22,14 @@ import com.android.sdklib.IAndroidTarget;
 import com.intellij.execution.JavaTestPatcher;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.util.PathsList;
 import com.intellij.util.containers.ContainerUtil;
 import org.gradle.tooling.model.UnsupportedMethodException;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.List;
@@ -48,7 +49,7 @@ public class AndroidJunitPatcher implements JavaTestPatcher {
       return;
     }
 
-    AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (androidFacet == null) {
       return;
     }

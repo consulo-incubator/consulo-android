@@ -16,6 +16,7 @@
 
 package org.jetbrains.android.dom.converters;
 
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.GenericDomValue;
 import com.intellij.util.xml.ResolvingConverter;
@@ -24,11 +25,11 @@ import org.jetbrains.android.dom.AndroidDomUtil;
 import org.jetbrains.android.dom.attrs.AttributeDefinition;
 import org.jetbrains.android.dom.attrs.AttributeDefinitions;
 import org.jetbrains.android.dom.resources.StyleItem;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,7 +42,7 @@ public class StyleItemConverter extends WrappingConverter {
   @Nullable
   private static ResolvingConverter findConverterForAttribute(String nsPrefix,
                                                               String localName,
-                                                              @NotNull AndroidFacet facet,
+                                                              @NotNull AndroidModuleExtension facet,
                                                               @NotNull GenericDomValue element) {
     ResourceManager manager = facet.getResourceManager("android".equals(nsPrefix)
                                                        ? AndroidUtils.SYSTEM_RESOURCE_PACKAGE
@@ -65,7 +66,7 @@ public class StyleItemConverter extends WrappingConverter {
     if (name != null) {
       String[] strs = name.split(":");
       if (strs.length == 1 || strs.length == 2) {
-        AndroidFacet facet = AndroidFacet.getInstance(element);
+        AndroidModuleExtension facet = ModuleUtilCore.getExtension(element.getXmlElement(), AndroidModuleExtension.class);
         if (facet != null) {
           String namespacePrefix = strs.length == 2 ? strs[0] : null;
           String localName = strs[strs.length - 1];

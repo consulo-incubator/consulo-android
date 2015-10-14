@@ -26,11 +26,11 @@ import com.intellij.util.xml.impl.ConvertContextFactory;
 import com.intellij.util.xml.impl.DomCompletionContributor;
 import org.jetbrains.android.dom.AndroidDomUtil;
 import org.jetbrains.android.dom.resources.ResourceValue;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 
@@ -41,7 +41,7 @@ public class AndroidResourceReference extends AndroidResourceReferenceBase {
   private final GenericDomValue<ResourceValue> myValue;
 
   public AndroidResourceReference(@NotNull GenericDomValue<ResourceValue> value,
-                                  @NotNull AndroidFacet facet,
+                                  @NotNull AndroidModuleExtension facet,
                                   @NotNull ResourceValue resourceValue,
                                   @Nullable TextRange range) {
     super(value, range, resourceValue, facet);

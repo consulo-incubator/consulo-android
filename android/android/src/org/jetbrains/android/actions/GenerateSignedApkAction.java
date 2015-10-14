@@ -8,10 +8,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import org.jetbrains.android.exportSignedPackage.CheckModulePanel;
 import org.jetbrains.android.exportSignedPackage.ExportSignedPackageWizard;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.List;
@@ -25,7 +25,7 @@ public class GenerateSignedApkAction extends AnAction {
     super(AndroidBundle.message("android.generate.signed.apk.action.text"));
   }
 
-  private static boolean checkFacet(final AndroidFacet facet) {
+  private static boolean checkFacet(final AndroidModuleExtension facet) {
     final CheckModulePanel panel = new CheckModulePanel();
     panel.updateMessages(facet);
     final boolean hasError = panel.hasError();
@@ -64,7 +64,7 @@ public class GenerateSignedApkAction extends AnAction {
     final Project project = e.getData(CommonDataKeys.PROJECT);
     assert project != null;
 
-    List<AndroidFacet> facets = AndroidUtils.getApplicationFacets(project);
+    List<AndroidModuleExtension> facets = AndroidUtils.getApplicationFacets(project);
     assert facets.size() > 0;
     if (facets.size() == 1) {
       if (!checkFacet(facets.get(0))) return;

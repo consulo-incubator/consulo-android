@@ -23,10 +23,11 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
-import org.jetbrains.android.facet.AndroidFacet;
+import com.intellij.openapi.module.ModuleUtilCore;
 import org.jetbrains.android.sdk.AndroidTargetData;
 import org.jetbrains.android.uipreview.ModuleClassLoader;
 import org.jetbrains.android.util.AndroidBundle;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 public class RefreshRenderAction extends AnAction {
   private final RenderContext myContext;
@@ -59,7 +60,7 @@ public class RefreshRenderAction extends AnAction {
         }
       }
 
-      AndroidFacet facet = AndroidFacet.getInstance(configuration.getModule());
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(configuration.getModule(), AndroidModuleExtension.class);
       if (facet != null) {
         facet.refreshResources();
       }
