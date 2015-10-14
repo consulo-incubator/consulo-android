@@ -29,6 +29,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.*;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.ide.util.ClassFilter;
 import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeClassChooserFactory;
@@ -37,7 +38,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -365,7 +365,7 @@ public class TemplateParameterStep2 extends DynamicWizardStepWithDescription {
     com.intellij.openapi.editor.Document doc =
         JavaReferenceEditorUtil.createDocument("", project, false, JavaCodeFragment.VisibilityChecker.PROJECT_SCOPE_VISIBLE);
     assert doc != null;
-    final EditorComboBox textField = new EditorComboBox(doc, project, StdFileTypes.JAVA);
+    final EditorComboBox textField = new EditorComboBox(doc, project, JavaFileType.INSTANCE);
     final List<String> recentEntries = AddAndroidActivityPath.getParameterValueHistory(parameter, project);
     if (recentEntries != null) {
       textField.setHistory(ArrayUtil.toStringArray(recentEntries));

@@ -33,6 +33,8 @@ import com.google.common.collect.Sets;
 import com.intellij.compiler.impl.javaCompiler.javac.JavacConfiguration;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
@@ -40,7 +42,6 @@ import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -812,7 +813,7 @@ public class RenderErrorPanel extends JPanel {
         boolean haveResourceErrors = wolfgang.hasProblemFilesBeneath(new Condition<VirtualFile>() {
           @Override
           public boolean value(VirtualFile virtualFile) {
-            return virtualFile.getFileType() == StdFileTypes.XML;
+            return virtualFile.getFileType() == XmlFileType.INSTANCE;
           }
         });
         if (haveResourceErrors) {
@@ -824,7 +825,7 @@ public class RenderErrorPanel extends JPanel {
         boolean hasJavaErrors = wolfgang.hasProblemFilesBeneath(new Condition<VirtualFile>() {
           @Override
           public boolean value(VirtualFile virtualFile) {
-            return virtualFile.getFileType() == StdFileTypes.JAVA;
+            return virtualFile.getFileType() == JavaFileType.INSTANCE;
           }
         });
         if (hasJavaErrors) {

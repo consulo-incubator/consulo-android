@@ -22,9 +22,9 @@ import com.intellij.designer.model.MetaModel;
 import com.intellij.designer.model.RadComponent;
 import com.intellij.designer.model.RadLayout;
 import com.intellij.lang.Language;
+import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiDocumentManager;
@@ -253,7 +253,7 @@ public class RadComponentOperations {
           project = parentTag.getProject();
         }
 
-        Language language = StdFileTypes.XML.getLanguage();
+        Language language = XMLLanguage.INSTANCE;
         XmlTag xmlTag =
           XmlElementFactory.getInstance(project).createTagFromText("\n" + tagBuilder.compute(), language);
 

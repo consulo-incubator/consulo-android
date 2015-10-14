@@ -31,8 +31,8 @@ import com.intellij.designer.designSurface.ZoomType;
 import com.intellij.designer.model.RadComponent;
 import com.intellij.designer.model.RadLayout;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -263,7 +263,7 @@ public class AndroidDesignerActionPanel extends DesignerActionPanel {
     AndroidDesignerEditorPanel designer = (AndroidDesignerEditorPanel)myDesigner;
     XmlFile xmlFile = designer.getXmlFile();
     GlobalSearchScope useScope = GlobalSearchScope.projectScope(designer.getProject());
-    GlobalSearchScope scope = GlobalSearchScope.getScopeRestrictedByFileTypes(useScope, StdFileTypes.XML);
+    GlobalSearchScope scope = GlobalSearchScope.getScopeRestrictedByFileTypes(useScope, XmlFileType.INSTANCE);
     Iterable<PsiReference> allReferences = SearchUtils.findAllReferences(xmlFile, scope);
     Iterator<PsiReference> iterator = allReferences.iterator();
 

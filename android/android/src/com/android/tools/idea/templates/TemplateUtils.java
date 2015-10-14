@@ -22,16 +22,15 @@ import com.android.tools.idea.wizard.WizardUtils;
 import com.android.utils.SparseArray;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.ide.impl.ProjectPaneSelectInTarget;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.ThrowableComputable;
@@ -323,7 +322,7 @@ public class TemplateUtils {
    */
   public static boolean openEditor(@NotNull Project project, @NotNull VirtualFile vFile) {
     OpenFileDescriptor descriptor;
-    if (vFile.getFileType() == StdFileTypes.XML && AndroidEditorSettings.getInstance().getGlobalState().isPreferXmlEditor()) {
+    if (vFile.getFileType() == XmlFileType.INSTANCE && AndroidEditorSettings.getInstance().getGlobalState().isPreferXmlEditor()) {
       descriptor = new OpenFileDescriptor(project, vFile, 0);
     } else {
       descriptor = new OpenFileDescriptor(project, vFile);

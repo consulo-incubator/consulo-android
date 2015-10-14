@@ -22,6 +22,7 @@ import com.android.tools.idea.rendering.LayoutPullParserFactory;
 import com.android.tools.idea.rendering.ResourceNameValidator;
 import com.intellij.CommonBundle;
 import com.intellij.ide.IdeView;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -32,7 +33,6 @@ import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.InputValidatorEx;
@@ -75,7 +75,7 @@ public class CreateTypedResourceFileAction extends CreateResourceActionBase {
                                        boolean valuesResourceFile,
                                        boolean chooseTagName) {
     super(AndroidBundle.message("new.typed.resource.action.title", resourcePresentableName),
-          AndroidBundle.message("new.typed.resource.action.description", resourcePresentableName), StdFileTypes.XML.getIcon());
+          AndroidBundle.message("new.typed.resource.action.description", resourcePresentableName), XmlFileType.INSTANCE.getIcon());
     myResourceType = resourceFolderType;
     myResourcePresentableName = resourcePresentableName;
     myDefaultRootTag = getDefaultRootTagByResourceType(resourceFolderType);

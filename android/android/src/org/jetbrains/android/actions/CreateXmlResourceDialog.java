@@ -22,12 +22,12 @@ import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
 import com.android.tools.idea.rendering.ResourceHelper;
 import com.intellij.CommonBundle;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.actions.VirtualFileDeleteProvider;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -447,7 +447,7 @@ public class CreateXmlResourceDialog extends DialogWrapper {
         continue;
       }
 
-      if (resFile.getFileType() != StdFileTypes.XML) {
+      if (resFile.getFileType() != XmlFileType.INSTANCE) {
         return new ValidationInfo("File " + FileUtil.toSystemDependentName(resFile.getPath()) + " is not XML file");
       }
 

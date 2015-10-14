@@ -27,12 +27,11 @@ import com.intellij.ide.actions.CreateElementActionBase;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
-import com.intellij.openapi.application.RunResult;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtil;
@@ -1070,8 +1069,8 @@ public class AndroidResourceUtil {
    */
   public static int compareResourceFiles(@Nullable VirtualFile file1, @Nullable VirtualFile file2) {
     if (file1 != null && file2 != null && file1 != file2) {
-      boolean xml1 = file1.getFileType() == StdFileTypes.XML;
-      boolean xml2 = file2.getFileType() == StdFileTypes.XML;
+      boolean xml1 = file1.getFileType() == XmlFileType.INSTANCE;
+      boolean xml2 = file2.getFileType() == XmlFileType.INSTANCE;
       if (xml1 != xml2) {
         return xml1 ? -1 : 1;
       }
@@ -1102,8 +1101,8 @@ public class AndroidResourceUtil {
    */
   public static int compareResourceFiles(@Nullable PsiFile file1, @Nullable PsiFile file2) {
     if (file1 != null && file2 != null && file1 != file2) {
-      boolean xml1 = file1.getFileType() == StdFileTypes.XML;
-      boolean xml2 = file2.getFileType() == StdFileTypes.XML;
+      boolean xml1 = file1.getFileType() == XmlFileType.INSTANCE;
+      boolean xml2 = file2.getFileType() == XmlFileType.INSTANCE;
       if (xml1 != xml2) {
         return xml1 ? -1 : 1;
       }

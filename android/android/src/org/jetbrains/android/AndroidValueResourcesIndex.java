@@ -3,7 +3,8 @@ package org.jetbrains.android;
 import com.android.annotations.VisibleForTesting;
 import com.android.resources.ResourceType;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.ide.highlighter.XmlFileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlRecursiveElementVisitor;
@@ -258,9 +259,9 @@ public class AndroidValueResourcesIndex extends FileBasedIndexExtension<Resource
   @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
-    return new DefaultFileTypeSpecificInputFilter(StdFileTypes.XML) {
+    return new DefaultFileTypeSpecificInputFilter(XmlFileType.INSTANCE) {
       @Override
-      public boolean acceptInput(@NotNull final VirtualFile file) {
+      public boolean acceptInput(@Nullable Project project, @NotNull final VirtualFile file) {
         return file.isInLocalFileSystem();
       }
     };

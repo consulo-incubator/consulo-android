@@ -16,9 +16,9 @@
 package org.jetbrains.android.spellchecker;
 
 import com.android.utils.Pair;
+import com.intellij.lang.properties.PropertiesFileType;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypes;
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -62,7 +62,7 @@ public class AndroidTextSpellcheckingStrategy extends SpellcheckingStrategy {
     FileType fileType = virtualFile.getFileType();
     boolean lastIgnore = false;
 
-    if (fileType == FileTypes.PLAIN_TEXT) {
+    if (fileType == PlainTextFileType.INSTANCE) {
       String name = virtualFile.getName();
       if (Comparing.equal(name, FN_RESOURCE_TEXT, SystemInfo.isFileSystemCaseSensitive) ||
           Comparing.equal(name, FN_GRADLE_WRAPPER_UNIX, SystemInfo.isFileSystemCaseSensitive) ||
@@ -72,7 +72,7 @@ public class AndroidTextSpellcheckingStrategy extends SpellcheckingStrategy {
         lastIgnore = true;
       }
     }
-    else if (fileType == StdFileTypes.PROPERTIES) {
+    else if (fileType == PropertiesFileType.INSTANCE) {
       String name = virtualFile.getName();
       if (Comparing.equal(name, FN_GRADLE_WRAPPER_PROPERTIES, SystemInfo.isFileSystemCaseSensitive) ||
           Comparing.equal(name, FN_LOCAL_PROPERTIES, SystemInfo.isFileSystemCaseSensitive) ||

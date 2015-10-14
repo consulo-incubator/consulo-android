@@ -17,7 +17,8 @@ package org.jetbrains.android;
 
 import com.android.SdkConstants;
 import com.intellij.ide.fileTemplates.*;
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -52,16 +53,16 @@ public class AndroidFileTemplateProvider implements FileTemplateGroupDescriptorF
   @Override
   public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
     final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor("Android", AndroidIcons.Android);
-    group.addTemplate(new FileTemplateDescriptor(ANDROID_MANIFEST_TEMPLATE, StdFileTypes.XML.getIcon()));
-    group.addTemplate(new FileTemplateDescriptor(VALUE_RESOURCE_FILE_TEMPLATE, StdFileTypes.XML.getIcon()));
-    group.addTemplate(new FileTemplateDescriptor(RESOURCE_FILE_TEMPLATE, StdFileTypes.XML.getIcon()));
-    group.addTemplate(new FileTemplateDescriptor(LAYOUT_RESOURCE_FILE_TEMPLATE, StdFileTypes.XML.getIcon()));
-    group.addTemplate(new FileTemplateDescriptor(LAYOUT_RESOURCE_VERTICAL_FILE_TEMPLATE, StdFileTypes.XML.getIcon()));
-    group.addTemplate(new FileTemplateDescriptor(ACTIVITY, StdFileTypes.JAVA.getIcon()));
-    group.addTemplate(new FileTemplateDescriptor(FRAGMENT, StdFileTypes.JAVA.getIcon()));
-    group.addTemplate(new FileTemplateDescriptor(APPLICATION, StdFileTypes.JAVA.getIcon()));
-    group.addTemplate(new FileTemplateDescriptor(SERVICE, StdFileTypes.JAVA.getIcon()));
-    group.addTemplate(new FileTemplateDescriptor(BROADCAST_RECEIVER, StdFileTypes.JAVA.getIcon()));
+    group.addTemplate(new FileTemplateDescriptor(ANDROID_MANIFEST_TEMPLATE, XmlFileType.INSTANCE.getIcon()));
+    group.addTemplate(new FileTemplateDescriptor(VALUE_RESOURCE_FILE_TEMPLATE, XmlFileType.INSTANCE.getIcon()));
+    group.addTemplate(new FileTemplateDescriptor(RESOURCE_FILE_TEMPLATE, XmlFileType.INSTANCE.getIcon()));
+    group.addTemplate(new FileTemplateDescriptor(LAYOUT_RESOURCE_FILE_TEMPLATE, XmlFileType.INSTANCE.getIcon()));
+    group.addTemplate(new FileTemplateDescriptor(LAYOUT_RESOURCE_VERTICAL_FILE_TEMPLATE, XmlFileType.INSTANCE.getIcon()));
+    group.addTemplate(new FileTemplateDescriptor(ACTIVITY, JavaFileType.INSTANCE.getIcon()));
+    group.addTemplate(new FileTemplateDescriptor(FRAGMENT, JavaFileType.INSTANCE.getIcon()));
+    group.addTemplate(new FileTemplateDescriptor(APPLICATION, JavaFileType.INSTANCE.getIcon()));
+    group.addTemplate(new FileTemplateDescriptor(SERVICE, JavaFileType.INSTANCE.getIcon()));
+    group.addTemplate(new FileTemplateDescriptor(BROADCAST_RECEIVER, JavaFileType.INSTANCE.getIcon()));
     group.addTemplate(new FileTemplateDescriptor(REMOTE_INTERFACE_TEMPLATE, AndroidIdlFileType.ourFileType.getIcon()));
     return group;
   }
@@ -87,18 +88,18 @@ public class AndroidFileTemplateProvider implements FileTemplateGroupDescriptorF
                                         @NotNull VirtualFile rootDir,
                                         @NotNull String templateName,
                                         @NotNull String fileName) throws Exception {
-    return createFromTemplate(project, rootDir, templateName, fileName, FileTemplateManager.getInstance(project).getDefaultProperties());
+    return createFromTemplate(project, rootDir, templateName, fileName, FileTemplateManager.getInstance().getDefaultProperties());
   }
 
   public static PsiElement createFromTemplate(String templateName, String fileName, @NotNull PsiDirectory directory, Properties properties)
     throws Exception {
-    FileTemplateManager manager = FileTemplateManager.getInstance(directory.getProject());
+    FileTemplateManager manager = FileTemplateManager.getInstance();
     FileTemplate template = manager.getJ2eeTemplate(templateName);
     return FileTemplateUtil.createFromTemplate(template, fileName, properties, directory);
   }
 
   public static PsiElement createFromTemplate(String templateName, String fileName, @NotNull PsiDirectory directory) throws Exception {
-    return createFromTemplate(templateName, fileName, directory, FileTemplateManager.getInstance(directory.getProject()).getDefaultProperties());
+    return createFromTemplate(templateName, fileName, directory, FileTemplateManager.getInstance().getDefaultProperties());
   }
 
   @NotNull

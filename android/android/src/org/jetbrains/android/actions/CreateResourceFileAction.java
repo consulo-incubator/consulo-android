@@ -23,10 +23,10 @@ import com.android.ide.common.resources.configuration.FolderConfiguration;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
 import com.intellij.CommonBundle;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
@@ -68,7 +68,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
 
   public CreateResourceFileAction() {
     super(AndroidBundle.message("new.resource.action.title"), AndroidBundle.message("new.resource.action.description"),
-          StdFileTypes.XML.getIcon());
+          XmlFileType.INSTANCE.getIcon());
   }
 
   public void add(CreateTypedResourceFileAction action) {

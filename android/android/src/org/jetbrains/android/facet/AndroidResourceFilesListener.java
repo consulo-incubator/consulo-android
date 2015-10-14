@@ -19,10 +19,10 @@ package org.jetbrains.android.facet;
 import com.android.SdkConstants;
 import com.android.resources.ResourceFolderType;
 import com.android.tools.idea.fileTypes.AndroidRenderscriptFileType;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -100,7 +100,7 @@ public class AndroidResourceFilesListener extends BulkFileListener.Adapter imple
         SdkConstants.FN_ANDROID_MANIFEST_XML.equals(file.getName())) {
       return true;
     }
-    else if (fileType == StdFileTypes.XML) {
+    else if (fileType == XmlFileType.INSTANCE) {
       final VirtualFile parent = file.getParent();
 
       if (parent != null && parent.isDirectory()) {

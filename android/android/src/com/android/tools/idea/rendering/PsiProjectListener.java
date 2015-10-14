@@ -18,10 +18,11 @@ package com.android.tools.idea.rendering;
 import com.android.SdkConstants;
 import com.android.resources.ResourceFolderType;
 import com.google.common.collect.Maps;
+import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -87,16 +88,16 @@ public class PsiProjectListener extends PsiTreeChangeAdapter {
   }
 
   static boolean isRelevantFileType(@NotNull FileType fileType) {
-    if (fileType == StdFileTypes.JAVA) { // fail fast for vital file type
+    if (fileType == JavaFileType.INSTANCE) { // fail fast for vital file type
       return false;
     }
-    return fileType == StdFileTypes.XML ||
+    return fileType == XmlFileType.INSTANCE ||
            (fileType.isBinary() && fileType == FileTypeManager.getInstance().getFileTypeByExtension(EXT_PNG));
   }
 
   static boolean isRelevantFile(@NotNull VirtualFile file) {
     FileType fileType = file.getFileType();
-    if (fileType == StdFileTypes.JAVA) {
+    if (fileType == JavaFileType.INSTANCE) {
       return false;
     }
 
@@ -117,7 +118,7 @@ public class PsiProjectListener extends PsiTreeChangeAdapter {
 
   static boolean isRelevantFile(@NotNull PsiFile file) {
     FileType fileType = file.getFileType();
-    if (fileType == StdFileTypes.JAVA) {
+    if (fileType == JavaFileType.INSTANCE) {
       return false;
     }
 

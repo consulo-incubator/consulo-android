@@ -16,7 +16,9 @@
 package org.jetbrains.android;
 
 import com.android.SdkConstants;
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.android.annotations.Nullable;
+import com.intellij.ide.highlighter.XmlFileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.containers.HashSet;
@@ -134,9 +136,9 @@ public class AndroidIdIndex extends FileBasedIndexExtension<String, Set<String>>
   @NotNull
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
-    return new DefaultFileTypeSpecificInputFilter(StdFileTypes.XML) {
+    return new DefaultFileTypeSpecificInputFilter(XmlFileType.INSTANCE) {
       @Override
-      public boolean acceptInput(@NotNull final VirtualFile file) {
+      public boolean acceptInput(@Nullable Project project, @NotNull final VirtualFile file) {
         return file.isInLocalFileSystem();
       }
     };

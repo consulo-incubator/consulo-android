@@ -28,10 +28,10 @@ import com.intellij.debugger.ui.impl.watch.NodeManagerImpl;
 import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl;
 import com.intellij.debugger.ui.tree.*;
 import com.intellij.debugger.ui.tree.render.*;
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiExpression;
-import com.sun.jdi.*;
+import consulo.internal.com.sun.jdi.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +89,7 @@ public class ArrayMapRendererBase extends NodeRendererImpl {
                                new TextWithImportsImpl(CodeFragmentKind.EXPRESSION,
                                                        expression,
                                                        "",
-                                                       StdFileTypes.JAVA));
+                                                       JavaFileType.INSTANCE));
       UserExpressionDescriptor userExpressionDescriptor =
         descriptorFactory.getUserExpressionDescriptor(builder.getParentDescriptor(), descriptorData);
       DebuggerTreeNode arrayMapItemNode = nodeManager.createNode(userExpressionDescriptor, evaluationContext);
@@ -122,7 +122,7 @@ public class ArrayMapRendererBase extends NodeRendererImpl {
     }
 
     ObjectReference ref = (ObjectReference)descriptor.getValue();
-    myLabelRenderer.setLabelExpression(new TextWithImportsImpl(CodeFragmentKind.EXPRESSION, "size()", "", StdFileTypes.JAVA));
+    myLabelRenderer.setLabelExpression(new TextWithImportsImpl(CodeFragmentKind.EXPRESSION, "size()", "", JavaFileType.INSTANCE));
     return ValueDescriptorImpl.getIdLabel(ref) + ", size = " + myLabelRenderer.calcLabel(descriptor, evaluationContext, listener);
   }
 
@@ -158,7 +158,7 @@ public class ArrayMapRendererBase extends NodeRendererImpl {
 
   private class MyArrayMapSizeEvaluator extends CachedEvaluator {
     public MyArrayMapSizeEvaluator() {
-      setReferenceExpression(new TextWithImportsImpl(CodeFragmentKind.EXPRESSION, "size()", "", StdFileTypes.JAVA));
+      setReferenceExpression(new TextWithImportsImpl(CodeFragmentKind.EXPRESSION, "size()", "", JavaFileType.INSTANCE));
     }
 
     @Override

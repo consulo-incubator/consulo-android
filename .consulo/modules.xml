@@ -223,6 +223,13 @@
               </binaries>
             </library>
           </orderEntry>
+          <orderEntry type="module-library">
+            <library name="consulo:Images">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/../../dep/images/lib/images.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
         </module-layer>
       </module>
       <module name="android/android-annotations" dirurl="file://$PROJECT_DIR$/tools-base/annotations" current-layer="Default">
@@ -272,11 +279,13 @@
       </module>
       <module name="android/android-rt" dirurl="file://$PROJECT_DIR$/android/android/rt" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="annotations" />
           <orderEntry type="module" module-name="util-rt" />
@@ -424,31 +433,51 @@
       </module>
       <module name="android/sdktools/lint-api" dirurl="file://$PROJECT_DIR$/tools-base/lint/libs/lint-api" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" custom-plugin-dir-url="file://$MODULE_DIR$/../../../../dep" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
           <orderEntry type="sourceFolder" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="library" exploded="" name="asm-tools" level="project" />
           <orderEntry type="library" exploded="" name="lombok-ast" level="project" />
           <orderEntry type="library" exploded="" name="builder-model" level="project" />
           <orderEntry type="module" module-name="android-annotations" exported="" />
-          <orderEntry type="library" exploded="" name="guava-tools" level="project" />
           <orderEntry type="module" module-name="common" />
           <orderEntry type="module" module-name="sdklib" />
           <orderEntry type="module" module-name="sdk-common" />
           <orderEntry type="module" module-name="layoutlib-api" />
           <orderEntry type="module" module-name="builder-model" />
+          <orderEntry type="module-library">
+            <library name="consulo:Java">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/asm-all.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/coverate_rt.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/instrumentation-util.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/jacocoant.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/java-i18n.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/java-manifest.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/java-rt.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/java.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/jdi.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/jdk-annotations.jar!/" />
+                <root url="jar://$MODULE_DIR$/../../../../dep/java/lib/jimage-jdk6.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
         </module-layer>
       </module>
       <module name="android/sdktools/lint-checks" dirurl="file://$PROJECT_DIR$/tools-base/lint/libs/lint-checks" current-layer="Default">
         <module-layer name="Default">
+          <extension id="consulo-plugin" sdk-module-name="" sdk-name="Consulo 1.SNAPSHOT" />
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
+          <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />
           <orderEntry type="sourceFolder" />
           <orderEntry type="module" module-name="lint-api" exported="" />
           <orderEntry type="module" module-name="sdk-common" />
@@ -476,7 +505,6 @@
           <extension id="java" sdk-module-name="" sdk-name="1.6" language-level-module-name="" language-level-name="JDK_1_6" special-dir-location="SOURCE_DIR" />
           <content url="file://$MODULE_DIR$">
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src/main/java" />
-            <content-folder type="TEST" url="file://$MODULE_DIR$/src/test/java" />
           </content>
           <orderEntry type="module-extension-sdk" extension-id="java" />
           <orderEntry type="module-extension-sdk" extension-id="consulo-plugin" />

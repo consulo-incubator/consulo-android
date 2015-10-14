@@ -18,15 +18,17 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.ex.CustomEditInspectionToolsSettingsAction;
 import com.intellij.codeInspection.ex.DisableInspectionToolAction;
+import com.intellij.ide.highlighter.JavaFileType;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.lang.annotation.HighlightSeverity;
+import com.intellij.lang.properties.PropertiesFileType;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypes;
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -86,13 +88,13 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
 
     final FileType fileType = file.getFileType();
 
-    if (fileType == StdFileTypes.XML) {
+    if (fileType == XmlFileType.INSTANCE) {
       if (facet == null || facet.getLocalResourceManager().getFileResourceType(file) == null &&
           !SdkConstants.ANDROID_MANIFEST_XML.equals(vFile.getName())) {
         return null;
       }
     }
-    else if (fileType == FileTypes.PLAIN_TEXT) {
+    else if (fileType == PlainTextFileType.INSTANCE) {
       if (!AndroidCommonUtils.PROGUARD_CFG_FILE_NAME.equals(file.getName()) &&
           !AndroidCompileUtil.OLD_PROGUARD_CFG_FILE_NAME.equals(file.getName())) {
         return null;
@@ -108,7 +110,7 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
         PsiProjectListener.getListener(project);
       }
     }
-    else if (fileType != StdFileTypes.JAVA && fileType != StdFileTypes.PROPERTIES) {
+    else if (fileType != JavaFileType.INSTANCE && fileType != PropertiesFileType.INSTANCE) {
       return null;
     }
 
@@ -129,19 +131,19 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
       VirtualFile mainFile = state.getMainFile();
       final FileType fileType = mainFile.getFileType();
       String name = mainFile.getName();
-      if (fileType == StdFileTypes.XML) {
+      if (fileType == XmlFileType.INSTANCE) {
         if (name.equals(ANDROID_MANIFEST_XML)) {
           scope = Scope.MANIFEST_SCOPE;
         } else {
           scope = Scope.RESOURCE_FILE_SCOPE;
         }
-      } else if (fileType == StdFileTypes.JAVA) {
+      } else if (fileType == JavaFileType.INSTANCE) {
         scope = Scope.JAVA_FILE_SCOPE;
       } else if (name.equals(OLD_PROGUARD_FILE) || name.equals(FN_PROJECT_PROGUARD_FILE)) {
         scope = EnumSet.of(Scope.PROGUARD_FILE);
       } else if (fileType == GroovyFileType.GROOVY_FILE_TYPE) {
         scope = Scope.GRADLE_SCOPE;
-      } else if (fileType == StdFileTypes.PROPERTIES) {
+      } else if (fileType == PropertiesFileType.INSTANCE) {
         scope = Scope.PROPERTY_SCOPE;
       } else {
         // #collectionInformation above should have prevented this

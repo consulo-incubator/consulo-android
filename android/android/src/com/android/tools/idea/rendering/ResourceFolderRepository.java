@@ -30,11 +30,11 @@ import com.android.tools.idea.databinding.DataBindingUtil;
 import com.android.tools.idea.model.ManifestInfo;
 import com.android.tools.lint.detector.api.LintUtils;
 import com.google.common.collect.*;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -439,7 +439,7 @@ public final class ResourceFolderRepository extends LocalResourceRepository {
   private boolean scanValueFile(String qualifiers, PsiFile file, FolderConfiguration folderConfiguration) {
     boolean added = false;
     FileType fileType = file.getFileType();
-    if (fileType == StdFileTypes.XML) {
+    if (fileType == XmlFileType.INSTANCE) {
       XmlFile xmlFile = (XmlFile)file;
       assert xmlFile.isValid();
       XmlDocument document = xmlFile.getDocument();

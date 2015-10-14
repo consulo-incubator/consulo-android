@@ -17,8 +17,8 @@ package org.jetbrains.android.resourceManagers;
 
 import com.android.resources.ResourceType;
 import com.android.tools.idea.AndroidPsiUtils;
+import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
@@ -192,7 +192,7 @@ public abstract class ResourceManager {
 
     for (VirtualFile valueResourceDir : getResourceSubdirs("values")) {
       for (VirtualFile valueResourceFile : valueResourceDir.getChildren()) {
-        if (!valueResourceFile.isDirectory() && valueResourceFile.getFileType().equals(StdFileTypes.XML)) {
+        if (!valueResourceFile.isDirectory() && valueResourceFile.getFileType().equals(XmlFileType.INSTANCE)) {
           files.add(valueResourceFile);
         }
       }
