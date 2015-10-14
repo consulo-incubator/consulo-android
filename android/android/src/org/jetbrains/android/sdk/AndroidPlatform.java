@@ -27,6 +27,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,7 +104,7 @@ public class AndroidPlatform {
     Set<String> jarPaths = Sets.newHashSet();
     VirtualFile frameworkLibrary = null;
     for (VirtualFile file : files) {
-      VirtualFile vFile = JarFileSystem.getInstance().getVirtualFileForJar(file);
+      VirtualFile vFile = ArchiveVfsUtil.getVirtualFileForJar(file);
       if (vFile != null) {
         if (vFile.getName().equals(FN_FRAMEWORK_LIBRARY)) {
           frameworkLibrary = vFile;

@@ -20,6 +20,7 @@ import com.android.SdkConstants;
 import com.android.resources.ResourceType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -37,12 +38,12 @@ import gnu.trove.THashMap;
 import org.jetbrains.android.dom.manifest.Manifest;
 import org.jetbrains.android.dom.manifest.ManifestDomFileDescription;
 import org.jetbrains.android.dom.xml.XmlResourceDomFileDescription;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.net.URL;
 import java.util.HashSet;
@@ -63,7 +64,7 @@ public class AndroidXmlSchemaProvider extends XmlSchemaProvider {
 
   @Override
   public XmlFile getSchema(@NotNull @NonNls String url, @Nullable final Module module, @NotNull PsiFile baseFile) {
-    if (module == null || AndroidFacet.getInstance(module) == null) return null;
+    if (module == null || ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) == null) return null;
 
     Map<String, CachedValue<XmlFile>> descriptors = module.getUserData(DESCRIPTORS_MAP_IN_MODULE);
     if (descriptors == null) {
@@ -102,7 +103,7 @@ public class AndroidXmlSchemaProvider extends XmlSchemaProvider {
       public Boolean compute() {
         if (isXmlResourceFile(originalFile) ||
             ManifestDomFileDescription.isManifestFile(originalFile)) {
-          return AndroidFacet.getInstance(originalFile) != null;
+          return ModuleUtilCore.getExtension(originalFile, AndroidModuleExtension.class) != null;
         }
         return false;
       }
@@ -133,7 +134,7 @@ public class AndroidXmlSchemaProvider extends XmlSchemaProvider {
   @Override
   public Set<String> getAvailableNamespaces(@NotNull XmlFile file, @Nullable String tagName) {
     Set<String> result = new HashSet<String>();
-    AndroidFacet facet = AndroidFacet.getInstance(file);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     if (facet != null) {
       result.add(SdkConstants.NS_RESOURCES);
       String localNs = getLocalXmlNamespace(facet);
@@ -160,7 +161,7 @@ public class AndroidXmlSchemaProvider extends XmlSchemaProvider {
   }
 
   @Nullable
-  public static String getLocalXmlNamespace(@NotNull AndroidFacet facet) {
+  public static String getLocalXmlNamespace(@NotNull AndroidModuleExtension<?> facet) {
     if (facet.isLibraryProject() || facet.isGradleProject()) {
       return SdkConstants.AUTO_URI;
     }

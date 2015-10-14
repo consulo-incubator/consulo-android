@@ -31,6 +31,7 @@ import com.android.util.Pair;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectIntHashMap;
@@ -39,6 +40,7 @@ import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.*;
@@ -88,7 +90,7 @@ public class AppResourceRepository extends MultiResourceRepository {
    */
   @Nullable
   public static AppResourceRepository getAppResources(@NotNull Module module, boolean createIfNecessary) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet != null) {
       return facet.getAppResources(createIfNecessary);
     }
@@ -106,7 +108,7 @@ public class AppResourceRepository extends MultiResourceRepository {
    */
   @Contract("!null, true -> !null")
   @Nullable
-  public static AppResourceRepository getAppResources(@NotNull AndroidFacet facet, boolean createIfNecessary) {
+  public static AppResourceRepository getAppResources(@NotNull AndroidModuleExtension<?> facet, boolean createIfNecessary) {
     return facet.getAppResources(createIfNecessary);
   }
 
@@ -178,7 +180,7 @@ public class AppResourceRepository extends MultiResourceRepository {
   }
 
   @NotNull
-  public static Collection<AndroidLibrary> findAarLibraries(@NotNull AndroidFacet facet) {
+  public static Collection<AndroidLibrary> findAarLibraries(@NotNull AndroidModuleExtension<?> facet) {
     List<AndroidLibrary> libraries = Lists.newArrayList();
     if (facet.isGradleProject()) {
       IdeaAndroidProject project = facet.getIdeaAndroidProject();
@@ -393,7 +395,7 @@ public class AppResourceRepository extends MultiResourceRepository {
   }
 
   @NonNull
-  public ResourceVisibilityLookup getResourceVisibility(@NonNull AndroidFacet facet) {
+  public ResourceVisibilityLookup getResourceVisibility(@NonNull AndroidModuleExtension<?> facet) {
     IdeaAndroidProject project = facet.getIdeaAndroidProject();
     if (project != null) {
       ResourceVisibilityLookup.Provider provider = getResourceVisibilityProvider();

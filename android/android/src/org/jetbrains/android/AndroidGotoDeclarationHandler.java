@@ -21,6 +21,7 @@ import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -33,13 +34,14 @@ import org.jetbrains.android.dom.manifest.Manifest;
 import org.jetbrains.android.dom.manifest.ManifestElementWithRequiredName;
 import org.jetbrains.android.dom.resources.Attr;
 import org.jetbrains.android.dom.resources.DeclareStyleable;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.LocalResourceManager;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.RequiredReadAction;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +67,7 @@ public class AndroidGotoDeclarationHandler implements GotoDeclarationHandler {
     if (file == null) {
       return null;
     }
-    AndroidFacet facet = AndroidFacet.getInstance(file);
+    AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }
@@ -137,7 +139,7 @@ public class AndroidGotoDeclarationHandler implements GotoDeclarationHandler {
 
   private static void collectManifestElements(@NotNull String nestedClassName,
                                               @NotNull String fieldName,
-                                              @NotNull AndroidFacet facet,
+                                              @NotNull AndroidModuleExtension<?> facet,
                                               @NotNull List<PsiElement> result) {
     final Manifest manifest = facet.getManifest();
 
@@ -184,6 +186,7 @@ public class AndroidGotoDeclarationHandler implements GotoDeclarationHandler {
    * for tools attributes better (see issue b.android.com/75702)
    */
   @Nullable
+  @RequiredReadAction
   private static PsiElement[] handleToolsNamespaceReferences(@NotNull XmlToken token) {
     if (!(token.getParent() instanceof XmlAttributeValue)) {
       return null;
@@ -200,7 +203,7 @@ public class AndroidGotoDeclarationHandler implements GotoDeclarationHandler {
     if (!ATTR_CONTEXT.equals(attribute.getLocalName()) || !TOOLS_URI.equals(attribute.getNamespace())) {
       return null;
     }
-    AndroidFacet facet = AndroidFacet.getInstance(token);
+    AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(token, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }

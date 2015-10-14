@@ -33,6 +33,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.undo.DocumentReference;
 import com.intellij.openapi.command.undo.DocumentReferenceManager;
 import com.intellij.openapi.command.undo.UndoManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Computable;
@@ -62,7 +63,6 @@ import org.jetbrains.android.dom.AndroidDomUtil;
 import org.jetbrains.android.dom.resources.ResourceElement;
 import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper;
 import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.LocalResourceManager;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.util.AndroidBundle;
@@ -70,6 +70,7 @@ import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.*;
@@ -99,7 +100,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
         }
 
         if (element1 instanceof PsiFile) {
-          return AndroidFacet.getInstance(element1) != null && AndroidResourceUtil.isInResourceSubdirectory((PsiFile)element1, null);
+          return ModuleUtilCore.getExtension(element1, AndroidModuleExtension.class) != null && AndroidResourceUtil.isInResourceSubdirectory((PsiFile)element1, null);
         }
         else if (element1 instanceof PsiField) {
           PsiField field = (PsiField)element1;
@@ -116,8 +117,8 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
             // then it is value resource
             XmlTag tag = PsiTreeUtil.getParentOfType(element1, XmlTag.class);
             return tag != null &&
-                   DomManager.getDomManager(tag.getProject()).getDomElement(tag) instanceof ResourceElement &&
-                   manager.getValueResourceType(tag) != null;
+                DomManager.getDomManager(tag.getProject()).getDomElement(tag) instanceof ResourceElement &&
+                manager.getValueResourceType(tag) != null;
           }
         }
         else if (element1 instanceof PsiClass) {
@@ -140,7 +141,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
 
     // TODO: support renaming alternative value resources
 
-    AndroidFacet facet = AndroidFacet.getInstance(element1);
+    AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(element1, AndroidModuleExtension.class);
     assert facet != null;
     if (element1 instanceof PsiFile) {
       prepareResourceFileRenaming((PsiFile)element1, newName, allRenames, facet);
@@ -165,7 +166,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
     }
   }
 
-  private static void prepareCustomViewRenaming(PsiClass cls, String newName, Map<PsiElement, String> allRenames, AndroidFacet facet) {
+  private static void prepareCustomViewRenaming(PsiClass cls, String newName, Map<PsiElement, String> allRenames, AndroidModuleExtension<?> facet) {
     AppResourceRepository appResources = AppResourceRepository.getAppResources(facet, true);
     String oldName = cls.getName();
     if (appResources.hasResourceItem(DECLARE_STYLEABLE, oldName)) {
@@ -205,7 +206,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
     }
   }
 
-  private static void prepareIdRenaming(XmlAttributeValue value, String newName, Map<PsiElement, String> allRenames, AndroidFacet facet) {
+  private static void prepareIdRenaming(XmlAttributeValue value, String newName, Map<PsiElement, String> allRenames, AndroidModuleExtension<?> facet) {
     LocalResourceManager manager = facet.getLocalResourceManager();
     allRenames.remove(value);
     String id = AndroidResourceUtil.getResourceNameByReferenceText(value.getValue());
@@ -263,8 +264,8 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
       else if (resource instanceof XmlAttributeValue) {
         XmlAttributeValue value = (XmlAttributeValue)resource;
         final String s = AndroidResourceUtil.isIdDeclaration(value)
-                         ? NEW_ID_PREFIX + newResName
-                         : newResName;
+            ? NEW_ID_PREFIX + newResName
+            : newResName;
         allRenames.put(new ValueResourceElementWrapper(value), s);
 
         // Also rename the dependent fields, e.g. if you rename <declare-styleable name="Foo">,
@@ -273,7 +274,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
           XmlAttribute parent = (XmlAttribute)value.getParent();
           XmlTag tag = parent.getParent();
           if (tag.getName().equals(TAG_DECLARE_STYLEABLE)) {
-            AndroidFacet facet = AndroidFacet.getInstance(tag);
+            AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(tag, AndroidModuleExtension.class);
             String oldName = tag.getAttributeValue(ATTR_NAME);
             if (facet != null && oldName != null) {
               for (XmlTag attr : tag.getSubTags()) {
@@ -301,7 +302,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
   private static void prepareValueResourceRenaming(PsiElement element,
                                                    String newName,
                                                    Map<PsiElement, String> allRenames,
-                                                   AndroidFacet facet) {
+                                                   AndroidModuleExtension<?> facet) {
     ResourceManager manager = facet.getLocalResourceManager();
     XmlTag tag = PsiTreeUtil.getParentOfType(element, XmlTag.class);
     assert tag != null;
@@ -353,7 +354,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
     }
   }
 
-  private static void prepareResourceFileRenaming(PsiFile file, String newName, Map<PsiElement, String> allRenames, AndroidFacet facet) {
+  private static void prepareResourceFileRenaming(PsiFile file, String newName, Map<PsiElement, String> allRenames, AndroidModuleExtension<?> facet) {
     Project project = file.getProject();
     ResourceManager manager = facet.getLocalResourceManager();
     String type = manager.getFileResourceType(file);
@@ -375,7 +376,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
       int r = 0;
       if (ASK) {
         r = Messages.showDialog(project, message("rename.alternate.resources.question"), message("rename.dialog.title"),
-                                new String[]{Messages.YES_BUTTON, Messages.NO_BUTTON}, 1, Messages.getQuestionIcon());
+            new String[]{Messages.YES_BUTTON, Messages.NO_BUTTON}, 1, Messages.getQuestionIcon());
       }
       if (r == 0) {
         for (PsiFile candidate : alternativeResources) {
@@ -395,7 +396,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
 
   @Override
   public void renameElement(PsiElement element, final String newName, UsageInfo[] usages, @Nullable RefactoringElementListener listener)
-    throws IncorrectOperationException {
+      throws IncorrectOperationException {
     if (element instanceof PsiField) {
       new RenameJavaVariableProcessor().renameElement(element, newName, usages, listener);
     }
@@ -418,7 +419,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
   }
 
   @Override
-  public void findExistingNameConflicts(final PsiElement originalElement, String newName, final MultiMap<PsiElement,String> conflicts) {
+  public void findExistingNameConflicts(final PsiElement originalElement, String newName, final MultiMap<PsiElement, String> conflicts) {
     ResourceType type = getResourceType(originalElement);
     if (type == null) {
       return;
@@ -429,7 +430,7 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
       return;
     }
 
-    AndroidFacet facet = AndroidFacet.getInstance(element);
+    AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(element, AndroidModuleExtension.class);
     if (facet == null) {
       return;
     }
@@ -510,8 +511,10 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
     }
   }
 
-  /** Looks up the {@link ResourceType} for the given refactored element. Uses the same
-   * instanceof chain checkups as is done in {@link #canProcessElement} */
+  /**
+   * Looks up the {@link ResourceType} for the given refactored element. Uses the same
+   * instanceof chain checkups as is done in {@link #canProcessElement}
+   */
   @Nullable
   private static ResourceType getResourceType(PsiElement originalElement) {
     PsiElement element = LazyValueResourceElementWrapper.computeLazyElement(originalElement);
@@ -553,8 +556,10 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
     return null;
   }
 
-  /** Looks up the resource name for the given refactored element. Uses the same
-   * instanceof chain checkups as is done in {@link #canProcessElement} */
+  /**
+   * Looks up the resource name for the given refactored element. Uses the same
+   * instanceof chain checkups as is done in {@link #canProcessElement}
+   */
   @Nullable
   private static String getResourceName(PsiElement originalElement) {
     PsiElement element = LazyValueResourceElementWrapper.computeLazyElement(originalElement);
@@ -594,10 +599,12 @@ public class AndroidResourceRenameResourceProcessor extends RenamePsiElementProc
     return null;
   }
 
-  /** Writes into the given {@link com.android.utils.HtmlBuilder} a set of references
-   * that are defined in a library (and may or may not also be defined locally) */
+  /**
+   * Writes into the given {@link com.android.utils.HtmlBuilder} a set of references
+   * that are defined in a library (and may or may not also be defined locally)
+   */
   private static void appendUnhandledReferences(@NotNull Project project,
-                                                @NotNull AndroidFacet facet,
+                                                @NotNull AndroidModuleExtension<?> facet,
                                                 @NotNull List<ResourceItem> all,
                                                 @NotNull List<ResourceItem> local,
                                                 @NotNull HtmlBuilder builder) {

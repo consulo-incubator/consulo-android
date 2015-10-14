@@ -22,11 +22,11 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.android.dom.AndroidAttributeValue;
 import org.jetbrains.android.dom.AndroidDomUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.*;
@@ -74,7 +74,7 @@ public class AndroidGotoRelatedProvider extends GotoRelatedProvider {
     if (module == null) {
       return null;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
     if (facet == null) {
       return null;
@@ -101,7 +101,7 @@ public class AndroidGotoRelatedProvider extends GotoRelatedProvider {
   }
 
   @Nullable
-  public static Computable<List<GotoRelatedItem>> getLazyItemsForXmlFile(@NotNull XmlFile file, @NotNull AndroidFacet facet) {
+  public static Computable<List<GotoRelatedItem>> getLazyItemsForXmlFile(@NotNull XmlFile file, @NotNull AndroidModuleExtension<?> facet) {
     final String resourceType = facet.getLocalResourceManager().getFileResourceType(file);
 
     // TODO: Handle menus as well!
@@ -113,7 +113,7 @@ public class AndroidGotoRelatedProvider extends GotoRelatedProvider {
 
   @Nullable
   static Computable<List<GotoRelatedItem>> getLazyItemsForClass(@NotNull PsiClass aClass,
-                                                                @NotNull AndroidFacet facet,
+                                                                @NotNull AndroidModuleExtension<?> facet,
                                                                 boolean addDeclarationInManifest) {
     final GotoRelatedItem item = findDeclarationInManifest(aClass);
     final boolean isContextClass = isInheritorOfContextClass(aClass, facet.getModule());
@@ -173,7 +173,7 @@ public class AndroidGotoRelatedProvider extends GotoRelatedProvider {
 
   @Nullable
   private static Computable<List<GotoRelatedItem>> collectRelatedJavaFiles(@NotNull final XmlFile file,
-                                                                           @NotNull final AndroidFacet facet) {
+                                                                           @NotNull final AndroidModuleExtension<?> facet) {
     final String resType = ResourceType.LAYOUT.getName();
     final String resourceName = AndroidCommonUtils.getResourceName(resType, file.getName());
     final PsiField[] fields = AndroidResourceUtil.findResourceFields(facet, resType, resourceName, true);
@@ -257,7 +257,7 @@ public class AndroidGotoRelatedProvider extends GotoRelatedProvider {
   }
 
   @NotNull
-  private static List<GotoRelatedItem> collectRelatedLayoutFiles(@NotNull final AndroidFacet facet, @NotNull PsiClass context) {
+  private static List<GotoRelatedItem> collectRelatedLayoutFiles(@NotNull final AndroidModuleExtension<?> facet, @NotNull PsiClass context) {
     final Set<PsiFile> files = new HashSet<PsiFile>();
 
     context.accept(new JavaRecursiveElementWalkingVisitor() {

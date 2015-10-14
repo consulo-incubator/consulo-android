@@ -1,6 +1,7 @@
 package org.jetbrains.android;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -13,11 +14,12 @@ import com.intellij.refactoring.safeDelete.SafeDeleteProcessor;
 import com.intellij.refactoring.safeDelete.SafeDeleteProcessorDelegateBase;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.RequiredReadAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,11 +39,12 @@ public class AndroidResourceFileSafeDeleteProcessor extends SafeDeleteProcessorD
   }
 
   @Override
+  @RequiredReadAction
   public boolean handlesElement(PsiElement element) {
     if (!(element instanceof PsiFile)) {
       return false;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(element);
+    final AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(element, AndroidModuleExtension.class);
 
     if (facet == null) {
       return false;
@@ -69,6 +72,7 @@ public class AndroidResourceFileSafeDeleteProcessor extends SafeDeleteProcessorD
 
   @Nullable
   @Override
+  @RequiredReadAction
   public Collection<PsiElement> getAdditionalElementsToDelete(@NotNull PsiElement element,
                                                               @NotNull Collection<PsiElement> allElementsToDelete,
                                                               boolean askUser) {
@@ -76,7 +80,7 @@ public class AndroidResourceFileSafeDeleteProcessor extends SafeDeleteProcessorD
       // todo: support this case (we should ask once)
       return Collections.emptyList();
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(element);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(element, AndroidModuleExtension.class);
     assert facet != null;
 
     final PsiFile file = (PsiFile)element;

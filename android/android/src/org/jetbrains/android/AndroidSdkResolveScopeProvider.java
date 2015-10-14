@@ -1,23 +1,21 @@
 package org.jetbrains.android;
 
-import com.intellij.facet.ProjectFacetManager;
-import com.intellij.openapi.module.impl.scopes.JdkScope;
+import com.intellij.openapi.module.impl.scopes.LibraryScopeBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.JdkOrderEntry;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.ResolveScopeProvider;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.android.augment.AndroidInternalRClass;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidSdkType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
+
+import java.util.List;
 
 /**
  * @author Eugene.Kudelevsky
@@ -27,29 +25,31 @@ public class AndroidSdkResolveScopeProvider extends ResolveScopeProvider {
   @Nullable
   @Override
   public GlobalSearchScope getResolveScope(@NotNull VirtualFile file, Project project) {
-    if (!ProjectFacetManager.getInstance(project).hasFacets(AndroidFacet.ID)) return null;
+    if (!ModuleExtensionHelper.getInstance(project).hasModuleExtension(AndroidModuleExtension.class)) return null;
 
     ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-    JdkOrderEntry entry = ContainerUtil.findInstance(index.getOrderEntriesForFile(file), JdkOrderEntry.class);
-    final Sdk sdk = entry == null ? null : entry.getJdk();
-    if (sdk == null || !(sdk.getSdkType() instanceof AndroidSdkType)) {
-      return null;
+    List<OrderEntry> orderEntriesForFile = index.getOrderEntriesForFile(file);
+    for (OrderEntry orderEntry : orderEntriesForFile) {
+      if(orderEntry instanceof ModuleExtensionWithSdkOrderEntry) {
+        Sdk sdk = ((ModuleExtensionWithSdkOrderEntry)orderEntry).getSdk();
+        if(sdk != null && sdk.getSdkType() instanceof AndroidSdkType) {
+          return new MyJdkScope(project, (ModuleExtensionWithSdkOrderEntry)orderEntry, index.isInLibrarySource(file));
+        }
+      }
     }
-
-    return new MyJdkScope(project, entry, index.isInLibrarySource(file));
+    return null;
   }
 
-  public static class MyJdkScope extends JdkScope {
+  public static class MyJdkScope extends LibraryScopeBase {
     private final Sdk mySdk;
     private final boolean myIncludeSource;
 
-    private MyJdkScope(Project project, @NotNull JdkOrderEntry entry, boolean includeSource) {
+    private MyJdkScope(Project project, @NotNull ModuleExtensionWithSdkOrderEntry entry, boolean includeSource) {
       super(project,
-            entry.getRootFiles(OrderRootType.CLASSES),
-            includeSource ? entry.getRootFiles(OrderRootType.SOURCES) : VirtualFile.EMPTY_ARRAY,
-            entry.getJdkName());
+            entry.getFiles(OrderRootType.CLASSES),
+            includeSource ? entry.getFiles(OrderRootType.SOURCES) : VirtualFile.EMPTY_ARRAY);
       myIncludeSource = includeSource;
-      mySdk = entry.getJdk();
+      mySdk = entry.getSdk();
     }
 
     @Override

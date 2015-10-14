@@ -31,6 +31,7 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
@@ -55,6 +56,7 @@ import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.event.HyperlinkEvent;
 import java.util.*;
@@ -119,14 +121,14 @@ public class AndroidPropertyFilesUpdater extends AbstractProjectComponent {
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
 
     final List<VirtualFile> toAskFiles = new ArrayList<VirtualFile>();
-    final List<AndroidFacet> toAskFacets = new ArrayList<AndroidFacet>();
+    final List<AndroidModuleExtension<?>> toAskFacets = new ArrayList<AndroidModuleExtension<?>>();
     final List<Runnable> toAskChanges = new ArrayList<Runnable>();
 
     final List<VirtualFile> files = new ArrayList<VirtualFile>();
     final List<Runnable> changes = new ArrayList<Runnable>();
 
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
       if (facet != null && !facet.isGradleProject()) {
         final String updatePropertyFiles = facet.getProperties().UPDATE_PROPERTY_FILES;
@@ -217,10 +219,7 @@ public class AndroidPropertyFilesUpdater extends AbstractProjectComponent {
   }
 
   @Nullable
-  private static Pair<VirtualFile, List<Runnable>> updateProjectPropertiesIfNecessary(@NotNull AndroidFacet facet) {
-    if (facet.isDisposed()) {
-      return null;
-    }
+  private static Pair<VirtualFile, List<Runnable>> updateProjectPropertiesIfNecessary(@NotNull AndroidModuleExtension<?> facet) {
     final Module module = facet.getModule();
     final Pair<PropertiesFile, VirtualFile> pair =
       AndroidRootUtil.findPropertyFile(module, SdkConstants.FN_PROJECT_PROPERTIES);

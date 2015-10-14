@@ -20,12 +20,14 @@ import com.android.tools.idea.gradle.project.GradleSyncListener;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +50,7 @@ public final class ProjectResourceRepository extends MultiResourceRepository {
    */
   @Nullable
   public static ProjectResourceRepository getProjectResources(@NotNull Module module, boolean createIfNecessary) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet != null) {
       return facet.getProjectResources(createIfNecessary);
     }
@@ -65,7 +67,7 @@ public final class ProjectResourceRepository extends MultiResourceRepository {
    */
   @Contract("!null, true -> !null")
   @Nullable
-  public static ProjectResourceRepository getProjectResources(@NotNull AndroidFacet facet, boolean createIfNecessary) {
+  public static ProjectResourceRepository getProjectResources(@NotNull AndroidModuleExtension<?> facet, boolean createIfNecessary) {
     return facet.getProjectResources(createIfNecessary);
   }
 

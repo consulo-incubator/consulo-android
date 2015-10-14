@@ -64,6 +64,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.*;
@@ -137,7 +138,7 @@ public class AndroidResourceUtil {
   }
 
   @NotNull
-  public static PsiField[] findResourceFields(@NotNull AndroidFacet facet,
+  public static PsiField[] findResourceFields(@NotNull AndroidModuleExtension<?> facet,
                                               @NotNull String resClassName,
                                               @NotNull String resourceName,
                                               boolean onlyInOwnPackages) {
@@ -165,7 +166,7 @@ public class AndroidResourceUtil {
    * can match than more than a single field name
    */
   @NotNull
-  public static PsiField[] findResourceFields(@NotNull AndroidFacet facet,
+  public static PsiField[] findResourceFields(@NotNull AndroidModuleExtension<?> facet,
                                               @NotNull String resClassName,
                                               @NotNull Collection<String> resourceNames,
                                               boolean onlyInOwnPackages) {
@@ -208,7 +209,7 @@ public class AndroidResourceUtil {
   }
 
   @NotNull
-  private static List<PsiJavaFile> findRJavaFiles(@NotNull AndroidFacet facet, boolean onlyInOwnPackages) {
+  private static List<PsiJavaFile> findRJavaFiles(@NotNull AndroidModuleExtension<?> facet, boolean onlyInOwnPackages) {
     final Module module = facet.getModule();
     final Project project = module.getProject();
     final Manifest manifest = facet.getManifest();
@@ -1001,14 +1002,14 @@ public class AndroidResourceUtil {
   }
 
   @Nullable
-  public static MyReferredResourceFieldInfo getReferredResourceOrManifestField(@NotNull AndroidFacet facet,
+  public static MyReferredResourceFieldInfo getReferredResourceOrManifestField(@NotNull AndroidModuleExtension<?> facet,
                                                                                @NotNull PsiReferenceExpression exp,
                                                                                boolean localOnly) {
     return getReferredResourceOrManifestField(facet, exp, null, localOnly);
   }
 
   @Nullable
-  public static MyReferredResourceFieldInfo getReferredResourceOrManifestField(@NotNull AndroidFacet facet,
+  public static MyReferredResourceFieldInfo getReferredResourceOrManifestField(@NotNull AndroidModuleExtension<?> facet,
                                                                                @NotNull PsiReferenceExpression exp,
                                                                                @Nullable String className,
                                                                                boolean localOnly) {

@@ -16,11 +16,12 @@ import com.android.SdkConstants;
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -39,7 +40,7 @@ public class AndroidProblemFileHighlightingFilter implements Condition<VirtualFi
     }
     if (SdkConstants.FN_ANDROID_MANIFEST_XML.equals(file.getName())) {
       Module module = ModuleUtil.findModuleForFile(file, myProject);
-      return module != null && AndroidFacet.getInstance(module) != null;
+      return module != null && ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) != null;
     }
 
     VirtualFile parent = file.getParent();

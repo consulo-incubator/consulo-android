@@ -7,6 +7,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.icons.AllIcons;
 import com.intellij.navigation.GotoRelatedItem;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Computable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -16,9 +17,10 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ConstantFunction;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.RequiredReadAction;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -30,6 +32,7 @@ import java.util.List;
  */
 public class AndroidLineMarkerProvider implements LineMarkerProvider {
 
+  @RequiredReadAction
   @Override
   public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
     for (PsiElement element : elements) {
@@ -41,12 +44,14 @@ public class AndroidLineMarkerProvider implements LineMarkerProvider {
     }
   }
 
+  @RequiredReadAction
   @Nullable
   @Override
   public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
     return null;
   }
 
+  @RequiredReadAction
   private static LineMarkerInfo doGetLineMarkerInfo(PsiElement element) {
     final MyMarkerInfo info = getMarkerInfo(element);
 
@@ -62,11 +67,12 @@ public class AndroidLineMarkerProvider implements LineMarkerProvider {
   }
 
   @Nullable
+  @RequiredReadAction
   private static MyMarkerInfo getMarkerInfo(@NotNull PsiElement element) {
     if (!(element instanceof XmlFile) && !(element instanceof PsiJavaFile)) {
       return null;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(element);
+    final AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(element, AndroidModuleExtension.class);
 
     if (facet == null) {
       return null;

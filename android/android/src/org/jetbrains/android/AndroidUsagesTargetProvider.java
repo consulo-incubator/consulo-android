@@ -3,6 +3,7 @@ package org.jetbrains.android;
 import com.android.resources.ResourceFolderType;
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -10,10 +11,11 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.usages.UsageTarget;
 import com.intellij.usages.UsageTargetProvider;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.RequiredReadAction;
 
 import static com.android.SdkConstants.TAG_RESOURCES;
 
@@ -39,12 +41,13 @@ public class AndroidUsagesTargetProvider implements UsageTargetProvider {
   }
 
   @Nullable
+  @RequiredReadAction
   static XmlTag findValueResourceTagInContext(@NotNull Editor editor, @NotNull PsiFile file) {
     if (!(file instanceof XmlFile)) {
       return null;
     }
 
-    final AndroidFacet facet = AndroidFacet.getInstance(file);
+    final AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }

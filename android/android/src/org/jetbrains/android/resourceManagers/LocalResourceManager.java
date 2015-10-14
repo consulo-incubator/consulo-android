@@ -48,6 +48,7 @@ import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.android.util.ResourceEntry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.*;
@@ -57,14 +58,14 @@ import java.util.*;
  */
 public class LocalResourceManager extends ResourceManager {
   private AttributeDefinitions myAttrDefs;
-  protected final AndroidFacet myFacet;
+  protected final AndroidModuleExtension<?> myFacet;
 
-  public LocalResourceManager(@NotNull AndroidFacet facet) {
+  public LocalResourceManager(@NotNull AndroidModuleExtension<?> facet) {
     super(facet.getModule().getProject());
     myFacet = facet;
   }
 
-  public AndroidFacet getFacet() {
+  public AndroidModuleExtension<?> getFacet() {
     return myFacet;
   }
 
@@ -113,7 +114,7 @@ public class LocalResourceManager extends ResourceManager {
     return getValueResources(resourceType, null);
   }
 
-  private static void collectResourceDirs(AndroidFacet facet, Set<VirtualFile> result, Set<Module> visited) {
+  private static void collectResourceDirs(AndroidModuleExtension<?> facet, Set<VirtualFile> result, Set<Module> visited) {
     if (!visited.add(facet.getModule())) {
       return;
     }

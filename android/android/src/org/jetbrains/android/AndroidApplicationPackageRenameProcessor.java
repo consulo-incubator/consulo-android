@@ -1,6 +1,5 @@
 package org.jetbrains.android;
 
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -20,12 +19,15 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericAttributeValue;
+import org.consulo.psi.PsiPackage;
 import org.jetbrains.android.dom.converters.PackageClassConverter;
 import org.jetbrains.android.dom.manifest.Manifest;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 import java.util.Map;
 
@@ -35,9 +37,9 @@ import java.util.Map;
 public class AndroidApplicationPackageRenameProcessor extends RenamePsiElementProcessor {
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
-    if (element instanceof PsiPackage) {
+    if (element instanceof PsiJavaPackage) {
       // possibly renaming application package
-      return ProjectFacetManager.getInstance(element.getProject()).hasFacets(AndroidFacet.ID);
+      return ModuleExtensionHelper.getInstance(element.getProject()).hasModuleExtension(AndroidModuleExtension.class);
     }
     return AndroidRenameHandler.isPackageAttributeInManifest(element.getProject(), element);
   }

@@ -26,6 +26,7 @@ import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.Alarm;
@@ -37,6 +38,7 @@ import org.jetbrains.android.compiler.AndroidPrecompileTask;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidResourceFilesListener;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -100,14 +102,14 @@ public class AndroidProjectComponent extends AbstractProjectComponent {
     alarm.addRequest(new Runnable() {
       @Override
       public void run() {
-          final Map<AndroidFacet, Collection<AndroidAutogeneratorMode>> facetsToProcess =
-            new HashMap<AndroidFacet, Collection<AndroidAutogeneratorMode>>();
+          final Map<AndroidModuleExtension<?>, Collection<AndroidAutogeneratorMode>> facetsToProcess =
+            new HashMap<AndroidModuleExtension<?>, Collection<AndroidAutogeneratorMode>>();
 
         final Module[] modules = ModuleManager.getInstance(myProject).getModules();
         final Module[] modulesCopy = Arrays.copyOf(modules, modules.length);
 
         for (Module module : modulesCopy) {
-            final AndroidFacet facet = AndroidFacet.getInstance(module);
+            final AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
             if (facet != null && facet.isAutogenerationEnabled()) {
               final Set<AndroidAutogeneratorMode> modes = EnumSet.noneOf(AndroidAutogeneratorMode.class);
@@ -134,7 +136,7 @@ public class AndroidProjectComponent extends AbstractProjectComponent {
     }, 2000);
   }
 
-  private void generate(final Map<AndroidFacet, Collection<AndroidAutogeneratorMode>> facetsToProcess) {
+  private void generate(final Map<AndroidModuleExtension<?>, Collection<AndroidAutogeneratorMode>> facetsToProcess) {
     ApplicationManager.getApplication().invokeAndWait(new Runnable() {
       @Override
       public void run() {
@@ -142,8 +144,8 @@ public class AndroidProjectComponent extends AbstractProjectComponent {
       }
     }, ModalityState.defaultModalityState());
 
-    for (Map.Entry<AndroidFacet, Collection<AndroidAutogeneratorMode>> entry : facetsToProcess.entrySet()) {
-      final AndroidFacet facet = entry.getKey();
+    for (Map.Entry<AndroidModuleExtension<?>, Collection<AndroidAutogeneratorMode>> entry : facetsToProcess.entrySet()) {
+      final AndroidModuleExtension<?> facet = entry.getKey();
       final Collection<AndroidAutogeneratorMode> modes = entry.getValue();
 
       for (AndroidAutogeneratorMode mode : modes) {

@@ -64,6 +64,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.containers.HashSet;
+import org.gradle.plugins.ide.eclipse.model.SourceFolder;
 import org.jetbrains.android.compiler.artifact.*;
 import org.jetbrains.android.dom.manifest.Manifest;
 import org.jetbrains.android.facet.AndroidFacet;
@@ -80,6 +81,8 @@ import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 import org.jetbrains.jps.model.java.JavaSourceRootProperties;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.RequiredDispatchThread;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.File;
@@ -448,7 +451,7 @@ public class AndroidCompileUtil {
     }
   }
 
-  public static boolean doGenerate(AndroidFacet facet, final AndroidAutogeneratorMode mode) {
+  public static boolean doGenerate(AndroidModuleExtension<?> facet, final AndroidAutogeneratorMode mode) {
     assert !ApplicationManager.getApplication().isDispatchThread();
     final CompileContext[] contextWrapper = new CompileContext[1];
     final Module module = facet.getModule();
@@ -615,7 +618,7 @@ public class AndroidCompileUtil {
     compileScope.putUserData(RELEASE_BUILD_KEY, Boolean.TRUE);
   }
 
-  public static boolean createGenModulesAndSourceRoots(@NotNull AndroidFacet facet, @NotNull ModifiableRootModel model) {
+  public static boolean createGenModulesAndSourceRoots(@NotNull AndroidModuleExtension<?> facet, @NotNull ModifiableRootModel model) {
     if (facet.isGradleProject() || !facet.getProperties().ENABLE_SOURCES_AUTOGENERATION) {
       return false;
     }
@@ -922,7 +925,8 @@ public class AndroidCompileUtil {
            : null;
   }
 
-  public static void createGenModulesAndSourceRoots(@NotNull Project project, @NotNull final Collection<AndroidFacet> facets) {
+  @RequiredDispatchThread
+  public static void createGenModulesAndSourceRoots(@NotNull Project project, @NotNull final Collection<AndroidModuleExtension<?>> facets) {
     if (project.isDisposed()) {
       return;
     }
@@ -933,7 +937,7 @@ public class AndroidCompileUtil {
       public void run() {
         final List<ModifiableRootModel> modelsToCommit = new ArrayList<ModifiableRootModel>();
 
-        for (final AndroidFacet facet : facets) {
+        for (final AndroidModuleExtension<?> facet : facets) {
           if (facet.isGradleProject()) {
             continue;
           }

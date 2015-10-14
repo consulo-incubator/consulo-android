@@ -23,7 +23,6 @@ import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericAttributeValue;
 import org.jetbrains.android.dom.manifest.Manifest;
 import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidCommonUtils;
@@ -31,12 +30,15 @@ import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.RequiredReadAction;
 
 /**
  * @author Eugene.Kudelevsky
  */
 public class AndroidRenameHandler implements RenameHandler, TitledHandler {
   @Override
+  @RequiredReadAction
   public boolean isAvailableOnDataContext(DataContext dataContext) {
     final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     if (editor == null) {
@@ -61,11 +63,13 @@ public class AndroidRenameHandler implements RenameHandler, TitledHandler {
   }
 
   @Override
+  @RequiredReadAction
   public boolean isRenaming(DataContext dataContext) {
     return isAvailableOnDataContext(dataContext);
   }
 
   @Override
+  @RequiredReadAction
   public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
     if (file == null || editor == null) {
       return;
@@ -102,6 +106,7 @@ public class AndroidRenameHandler implements RenameHandler, TitledHandler {
     RenameDialog.showRenameDialog(dataContext, new RenameDialog(project, new ValueResourceElementWrapper(attributeValue), null, editor));
   }
 
+  @RequiredReadAction
   private static void performResourceReferenceRenaming(Project project,
                                                        Editor editor,
                                                        DataContext dataContext,
@@ -109,7 +114,7 @@ public class AndroidRenameHandler implements RenameHandler, TitledHandler {
                                                        ResourceUrl url) {
     assert !url.framework;
 
-    final AndroidFacet facet = AndroidFacet.getInstance(file);
+    final AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     if (facet != null) {
       // Treat the resource reference as if the user renamed the R field instead
       PsiField[] resourceFields = AndroidResourceUtil.findResourceFields(facet, url.type.getName(), url.name, false);
@@ -120,12 +125,13 @@ public class AndroidRenameHandler implements RenameHandler, TitledHandler {
   }
 
   @Nullable
+  @RequiredReadAction
   private static ResourceUrl findResourceReferenceUnderCaret(@NotNull Editor editor, @NotNull PsiFile file) {
     if (!(file instanceof XmlFile)) {
       return null;
     }
 
-    final AndroidFacet facet = AndroidFacet.getInstance(file);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }
@@ -150,6 +156,7 @@ public class AndroidRenameHandler implements RenameHandler, TitledHandler {
   }
 
   @Override
+  @RequiredReadAction
   public void invoke(@NotNull Project project, @NotNull PsiElement[] elements, DataContext dataContext) {
     final Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     if (editor == null) {
@@ -169,6 +176,7 @@ public class AndroidRenameHandler implements RenameHandler, TitledHandler {
     return "Rename Android value resource";
   }
 
+  @RequiredReadAction
   static boolean isPackageAttributeInManifest(@NotNull Project project, @Nullable PsiElement element) {
     if (element == null) {
       return false;
@@ -178,7 +186,7 @@ public class AndroidRenameHandler implements RenameHandler, TitledHandler {
     if (!(psiFile instanceof XmlFile)) {
       return false;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(psiFile);
+    final AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(psiFile, AndroidModuleExtension.class);
 
     if (facet == null) {
       return false;
@@ -205,6 +213,7 @@ public class AndroidRenameHandler implements RenameHandler, TitledHandler {
     return parentDomElement instanceof Manifest && attrValue.equals(((Manifest)parentDomElement).getPackage());
   }
 
+  @RequiredReadAction
   private static void performApplicationPackageRenaming(@NotNull Project project,
                                                         @NotNull Editor editor,
                                                         @NotNull DataContext context) {

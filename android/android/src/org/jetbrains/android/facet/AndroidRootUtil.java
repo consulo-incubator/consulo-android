@@ -42,6 +42,7 @@ import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class AndroidRootUtil {
    */
   @Nullable
   @Deprecated
-  public static VirtualFile getManifestFile(@NotNull AndroidFacet facet) {
+  public static VirtualFile getManifestFile(@NotNull AndroidModuleExtension<?> facet) {
     if (facet.isGradleProject()) {
       return facet.getMainIdeaSourceProvider().getManifestFile();
     }
@@ -367,7 +368,7 @@ public class AndroidRootUtil {
   }
 
   @NotNull
-  public static VirtualFile[] getResourceOverlayDirs(@NotNull AndroidFacet facet) {
+  public static VirtualFile[] getResourceOverlayDirs(@NotNull AndroidModuleExtension<?> facet) {
     List<String> overlayFolders = facet.getProperties().RES_OVERLAY_FOLDERS;
     List<VirtualFile> result = new ArrayList<VirtualFile>();
     for (String overlayFolder : overlayFolders) {

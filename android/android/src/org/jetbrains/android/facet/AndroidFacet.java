@@ -112,6 +112,7 @@ import static org.jetbrains.android.util.AndroidUtils.loadDomElement;
 /**
  * @author yole
  */
+@Deprecated
 public class AndroidFacet extends Facet<AndroidFacetConfiguration> {
   private static final Logger LOG = Logger.getInstance("#org.jetbrains.android.facet.AndroidFacet");
 

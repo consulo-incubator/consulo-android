@@ -20,7 +20,6 @@ import com.android.resources.ResourceType;
 import com.android.tools.idea.AndroidPsiUtils;
 import com.android.tools.idea.javadoc.AndroidJavaDocRenderer;
 import com.intellij.codeInsight.javadoc.JavaDocExternalFilter;
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.documentation.ExternalDocumentationProvider;
 import com.intellij.lang.java.JavaDocumentationProvider;
@@ -32,13 +31,15 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.psi.*;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -197,8 +198,8 @@ public class AndroidDocumentationProvider implements DocumentationProvider, Exte
           }
           String path = FileUtil.toSystemIndependentName(vFile.getPath());
           if (path.toLowerCase(Locale.US).contains("/" + SdkConstants.FN_FRAMEWORK_LIBRARY + "!/")) {
-            if (ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID).size() > 0) {
-              VirtualFile jarFile = JarFileSystem.getInstance().getVirtualFileForJar(vFile);
+            if (ModuleExtensionHelper.getInstance(project).hasModuleExtension(AndroidModuleExtension.class)) {
+              VirtualFile jarFile = ArchiveVfsUtil.getVirtualFileForJar(vFile);
               return jarFile != null && SdkConstants.FN_FRAMEWORK_LIBRARY.equals(jarFile.getName());
             }
           }
