@@ -564,7 +564,7 @@ alege->allege
 aleged->alleged
 alegience->allegiance
 algebraical->algebraic
-algorhitms->algorithms
+algorithms->algorithms
 algoritm->algorithm
 algoritms->algorithms
 alientating->alienating
