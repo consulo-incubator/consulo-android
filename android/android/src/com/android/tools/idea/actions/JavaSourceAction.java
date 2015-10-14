@@ -21,12 +21,13 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 
@@ -45,7 +46,7 @@ public abstract class JavaSourceAction extends AnAction {
     if (module == null ||
         view == null ||
         view.getDirectories().length == 0 ||
-        AndroidFacet.getInstance(module) == null) {
+        ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) == null) {
       return false;
     }
     final ProjectFileIndex projectIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();

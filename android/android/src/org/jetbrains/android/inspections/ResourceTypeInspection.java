@@ -33,6 +33,7 @@ import com.intellij.codeInspection.*;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Key;
@@ -64,6 +65,7 @@ import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -164,7 +166,7 @@ public class ResourceTypeInspection extends BaseJavaLocalInspectionTool {
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder,
                                         boolean isOnTheFly,
                                         @NotNull LocalInspectionToolSession session) {
-    AndroidFacet facet = AndroidFacet.getInstance(holder.getFile());
+    AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(holder.getFile(), AndroidModuleExtension.class);
     if (facet == null) {
       // No-op outside of Android modules
       return new PsiElementVisitor() {};
@@ -398,7 +400,7 @@ public class ResourceTypeInspection extends BaseJavaLocalInspectionTool {
     PermissionRequirement requirement = PermissionRequirement.create(null, LombokPsiParser.createResolvedAnnotation(annotation));
     if (!requirement.isConditional()) {
       Project project = methodCall.getProject();
-      final AndroidFacet facet = AndroidFacet.getInstance(methodCall);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(methodCall, AndroidModuleExtension.class);
       assert facet != null; // already checked early on in the inspection visitor
       PermissionHolder lookup = DeclaredPermissionsLookup.getPermissionHolder(facet.getModule());
       if (!requirement.isSatisfied(lookup)) {
@@ -494,10 +496,10 @@ public class ResourceTypeInspection extends BaseJavaLocalInspectionTool {
   }
 
   private static class AddPermissionFix implements LocalQuickFix {
-    private final AndroidFacet myFacet;
+    private final AndroidModuleExtension<?> myFacet;
     private final String myPermissionName;
 
-    public AddPermissionFix(AndroidFacet facet, String permissionName) {
+    public AddPermissionFix(AndroidModuleExtension<?> facet, String permissionName) {
       myFacet = facet;
       myPermissionName = permissionName;
     }
@@ -588,12 +590,12 @@ public class ResourceTypeInspection extends BaseJavaLocalInspectionTool {
   }
 
   private static class AddCheckPermissionFix implements LocalQuickFix {
-    private final AndroidFacet myFacet;
+    private final AndroidModuleExtension<?> myFacet;
     private final PermissionRequirement myRequirement;
     private final Set<String> myRevocablePermissions;
     private final PsiCallExpression myCall;
 
-    public AddCheckPermissionFix(AndroidFacet facet, PermissionRequirement requirement, PsiCallExpression call,
+    public AddCheckPermissionFix(AndroidModuleExtension<?> facet, PermissionRequirement requirement, PsiCallExpression call,
                                  Set<String> revocablePermissions) {
       myFacet = facet;
       myRequirement = requirement;

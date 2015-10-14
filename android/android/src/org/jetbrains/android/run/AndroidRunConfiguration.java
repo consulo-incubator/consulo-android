@@ -54,6 +54,7 @@ import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -335,7 +336,7 @@ public class AndroidRunConfiguration extends AndroidRunConfigurationBase impleme
 
   @Nullable
   @VisibleForTesting
-  static String computeDefaultActivity(@NotNull final AndroidFacet facet, @Nullable final ProcessHandler processHandler) {
+  static String computeDefaultActivity(@NotNull final AndroidModuleExtension facet, @Nullable final ProcessHandler processHandler) {
     if (!facet.getProperties().USE_CUSTOM_COMPILER_MANIFEST) {
       final boolean useMergedManifest = facet.isGradleProject() || facet.getProperties().ENABLE_MANIFEST_MERGING;
       final ManifestInfo manifestInfo = ManifestInfo.get(facet.getModule(), useMergedManifest);
@@ -383,7 +384,7 @@ public class AndroidRunConfiguration extends AndroidRunConfigurationBase impleme
    * a specific intent filter. This definition is likely stricter than it needs to be to but we are only
    * interested in matching the watch face template application.
    */
-  public static boolean isWatchFaceApp(@NotNull AndroidFacet facet) {
+  public static boolean isWatchFaceApp(@NotNull AndroidModuleExtension facet) {
     ManifestInfo info = ManifestInfo.get(facet.getModule(), true);
     if (!info.getActivities().isEmpty()) {
       return false;

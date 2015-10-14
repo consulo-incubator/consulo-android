@@ -33,11 +33,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Splitter;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
@@ -48,12 +48,12 @@ import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SideBorder;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
 import icons.AndroidIcons;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.ResourceFolderManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -100,7 +100,7 @@ public class NavigationEditor extends UserDataHolderBase implements FileEditor {
 
   @Nullable
   public static RenderingParameters getRenderingParams(@NotNull Module module, String navigationDirectoryName) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }
@@ -262,7 +262,7 @@ public class NavigationEditor extends UserDataHolderBase implements FileEditor {
     return new JBScrollPane(panel);
   }
 
-  private static ResourceFolderManager getResourceFolderManager(AndroidFacet facet) {
+  private static ResourceFolderManager getResourceFolderManager(AndroidModuleExtension facet) {
     //if (facet.isGradleProject()) {
     // Ensure that the app resources have been initialized first, since
     // we want it to add its own variant listeners before ours (such that
@@ -301,7 +301,7 @@ public class NavigationEditor extends UserDataHolderBase implements FileEditor {
     return result;
   }
 
-  private static String[] resourceDirectoryNames(AndroidFacet facet, String type) {
+  private static String[] resourceDirectoryNames(AndroidModuleExtension facet, String type) {
     List<VirtualFile> resourceDirectories = facet.getAllResourceDirectories();
     List<String> qualifiers = new ArrayList<String>();
     for (VirtualFile root : resourceDirectories) {
@@ -608,7 +608,7 @@ public class NavigationEditor extends UserDataHolderBase implements FileEditor {
   @Override
   public void selectNotify() {
     if (myRenderingParams != null) {
-      AndroidFacet facet = myRenderingParams.facet;
+      AndroidModuleExtension facet = myRenderingParams.facet;
       postDelayedRefresh();
       VirtualFileManager.getInstance().addVirtualFileListener(myVirtualFileListener);
       getResourceFolderManager(facet).addListener(myResourceFolderListener);
@@ -619,7 +619,7 @@ public class NavigationEditor extends UserDataHolderBase implements FileEditor {
   @Override
   public void deselectNotify() {
     if (myRenderingParams != null) {
-      AndroidFacet facet = myRenderingParams.facet;
+      AndroidModuleExtension facet = myRenderingParams.facet;
       VirtualFileManager.getInstance().removeVirtualFileListener(myVirtualFileListener);
       getResourceFolderManager(facet).removeListener(myResourceFolderListener);
       myNavigationModel.getListeners().remove(myNavigationModelListener);

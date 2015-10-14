@@ -6,6 +6,7 @@ import com.intellij.codeInspection.*;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -25,13 +26,13 @@ import org.jetbrains.android.dom.AndroidCreateOnClickHandlerAction;
 import org.jetbrains.android.dom.converters.OnClickConverter;
 import org.jetbrains.android.dom.layout.LayoutDomFileDescription;
 import org.jetbrains.android.dom.menu.MenuDomFileDescription;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -41,7 +42,7 @@ import java.util.*;
 public class AndroidMissingOnClickHandlerInspection extends LocalInspectionTool {
   @NotNull
   private static Collection<PsiClass> findRelatedActivities(@NotNull XmlFile file,
-                                                            @NotNull AndroidFacet facet,
+                                                            @NotNull AndroidModuleExtension<?> facet,
                                                             @NotNull DomFileDescription<?> description) {
     if (description instanceof LayoutDomFileDescription) {
       final Computable<List<GotoRelatedItem>> computable = AndroidGotoRelatedProvider.getLazyItemsForXmlFile(file, facet);
@@ -80,7 +81,7 @@ public class AndroidMissingOnClickHandlerInspection extends LocalInspectionTool 
   }
 
   @NotNull
-  private static Set<PsiClass> findRelatedActivitiesForMenu(@NotNull XmlFile file, @NotNull AndroidFacet facet) {
+  private static Set<PsiClass> findRelatedActivitiesForMenu(@NotNull XmlFile file, @NotNull AndroidModuleExtension<?> facet) {
     final String resType = ResourceType.MENU.getName();
     final String resourceName = AndroidCommonUtils.getResourceName(resType, file.getName());
     final PsiField[] fields = AndroidResourceUtil.findResourceFields(facet, resType, resourceName, true);
@@ -126,7 +127,7 @@ public class AndroidMissingOnClickHandlerInspection extends LocalInspectionTool 
     if (!(file instanceof XmlFile)) {
       return ProblemDescriptor.EMPTY_ARRAY;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(file);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
 
     if (facet == null) {
       return ProblemDescriptor.EMPTY_ARRAY;

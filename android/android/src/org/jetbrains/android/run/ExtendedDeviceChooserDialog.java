@@ -43,6 +43,7 @@ import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -80,7 +81,7 @@ public class ExtendedDeviceChooserDialog extends DialogWrapper {
   @NonNls private static final String SELECTED_SERIALS_PROPERTY = "ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS";
 
 
-  public ExtendedDeviceChooserDialog(@NotNull final AndroidFacet facet,
+  public ExtendedDeviceChooserDialog(@NotNull final AndroidModuleExtension facet,
                                      @NotNull IAndroidTarget projectTarget,
                                      boolean multipleSelection,
                                      boolean showReuseDevicesCheckbox,
@@ -228,10 +229,10 @@ public class ExtendedDeviceChooserDialog extends DialogWrapper {
     private static final String EMULATOR = "Local Emulator";
     private static final String CLOUD_DEVICE = "Cloud Device";
 
-    private final AndroidFacet myFacet;
+    private final AndroidModuleExtension myFacet;
     private final String myEmulatorOptions;
 
-    public LaunchDeviceActionListener(@NotNull AndroidFacet facet, String emulatorOptions) {
+    public LaunchDeviceActionListener(@NotNull AndroidModuleExtension facet, String emulatorOptions) {
       myFacet = facet;
       myEmulatorOptions = emulatorOptions;
     }

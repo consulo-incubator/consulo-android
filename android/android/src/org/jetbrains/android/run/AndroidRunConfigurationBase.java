@@ -26,7 +26,6 @@ import com.android.tools.idea.gradle.project.AndroidGradleNotification;
 import com.android.tools.idea.gradle.service.notification.hyperlink.NotificationHyperlink;
 import com.android.tools.idea.gradle.util.GradleUtil;
 import com.android.tools.idea.model.AndroidModuleInfo;
-import com.android.tools.idea.run.CloudConfiguration;
 import com.android.tools.idea.run.CloudDebuggingTargetChooser;
 import com.android.tools.idea.run.CloudTargetChooser;
 import com.android.tools.idea.structure.gradle.AndroidProjectSettingsService;
@@ -44,6 +43,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
@@ -66,6 +66,7 @@ import org.jetbrains.android.sdk.AndroidSdkUtils;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -210,7 +211,7 @@ public abstract class AndroidRunConfigurationBase extends ModuleBasedConfigurati
     if (module == null) {
       throw new ExecutionException("Module is not found");
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       throw new ExecutionException(AndroidBundle.message("no.facet.error", module.getName()));
     }
@@ -304,7 +305,7 @@ public abstract class AndroidRunConfigurationBase extends ModuleBasedConfigurati
   }
 
   @Nullable
-  protected static Pair<File, String> getCopyOfCompilerManifestFile(@NotNull AndroidFacet facet, @Nullable ProcessHandler processHandler) {
+  protected static Pair<File, String> getCopyOfCompilerManifestFile(@NotNull AndroidModuleExtension facet, @Nullable ProcessHandler processHandler) {
     final VirtualFile manifestFile = AndroidRootUtil.getCustomManifestFileForCompiler(facet);
 
     if (manifestFile == null) {
@@ -354,7 +355,7 @@ public abstract class AndroidRunConfigurationBase extends ModuleBasedConfigurati
   protected abstract ConsoleView attachConsole(AndroidRunningState state, Executor executor) throws ExecutionException;
 
   @Nullable
-  protected abstract AndroidApplicationLauncher getApplicationLauncher(AndroidFacet facet);
+  protected abstract AndroidApplicationLauncher getApplicationLauncher(AndroidModuleExtension facet);
 
   protected abstract boolean supportMultipleDevices();
 

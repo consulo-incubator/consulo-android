@@ -24,9 +24,9 @@ import com.intellij.openapi.actionSystem.impl.PresentationFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +45,7 @@ public class LaunchCloudDeviceDialog extends DialogWrapper {
   private final CloudConfigurationProvider myCloudConfigurationProvider;
 
 
-  public LaunchCloudDeviceDialog(@NotNull AndroidFacet facet) {
+  public LaunchCloudDeviceDialog(@NotNull AndroidModuleExtension facet) {
     super(facet.getModule().getProject(), true, IdeModalityType.PROJECT);
 
     myProject = facet.getModule().getProject();

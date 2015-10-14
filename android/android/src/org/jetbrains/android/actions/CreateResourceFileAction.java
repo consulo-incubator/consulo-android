@@ -28,6 +28,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -38,11 +39,11 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.Collection;
@@ -68,7 +69,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
 
   public CreateResourceFileAction() {
     super(AndroidBundle.message("new.resource.action.title"), AndroidBundle.message("new.resource.action.description"),
-          XmlFileType.INSTANCE.getIcon());
+        XmlFileType.INSTANCE.getIcon());
   }
 
   public void add(CreateTypedResourceFileAction action) {
@@ -85,7 +86,9 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
     return isOutsideResourceTypeFolder(context);
   }
 
-  /** Returns true if the context points to an Android module, but outside of a specific resource type folder */
+  /**
+   * Returns true if the context points to an Android module, but outside of a specific resource type folder
+   */
   static boolean isOutsideResourceTypeFolder(@NotNull DataContext context) {
     // Avoid listing these actions in folders where we have a more specific action (e.g. "Add Layout File")
     VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(context);
@@ -102,15 +105,15 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
     // Offer creating resource files from anywhere in the project (as is done for Java Classes) as long as it's within an Android module
     Module module = LangDataKeys.MODULE.getData(context);
     if (module != null) {
-      return AndroidFacet.getInstance(module) != null;
+      return ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) != null;
     }
 
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(context);
-    return element != null && AndroidFacet.getInstance(element) != null;
+    return element != null && ModuleUtilCore.getExtension(element, AndroidModuleExtension.class) != null;
   }
 
   @Nullable
-  public static XmlFile createFileResource(@NotNull AndroidFacet facet,
+  public static XmlFile createFileResource(@NotNull AndroidModuleExtension facet,
                                            @NotNull final ResourceFolderType resType,
                                            @Nullable String resName,
                                            @Nullable String rootElement,
@@ -119,7 +122,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
                                            @Nullable String dialogTitle,
                                            boolean navigate) {
     final PsiElement[] elements = doCreateFileResource(facet, resType, resName, rootElement,
-                                                       config, chooseResName, dialogTitle, navigate);
+        config, chooseResName, dialogTitle, navigate);
     if (elements.length == 0) {
       return null;
     }
@@ -129,7 +132,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
 
   @Deprecated
   @Nullable
-  public static XmlFile createFileResource(@NotNull AndroidFacet facet,
+  public static XmlFile createFileResource(@NotNull AndroidModuleExtension<?> facet,
                                            @NotNull final ResourceType resType,
                                            @Nullable String resName,
                                            @Nullable String rootElement,
@@ -148,7 +151,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
   }
 
   @Nullable
-  public static XmlFile createFileResource(@NotNull AndroidFacet facet,
+  public static XmlFile createFileResource(@NotNull AndroidModuleExtension<?> facet,
                                            @NotNull final ResourceFolderType folderType,
                                            @Nullable String resName,
                                            @Nullable String rootElement,
@@ -159,7 +162,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
   }
 
   @NotNull
-  private static PsiElement[] doCreateFileResource(@NotNull AndroidFacet facet,
+  private static PsiElement[] doCreateFileResource(@NotNull AndroidModuleExtension<?> facet,
                                                    @NotNull final ResourceFolderType resType,
                                                    @Nullable String resName,
                                                    @Nullable String rootElement,
@@ -172,7 +175,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
     final String subdirName;
     final Module selectedModule;
     final VirtualFile resourceDir;
-    final AndroidFacet selectedFacet;
+    final AndroidModuleExtension selectedFacet;
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       subdirName = resType.getName();
       selectedModule = facet.getModule();
@@ -181,8 +184,8 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
     }
     else {
       final MyDialog dialog = new MyDialog(facet, action.mySubactions.values(), resType, resName, rootElement,
-                                           config, chooseResName, action, facet.getModule(), true,
-                                           null);
+          config, chooseResName, action, facet.getModule(), true,
+          null);
       dialog.setNavigate(navigate);
       if (dialogTitle != null) {
         dialog.setTitle(dialogTitle);
@@ -195,7 +198,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
       }
       subdirName = dialog.getSubdirName();
       selectedModule = dialog.getSelectedModule();
-      selectedFacet = AndroidFacet.getInstance(selectedModule);
+      selectedFacet = ModuleUtilCore.getExtension(selectedModule, AndroidModuleExtension.class);
       assert selectedFacet != null;
 
       SourceProvider provider = dialog.getSourceProvider();
@@ -203,10 +206,12 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
         Collection<VirtualFile> resDirectories = IdeaSourceProvider.create(provider).getResDirectories();
         if (resDirectories.isEmpty()) {
           resourceDir = resDirectories.iterator().next();
-        } else {
+        }
+        else {
           resourceDir = selectedFacet.getPrimaryResourceDir();
         }
-      } else {
+      }
+      else {
         resourceDir = selectedFacet.getPrimaryResourceDir();
       }
     }
@@ -216,7 +221,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
 
     if (psiResDir == null) {
       Messages.showErrorDialog(project, "Cannot find resource directory for module " + selectedFacet.getModule().getName(),
-                               CommonBundle.getErrorTitle());
+          CommonBundle.getErrorTitle());
       return PsiElement.EMPTY_ARRAY;
     }
     final String finalResName = resName;
@@ -227,8 +232,8 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
       public PsiElement[] compute() {
         MyInputValidator validator = action.createValidator(project, psiResDir, subdirName);
         return validator.checkInput(finalResName) && validator.canClose(finalResName)
-               ? validator.getCreatedElements()
-               : null;
+            ? validator.getCreatedElements()
+            : null;
       }
     });
     return elements != null ? elements : PsiElement.EMPTY_ARRAY;
@@ -241,7 +246,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
     if (module == null) {
       return PsiElement.EMPTY_ARRAY;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     LOG.assertTrue(facet != null);
 
     VirtualFile[] files = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(dataContext);
@@ -252,16 +257,16 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
     }
 
     final MyDialog dialog =
-      new MyDialog(facet, mySubactions.values(), folderType, null, null, config, true, CreateResourceFileAction.this, facet.getModule(),
-                   false, findResourceDirectory(dataContext)) {
-        @Override
-        protected InputValidator createValidator(@NotNull String subdirName) {
-          Module module = LangDataKeys.MODULE.getData(dataContext);
-          assert module != null;
-          PsiDirectory resourceDirectory = getResourceDirectory(dataContext, true);
-          return CreateResourceFileAction.this.createValidator(module.getProject(), resourceDirectory, subdirName);
-        }
-    };
+        new MyDialog(facet, mySubactions.values(), folderType, null, null, config, true, CreateResourceFileAction.this, facet.getModule(),
+            false, findResourceDirectory(dataContext)) {
+          @Override
+          protected InputValidator createValidator(@NotNull String subdirName) {
+            Module module = LangDataKeys.MODULE.getData(dataContext);
+            assert module != null;
+            PsiDirectory resourceDirectory = getResourceDirectory(dataContext, true);
+            return CreateResourceFileAction.this.createValidator(module.getProject(), resourceDirectory, subdirName);
+          }
+        };
     dialog.show();
     return PsiElement.EMPTY_ARRAY;
   }
@@ -355,7 +360,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
     private final CreateResourceFileAction myAction;
     private boolean myNavigate = true;
 
-    protected MyDialog(@NotNull AndroidFacet facet,
+    protected MyDialog(@NotNull AndroidModuleExtension facet,
                        Collection<CreateTypedResourceFileAction> actions,
                        @Nullable ResourceFolderType predefinedResourceType,
                        @Nullable String predefinedFileName,
@@ -367,7 +372,7 @@ public class CreateResourceFileAction extends CreateResourceActionBase {
                        boolean chooseModule,
                        @Nullable PsiDirectory resDirectory) {
       super(facet, actions, predefinedResourceType, predefinedFileName, predefinedRootElement,
-            predefinedConfig, chooseFileName, module, chooseModule, resDirectory);
+          predefinedConfig, chooseFileName, module, chooseModule, resDirectory);
       myAction = action;
     }
 

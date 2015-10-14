@@ -32,10 +32,12 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlTag;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A data class that keeps data binding related information that was extracted from a layout file.
@@ -49,16 +51,16 @@ public class DataBindingInfo implements ModificationTracker {
   private final PsiResourceFile myPsiResourceFile;
   private PsiClass myPsiClass;
   private long myModificationCount;
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension<?> myFacet;
 
-  public DataBindingInfo(AndroidFacet facet, PsiResourceFile psiResourceFile, String className, String packageName) {
+  public DataBindingInfo(AndroidModuleExtension<?> facet, PsiResourceFile psiResourceFile, String className, String packageName) {
     myFacet = facet;
     myClassName = className;
     myPackageName = packageName;
     myPsiResourceFile = psiResourceFile;
   }
 
-  public AndroidFacet getFacet() {
+  public AndroidModuleExtension<?> getFacet() {
     return myFacet;
   }
 

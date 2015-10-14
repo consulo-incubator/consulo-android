@@ -18,17 +18,18 @@ package org.jetbrains.android.intentions;
 import com.intellij.codeInsight.intention.AbstractIntentionAction;
 import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.inspections.lint.AndroidQuickfixContexts;
 import org.jetbrains.android.inspections.lint.ParcelableQuickFix;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import static org.jetbrains.android.inspections.lint.ParcelableQuickFix.Operation.IMPLEMENT;
 
@@ -70,7 +71,7 @@ public class ImplementParcelableAction extends AbstractIntentionAction implement
 
   @Nullable
   private static PsiElement getPsiElement(PsiFile file, Editor editor) {
-    AndroidFacet facet = AndroidFacet.getInstance(file);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }

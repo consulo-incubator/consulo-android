@@ -33,6 +33,7 @@ import com.intellij.ui.EditorNotifications;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import static org.jetbrains.android.facet.ResourceFolderManager.EXPLODED_AAR;
 import static org.jetbrains.android.facet.ResourceFolderManager.EXPLODED_BUNDLES;
@@ -113,7 +114,7 @@ public class GeneratedFileNotificationProvider extends EditorNotifications.Provi
         return null;
       }
     }
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }

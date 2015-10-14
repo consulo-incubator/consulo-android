@@ -20,11 +20,11 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.android.actions.CreateResourceFileAction;
 import org.jetbrains.android.actions.CreateTypedResourceFileAction;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.uipreview.AndroidLayoutPreviewToolWindowManager;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
 * @author Eugene.Kudelevsky
@@ -32,13 +32,13 @@ import org.jetbrains.annotations.NotNull;
 public class CreateFileResourceQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction {
   private static final Logger LOG = Logger.getInstance("#org.jetbrains.android.inspections.CreateFileResourceQuickFix");
 
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension<?> myFacet;
   private final ResourceType myResourceType;
   private final String myResourceName;
   private final PsiFile myFile;
   private final boolean myChooseResName;
 
-  public CreateFileResourceQuickFix(@NotNull AndroidFacet facet,
+  public CreateFileResourceQuickFix(@NotNull AndroidModuleExtension<?> facet,
                                     @NotNull ResourceType resourceType,
                                     @NotNull String resourceName,
                                     @NotNull PsiFile file,

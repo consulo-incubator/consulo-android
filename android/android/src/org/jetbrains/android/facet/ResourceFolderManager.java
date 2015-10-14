@@ -22,7 +22,10 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -32,6 +35,7 @@ import org.jetbrains.android.maven.AndroidMavenUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,7 +59,7 @@ public class ResourceFolderManager implements ModificationTracker {
   public static final String EXPLODED_BUNDLES = "exploded-bundles";
   public static final String EXPLODED_AAR = "exploded-aar";
 
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
   private List<VirtualFile> myResDirCache;
   private long myGeneration;
   private final List<ResourceFolderListener> myListeners = Lists.newArrayList();
@@ -63,10 +67,10 @@ public class ResourceFolderManager implements ModificationTracker {
   private boolean myGradleInitListenerAdded;
 
   /**
-   * Should only be constructed by {@link AndroidFacet}; others should obtain instance
-   * via {@link AndroidFacet#getResourceFolderManager}
+   * Should only be constructed by {@link AndroidModuleExtension}; others should obtain instance
+   * via {@link AndroidModuleExtension#getResourceFolderManager}
    */
-  ResourceFolderManager(AndroidFacet facet) {
+  ResourceFolderManager(AndroidModuleExtension facet) {
     myFacet = facet;
   }
 
@@ -101,7 +105,7 @@ public class ResourceFolderManager implements ModificationTracker {
 
   private List<VirtualFile> computeFolders() {
     if (myFacet.isGradleProject()) {
-      JpsAndroidModuleProperties state = myFacet.getConfiguration().getState();
+      JpsAndroidModuleProperties state = myFacet.getProperties();
       IdeaAndroidProject ideaAndroidProject = myFacet.getIdeaAndroidProject();
       List<VirtualFile> resDirectories = new ArrayList<VirtualFile>();
       if (ideaAndroidProject == null) {
@@ -214,7 +218,7 @@ public class ResourceFolderManager implements ModificationTracker {
   }
 
   /** Adds in any AAR library resource directories found in the library definitions for the given facet */
-  public static void addAarsFromModuleLibraries(@NotNull AndroidFacet facet, @NotNull Set<File> dirs) {
+  public static void addAarsFromModuleLibraries(@NotNull AndroidModuleExtension facet, @NotNull Set<File> dirs) {
     Module module = facet.getModule();
     OrderEntry[] orderEntries = ModuleRootManager.getInstance(module).getOrderEntries();
     for (OrderEntry orderEntry : orderEntries) {
@@ -252,7 +256,7 @@ public class ResourceFolderManager implements ModificationTracker {
     }
   }
 
-  private static boolean isAarDependency(@NotNull AndroidFacet facet, @NotNull OrderEntry orderEntry) {
+  private static boolean isAarDependency(@NotNull AndroidModuleExtension facet, @NotNull OrderEntry orderEntry) {
     if (facet.isGradleProject() && orderEntry instanceof LibraryOrderEntry) {
       VirtualFile[] files = orderEntry.getFiles(OrderRootType.CLASSES);
       if (files.length >= 2) {
@@ -322,7 +326,7 @@ public class ResourceFolderManager implements ModificationTracker {
   /** Listeners for resource folder changes */
   public interface ResourceFolderListener {
     /** The resource folders in this project has changed */
-    void resourceFoldersChanged(@NotNull AndroidFacet facet,
+    void resourceFoldersChanged(@NotNull AndroidModuleExtension facet,
                                 @NotNull List<VirtualFile> folders,
                                 @NotNull Collection<VirtualFile> added,
                                 @NotNull Collection<VirtualFile> removed);

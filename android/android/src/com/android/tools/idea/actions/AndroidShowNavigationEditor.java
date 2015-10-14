@@ -19,7 +19,6 @@ package com.android.tools.idea.actions;
 import com.android.tools.idea.editors.navigation.NavigationEditor;
 import com.android.tools.idea.editors.navigation.NavigationEditorProvider;
 import com.android.tools.idea.editors.navigation.NavigationEditorUtils;
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -28,8 +27,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 public class AndroidShowNavigationEditor extends AnAction {
   public AndroidShowNavigationEditor() {
@@ -72,6 +72,6 @@ public class AndroidShowNavigationEditor extends AnAction {
   public void update(AnActionEvent e) {
     final Project project = e.getProject();
     e.getPresentation().setEnabledAndVisible(
-      project != null && !ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID).isEmpty());
+      project != null && ModuleExtensionHelper.getInstance(project).hasModuleExtension(AndroidModuleExtension.class));
   }
 }

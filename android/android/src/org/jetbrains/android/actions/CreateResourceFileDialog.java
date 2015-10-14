@@ -46,6 +46,7 @@ import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -83,11 +84,11 @@ public class CreateResourceFileDialog extends DialogWrapper {
 
   private final Map<String, CreateTypedResourceFileAction> myResType2ActionMap = new HashMap<String, CreateTypedResourceFileAction>();
   private final DeviceConfiguratorPanel myDeviceConfiguratorPanel;
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
   private final ResourceFolderType myPredefinedResourceType;
   private PsiDirectory myResDirectory;
 
-  public CreateResourceFileDialog(@NotNull AndroidFacet facet,
+  public CreateResourceFileDialog(@NotNull AndroidModuleExtension facet,
                                   Collection<CreateTypedResourceFileAction> actions,
                                   @Nullable ResourceFolderType predefinedResourceType,
                                   @Nullable String predefinedFileName,

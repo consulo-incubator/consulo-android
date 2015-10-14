@@ -16,7 +16,6 @@
 package com.android.tools.idea.run;
 
 import com.android.sdklib.repository.descriptors.IdDisplay;
-import com.intellij.facet.Facet;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
@@ -30,6 +29,7 @@ import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -39,14 +39,14 @@ public class LaunchEmulatorDialog extends DialogWrapper {
 
   @NonNls private static final String SELECTED_AVD_PROPERTY = "ANDROID_EXTENDED_DEVICE_CHOOSER_AVD";
 
-  private final Facet myFacet;
+  private final AndroidModuleExtension myFacet;
   private JPanel myPanel;
   private JLabel myAvdLabel;
   private JPanel myComboBoxWrapper;
   private final AvdComboBox myAvdCombo;
 
 
-  public LaunchEmulatorDialog(@NotNull Facet facet) {
+  public LaunchEmulatorDialog(@NotNull AndroidModuleExtension facet) {
     super(facet.getModule().getProject(), true, IdeModalityType.PROJECT);
 
     myFacet = facet;

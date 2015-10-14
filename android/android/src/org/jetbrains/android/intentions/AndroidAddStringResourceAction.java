@@ -34,6 +34,7 @@ import com.intellij.openapi.command.undo.UndoUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.TextRange;
@@ -54,12 +55,12 @@ import org.jetbrains.android.actions.CreateXmlResourceDialog;
 import org.jetbrains.android.dom.converters.ResourceReferenceConverter;
 import org.jetbrains.android.dom.manifest.Manifest;
 import org.jetbrains.android.dom.resources.ResourceValue;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.uipreview.AndroidLayoutPreviewToolWindowManager;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -94,7 +95,7 @@ public class AndroidAddStringResourceAction extends AbstractIntentionAction impl
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    AndroidFacet facet = AndroidFacet.getInstance(file);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     if (facet == null) {
       return false;
     }
@@ -193,7 +194,7 @@ public class AndroidAddStringResourceAction extends AbstractIntentionAction impl
     String value = getStringLiteralValue(project, element, file, type);
     assert value != null;
 
-    final AndroidFacet facet = AndroidFacet.getInstance(file);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     assert facet != null;
 
     final String aPackage = getPackage(facet);
@@ -394,7 +395,7 @@ public class AndroidAddStringResourceAction extends AbstractIntentionAction impl
   }
 
   @Nullable
-  private static String getPackage(@NotNull AndroidFacet facet) {
+  private static String getPackage(@NotNull AndroidModuleExtension facet) {
     Manifest manifest = facet.getManifest();
     if (manifest == null) return null;
     return manifest.getPackage().getValue();

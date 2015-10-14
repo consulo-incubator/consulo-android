@@ -18,8 +18,8 @@ package com.android.tools.idea.databinding;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiField;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.psi.util.CachedValue;
@@ -28,10 +28,11 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
-import org.jetbrains.android.facet.AndroidFacet;
+import com.intellij.util.indexing.IdFilter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,13 +48,13 @@ public class BrShortNamesCache extends PsiShortNamesCache {
       @Nullable
       @Override
       public Result<String[]> compute() {
-        AndroidFacet[] facets = myComponent.getDataBindingEnabledFacets();
+        AndroidModuleExtension<?>[] facets = myComponent.getDataBindingEnabledFacets();
         String[] result;
         if (facets.length == 0) {
           result = ArrayUtil.EMPTY_STRING_ARRAY;
         } else {
           Set<String> allFields = Sets.newHashSet();
-          for (AndroidFacet facet : facets) {
+          for (AndroidModuleExtension<?> facet : facets) {
             DataBindingUtil.LightBrClass brClass = DataBindingUtil.getOrCreateBrClassFor(facet);
             Collections.addAll(allFields, brClass.getAllFieldNames());
           }
@@ -83,7 +84,7 @@ public class BrShortNamesCache extends PsiShortNamesCache {
     if (!DataBindingUtil.BR.equals(name)) {
       return PsiClass.EMPTY_ARRAY;
     }
-    AndroidFacet[] facets = myComponent.getDataBindingEnabledFacets();
+    AndroidModuleExtension<?>[] facets = myComponent.getDataBindingEnabledFacets();
     return filterByScope(facets, scope);
   }
 
@@ -133,6 +134,21 @@ public class BrShortNamesCache extends PsiShortNamesCache {
     return true;
   }
 
+  @Override
+  public boolean processMethodsWithName(@NonNls @NotNull String s, @NotNull Processor<? super PsiMethod> processor, @NotNull GlobalSearchScope globalSearchScope, @Nullable IdFilter idFilter) {
+    return true;
+  }
+
+  @Override
+  public boolean processFieldsWithName(@NotNull String s, @NotNull Processor<? super PsiField> processor, @NotNull GlobalSearchScope globalSearchScope, @Nullable IdFilter idFilter) {
+    return true;
+  }
+
+  @Override
+  public boolean processClassesWithName(@NotNull String s, @NotNull Processor<? super PsiClass> processor, @NotNull GlobalSearchScope globalSearchScope, @Nullable IdFilter idFilter) {
+    return true;
+  }
+
   @NotNull
   @Override
   public String[] getAllMethodNames() {
@@ -178,12 +194,12 @@ public class BrShortNamesCache extends PsiShortNamesCache {
     Collections.addAll(set, getAllFieldNames());
   }
 
-  private static PsiClass[] filterByScope(AndroidFacet[] facets, @NotNull GlobalSearchScope scope) {
+  private static PsiClass[] filterByScope(AndroidModuleExtension<?>[] facets, @NotNull GlobalSearchScope scope) {
     if (facets == null || facets.length == 0) {
       return PsiClass.EMPTY_ARRAY;
     }
     List<PsiClass> selected = Lists.newArrayList();
-    for (AndroidFacet facet : facets) {
+    for (AndroidModuleExtension<?> facet : facets) {
       if (scope.isSearchInModuleContent(facet.getModule())) {
         selected.add(DataBindingUtil.getOrCreateBrClassFor(facet));
       }

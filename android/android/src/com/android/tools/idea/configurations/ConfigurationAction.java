@@ -26,14 +26,15 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.uipreview.AndroidLayoutPreviewToolWindowManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.io.File;
@@ -92,7 +93,7 @@ abstract class ConfigurationAction extends AnAction implements ConfigurationList
             if (!matchingFiles.isEmpty() && !matchingFiles.contains(file)) {
               // Switch files, and leave this configuration alone
               pickedBetterMatch(matchingFiles.get(0), file);
-              AndroidFacet facet = AndroidFacet.getInstance(module);
+              AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
               assert facet != null;
               updateConfiguration(facet.getConfigurationManager().getConfiguration(matchingFiles.get(0)), true /*commit*/);
               return;

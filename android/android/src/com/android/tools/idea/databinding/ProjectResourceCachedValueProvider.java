@@ -21,11 +21,13 @@ import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A utility cache that can be used if results from multiple resource repositories are being merged into one.
@@ -33,7 +35,7 @@ import java.util.*;
  * @param <V> The type of each individual {@linkplain ResourceCacheValueProvider}
  */
 abstract public class ProjectResourceCachedValueProvider<T, V> implements CachedValueProvider<T>, ModificationTracker {
-  private Map<AndroidFacet, CachedValue<V>> myCachedValues = Maps.newHashMap();
+  private Map<AndroidModuleExtension<?>, CachedValue<V>> myCachedValues = Maps.newHashMap();
   private final ModificationTracker[] myAdditionalTrackers;
   private List<ModificationTracker> myDependencies = Lists.newArrayList();
   private DataBindingProjectComponent myComponent;
@@ -57,13 +59,13 @@ abstract public class ProjectResourceCachedValueProvider<T, V> implements Cached
   @Nullable
   @Override
   public final Result<T> compute() {
-    AndroidFacet[] facets = myComponent.getDataBindingEnabledFacets();
+    AndroidModuleExtension<?>[] facets = myComponent.getDataBindingEnabledFacets();
     List<V> values = Lists.newArrayList();
 
     List<ModificationTracker> newDependencies = Lists.newArrayList();
     newDependencies.add(myComponent);
     Collections.addAll(newDependencies, myAdditionalTrackers);
-    for (AndroidFacet facet : facets) {
+    for (AndroidModuleExtension<?> facet : facets) {
       CachedValue<V> cachedValue = getCachedValue(facet);
       // we know this for sure since it is created from createCacheProvider
       if (cachedValue.getValueProvider() instanceof ModificationTracker) {
@@ -90,7 +92,7 @@ abstract public class ProjectResourceCachedValueProvider<T, V> implements Cached
   @NotNull
   abstract protected T merge(List<V> results);
 
-  private CachedValue<V> getCachedValue(AndroidFacet facet) {
+  private CachedValue<V> getCachedValue(AndroidModuleExtension<?> facet) {
     CachedValue<V> cachedValue = myCachedValues.get(facet);
     if (cachedValue == null) {
       ResourceCacheValueProvider<V> cacheProvider = createCacheProvider(facet);
@@ -100,7 +102,7 @@ abstract public class ProjectResourceCachedValueProvider<T, V> implements Cached
     return cachedValue;
   }
 
-  abstract ResourceCacheValueProvider<V> createCacheProvider(AndroidFacet facet);
+  abstract ResourceCacheValueProvider<V> createCacheProvider(AndroidModuleExtension<?> facet);
 
   abstract public static class MergedMapValueProvider<A, B> extends ProjectResourceCachedValueProvider<Map<A, List<B>>, Map<A, List<B>>> {
 

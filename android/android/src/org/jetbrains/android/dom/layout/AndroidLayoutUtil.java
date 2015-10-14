@@ -2,8 +2,8 @@ package org.jetbrains.android.dom.layout;
 
 import org.jetbrains.android.dom.AndroidDomExtender;
 import org.jetbrains.android.dom.AndroidDomUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class AndroidLayoutUtil {
   }
 
   @NotNull
-  public static List<String> getPossibleRoots(@NotNull AndroidFacet facet) {
+  public static List<String> getPossibleRoots(@NotNull AndroidModuleExtension facet) {
     final List<String> result = new ArrayList<String>();
     result.add(VIEW_TAG);
     result.add(VIEW_MERGE);

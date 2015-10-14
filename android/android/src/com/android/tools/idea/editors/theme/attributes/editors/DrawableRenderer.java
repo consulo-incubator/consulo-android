@@ -20,11 +20,12 @@ import com.android.tools.idea.editors.theme.datamodels.EditedStyleItem;
 import com.android.tools.idea.rendering.RenderLogger;
 import com.android.tools.idea.rendering.RenderService;
 import com.android.tools.idea.rendering.RenderTask;
-import org.jetbrains.android.facet.AndroidFacet;
+import com.intellij.openapi.module.ModuleUtilCore;
+import org.must.android.module.extension.AndroidModuleExtension;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
-import java.awt.Component;
+import java.awt.*;
 
 public class DrawableRenderer implements TableCellRenderer, ThemeEditorContext.ChangeListener {
   private final DrawableComponent myComponent;
@@ -45,7 +46,7 @@ public class DrawableRenderer implements TableCellRenderer, ThemeEditorContext.C
 
   public static RenderTask configureRenderTask(final ThemeEditorContext context) {
     RenderTask result = null;
-    AndroidFacet facet = AndroidFacet.getInstance(context.getCurrentThemeModule());
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(context.getCurrentThemeModule(), AndroidModuleExtension.class);
     if (facet != null) {
       final RenderService service = RenderService.get(facet);
       result = service.createTask(null, context.getConfiguration(), new RenderLogger("ThemeEditorLogger", context.getCurrentThemeModule()), null);

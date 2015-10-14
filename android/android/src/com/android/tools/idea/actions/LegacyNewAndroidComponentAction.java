@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -14,9 +15,9 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import icons.AndroidIcons;
 import org.jetbrains.android.actions.NewAndroidComponentDialog;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -25,8 +26,8 @@ public class LegacyNewAndroidComponentAction extends AnAction {
 
   protected LegacyNewAndroidComponentAction() {
     super(AndroidBundle.message("android.new.component.action.title.non.gradle"),
-          AndroidBundle.message("android.new.component.action.description"),
-          AndroidIcons.Android);
+        AndroidBundle.message("android.new.component.action.description"),
+        AndroidIcons.Android);
   }
 
   @Override
@@ -43,7 +44,7 @@ public class LegacyNewAndroidComponentAction extends AnAction {
         view.getDirectories().length == 0) {
       return false;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
     if (facet == null || facet.isGradleProject()) {
       return false;
@@ -71,7 +72,7 @@ public class LegacyNewAndroidComponentAction extends AnAction {
     final Module module = LangDataKeys.MODULE.getData(dataContext);
 
     if (module == null) return;
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     assert facet != null;
 
     final PsiDirectory dir = view.getOrChooseDirectory();

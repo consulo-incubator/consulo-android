@@ -1,5 +1,6 @@
 package org.jetbrains.android.projectView;
 
+import com.intellij.ide.IconDescriptorUpdaters;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.ViewSettings;
@@ -50,7 +51,7 @@ public class ResourceDirectoryNode extends ProjectViewNode<PsiDirectory> {
     presentation.clearText();
     presentation.addText(getValue().getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
     presentation.setPresentableText(getValue().getName());
-    presentation.setIcon(getValue().getIcon(0));
+    presentation.setIcon(IconDescriptorUpdaters.getIcon(getValue(), 0));
   }
 
   public void collectChildren() {

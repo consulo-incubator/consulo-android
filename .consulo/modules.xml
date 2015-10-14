@@ -230,6 +230,13 @@
               </binaries>
             </library>
           </orderEntry>
+          <orderEntry type="module-library">
+            <library name="consulo:UI Designer (Core)">
+              <binaries>
+                <root url="jar://$MODULE_DIR$/../../dep/ui-designer-core/lib/ui-designer-core.jar!/" />
+              </binaries>
+            </library>
+          </orderEntry>
         </module-layer>
       </module>
       <module name="android/android-annotations" dirurl="file://$PROJECT_DIR$/tools-base/annotations" current-layer="Default">

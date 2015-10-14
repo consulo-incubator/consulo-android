@@ -43,10 +43,10 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidTargetData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -73,7 +73,7 @@ import static com.android.tools.lint.detector.api.LintUtils.stripIdPrefix;
 public final class ResourceFolderRepository extends LocalResourceRepository {
   private static final Logger LOG = Logger.getInstance(ResourceFolderRepository.class);
   private final Module myModule;
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
   private final PsiListener myListener;
   private final VirtualFile myResourceDir;
   private final Map<ResourceType, ListMultimap<String, ResourceItem>> myItems = Maps.newEnumMap(ResourceType.class);
@@ -87,7 +87,7 @@ public final class ResourceFolderRepository extends LocalResourceRepository {
   @VisibleForTesting
   static int ourFullRescans;
 
-  private ResourceFolderRepository(@NotNull AndroidFacet facet, @NotNull VirtualFile resourceDir) {
+  private ResourceFolderRepository(@NotNull AndroidModuleExtension facet, @NotNull VirtualFile resourceDir) {
     super(resourceDir.getName());
     myFacet = facet;
     myModule = facet.getModule();
@@ -97,7 +97,7 @@ public final class ResourceFolderRepository extends LocalResourceRepository {
   }
 
   @NotNull
-  AndroidFacet getFacet() {
+  AndroidModuleExtension getFacet() {
     return myFacet;
   }
 
@@ -107,7 +107,7 @@ public final class ResourceFolderRepository extends LocalResourceRepository {
 
   /** NOTE: You should normally use {@link ResourceFolderRegistry#get} rather than this method. */
   @NotNull
-  static ResourceFolderRepository create(@NotNull final AndroidFacet facet, @NotNull VirtualFile dir) {
+  static ResourceFolderRepository create(@NotNull final AndroidModuleExtension facet, @NotNull VirtualFile dir) {
     return new ResourceFolderRepository(facet, dir);
   }
 

@@ -19,7 +19,6 @@ import com.android.annotations.VisibleForTesting;
 import com.android.ide.common.rendering.api.Bridge;
 import com.android.ide.common.resources.configuration.FolderConfiguration;
 import com.android.ide.common.resources.configuration.LocaleQualifier;
-import com.android.sdklib.AndroidVersion;
 import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.SdkManager;
 import com.android.sdklib.devices.Device;
@@ -36,12 +35,12 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.SoftValueHashMap;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.sdk.AndroidTargetData;
@@ -49,6 +48,7 @@ import org.jetbrains.android.sdk.MessageBuildingSdkLog;
 import org.jetbrains.android.uipreview.UserDeviceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -234,7 +234,7 @@ public class ConfigurationManager implements Disposable {
 
   @Nullable
   public Device createDeviceForAvd(@NotNull AvdInfo avd) {
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assert facet != null;
     for (Device device : getDevices()) {
       if (device.getManufacturer().equals(avd.getDeviceManufacturer())

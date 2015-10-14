@@ -28,6 +28,7 @@ import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
@@ -38,11 +39,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.android.resourceManagers.LocalResourceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.io.File;
@@ -109,7 +110,7 @@ public abstract class CreateResourceActionBase extends AnAction {
     }
 
     // Otherwise use the main source set:
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet != null) {
       VirtualFile res = facet.getPrimaryResourceDir();
       if (res != null) {
@@ -120,7 +121,7 @@ public abstract class CreateResourceActionBase extends AnAction {
     return null;
   }
 
-  public static void updateSourceSetCombo(@NotNull JComponent label, @NotNull JComboBox combo, @Nullable AndroidFacet facet,
+  public static void updateSourceSetCombo(@NotNull JComponent label, @NotNull JComboBox combo, @Nullable AndroidModuleExtension facet,
                                           @SuppressWarnings("UnusedParameters") @Nullable PsiDirectory resDirectory) {
     // Ideally, if we're in the Project View and you select a file under main/res, we already know that
     // the resource folder is "res" and we pass it in here -- and we shouldn't ask the user for a source set.

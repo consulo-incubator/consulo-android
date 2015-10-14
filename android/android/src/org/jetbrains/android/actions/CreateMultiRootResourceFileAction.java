@@ -25,6 +25,7 @@ import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidator;
@@ -36,10 +37,10 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.TextFieldWithAutoCompletion;
 import com.intellij.ui.components.JBLabel;
 import org.jetbrains.android.dom.layout.AndroidLayoutUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -74,7 +75,7 @@ public class CreateMultiRootResourceFileAction extends CreateTypedResourceFileAc
       final PsiDirectory directory = view.getOrChooseDirectory();
       if (directory != null) {
         InputValidator validator = createValidator(project, directory);
-        final AndroidFacet facet = AndroidFacet.getInstance(directory);
+        final AndroidModuleExtension facet = ModuleUtilCore.getExtension(directory, AndroidModuleExtension.class);
         if (facet != null) {
           final MyDialog dialog = new MyDialog(facet, validator);
           dialog.show();
@@ -85,7 +86,7 @@ public class CreateMultiRootResourceFileAction extends CreateTypedResourceFileAc
 
     Module module = LangDataKeys.MODULE.getData(dataContext);
     if (module != null) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       assert facet != null;
       PsiDirectory directory = getResourceDirectory(null, module, true);
       if (directory != null) {
@@ -110,7 +111,7 @@ public class CreateMultiRootResourceFileAction extends CreateTypedResourceFileAc
 
   @NotNull
   @Override
-  public List<String> getAllowedTagNames(@NotNull AndroidFacet facet) {
+  public List<String> getAllowedTagNames(@NotNull AndroidModuleExtension facet) {
     assert myResourceType == ResourceFolderType.LAYOUT; // if not, must override getAllowedTagNames
     return AndroidLayoutUtil.getPossibleRoots(facet);
   }
@@ -124,7 +125,7 @@ public class CreateMultiRootResourceFileAction extends CreateTypedResourceFileAc
     private JPanel myRootElementFieldWrapper;
     private JBLabel myRootElementLabel;
 
-    protected MyDialog(@NotNull AndroidFacet facet, @Nullable InputValidator validator) {
+    protected MyDialog(@NotNull AndroidModuleExtension facet, @Nullable InputValidator validator) {
       super(facet.getModule().getProject());
       myValidator = validator;
       setTitle(AndroidBundle.message("new.typed.resource.dialog.title", myResourcePresentableName));

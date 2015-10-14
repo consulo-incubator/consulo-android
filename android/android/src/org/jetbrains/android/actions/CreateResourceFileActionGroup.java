@@ -24,8 +24,8 @@ import org.jetbrains.android.dom.animator.AndroidAnimatorUtil;
 import org.jetbrains.android.dom.drawable.AndroidDrawableDomUtil;
 import org.jetbrains.android.dom.transition.TransitionDomUtil;
 import org.jetbrains.android.dom.xml.AndroidXmlResourcesUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class CreateResourceFileActionGroup extends DefaultActionGroup {
     a.add(new CreateMultiRootResourceFileAction(ResourceType.XML.getDisplayName(), ResourceFolderType.XML) {
       @NotNull
       @Override
-      public List<String> getAllowedTagNames(@NotNull AndroidFacet facet) {
+      public List<String> getAllowedTagNames(@NotNull AndroidModuleExtension facet) {
         return AndroidXmlResourcesUtil.getPossibleRoots(facet);
       }
     });
@@ -54,7 +54,7 @@ public class CreateResourceFileActionGroup extends DefaultActionGroup {
     a.add(new CreateMultiRootResourceFileAction(ResourceType.DRAWABLE.getDisplayName(), ResourceFolderType.DRAWABLE) {
       @NotNull
       @Override
-      public List<String> getAllowedTagNames(@NotNull AndroidFacet facet) {
+      public List<String> getAllowedTagNames(@NotNull AndroidModuleExtension facet) {
         return AndroidDrawableDomUtil.getPossibleRoots(facet);
       }
     });
@@ -66,7 +66,7 @@ public class CreateResourceFileActionGroup extends DefaultActionGroup {
     a.add(new CreateMultiRootResourceFileAction(ResourceType.ANIM.getDisplayName(), ResourceFolderType.ANIM) {
       @NotNull
       @Override
-      public List<String> getAllowedTagNames(@NotNull AndroidFacet facet) {
+      public List<String> getAllowedTagNames(@NotNull AndroidModuleExtension facet) {
         return AndroidAnimationUtils.getPossibleChildren(facet);
       }
     });
@@ -74,7 +74,7 @@ public class CreateResourceFileActionGroup extends DefaultActionGroup {
     a.add(new CreateMultiRootResourceFileAction(ResourceType.ANIMATOR.getDisplayName(), ResourceFolderType.ANIMATOR) {
       @NotNull
       @Override
-      public List<String> getAllowedTagNames(@NotNull AndroidFacet facet) {
+      public List<String> getAllowedTagNames(@NotNull AndroidModuleExtension facet) {
         return AndroidAnimatorUtil.getPossibleChildren();
       }
     });
@@ -82,7 +82,7 @@ public class CreateResourceFileActionGroup extends DefaultActionGroup {
     a.add(new CreateMultiRootResourceFileAction(ResourceType.TRANSITION.getDisplayName(), ResourceFolderType.TRANSITION) {
       @NotNull
       @Override
-      public List<String> getAllowedTagNames(@NotNull AndroidFacet facet) {
+      public List<String> getAllowedTagNames(@NotNull AndroidModuleExtension facet) {
         return TransitionDomUtil.getPossibleRoots();
       }
     });

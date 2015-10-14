@@ -19,8 +19,8 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +40,7 @@ public class ResourceFolderRegistry {
   }
 
   @NotNull
-  public static ResourceFolderRepository get(@NotNull final AndroidFacet facet, @NotNull final VirtualFile dir) {
+  public static ResourceFolderRepository get(@NotNull final AndroidModuleExtension facet, @NotNull final VirtualFile dir) {
     ResourceFolderRepository repository = ourDirMap.get(dir);
     if (repository == null) {
       Project project = facet.getModule().getProject();

@@ -37,6 +37,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -51,12 +52,12 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.android.actions.CreateResourceDirectoryDialog;
 import org.jetbrains.android.dom.resources.ResourceElement;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.inspections.lint.AndroidLintQuickFix;
 import org.jetbrains.android.inspections.lint.AndroidQuickfixContexts;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -94,7 +95,7 @@ public class OverrideResourceAction extends AbstractIntentionAction {
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    if (file instanceof XmlFile && file.isValid() && AndroidFacet.getInstance(file) != null) {
+    if (file instanceof XmlFile && file.isValid() && ModuleUtilCore.getExtension(file, AndroidModuleExtension.class) != null) {
       ResourceFolderType folderType = ResourceHelper.getFolderType(file);
       if (folderType == null) {
         return false;
@@ -109,7 +110,7 @@ public class OverrideResourceAction extends AbstractIntentionAction {
   }
 
   public boolean isAvailable(@Nullable XmlTag tag, PsiFile file) {
-    if (file instanceof XmlFile && file.isValid() && AndroidFacet.getInstance(file) != null) {
+    if (file instanceof XmlFile && file.isValid() && ModuleUtilCore.getExtension(file, AndroidModuleExtension.class) != null) {
       ResourceFolderType folderType = ResourceHelper.getFolderType(file);
       if (folderType == null) {
         return false;
@@ -129,7 +130,7 @@ public class OverrideResourceAction extends AbstractIntentionAction {
 
   @Override
   public void invoke(@NotNull final Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-    AndroidFacet facet = AndroidFacet.getInstance(file);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     ResourceFolderType folderType = ResourceHelper.getFolderType(file);
     if (facet == null || folderType == null) {
       // shouldn't happen; we checked in isAvailable
@@ -146,7 +147,7 @@ public class OverrideResourceAction extends AbstractIntentionAction {
   private static void forkResourceValue(@NotNull Project project,
                                         @NotNull Editor editor,
                                         @NotNull PsiFile file,
-                                        @NotNull AndroidFacet facet,
+                                        @NotNull AndroidModuleExtension facet,
                                         @Nullable PsiDirectory dir) {
     XmlTag tag = getValueTag(editor, file);
     if (tag == null) {
@@ -162,7 +163,7 @@ public class OverrideResourceAction extends AbstractIntentionAction {
   }
 
   protected static void forkResourceValue(@NotNull Project project, @NotNull XmlTag tag, @NotNull PsiFile file,
-                                          @NotNull AndroidFacet facet, @Nullable PsiDirectory dir) {
+                                          @NotNull AndroidModuleExtension facet, @Nullable PsiDirectory dir) {
 
     PsiDirectory resFolder = findRes(file);
     if (resFolder == null) {
@@ -217,7 +218,7 @@ public class OverrideResourceAction extends AbstractIntentionAction {
   }
 
   private static void createValueResource(@NotNull PsiFile file,
-                                          @NotNull AndroidFacet facet,
+                                          @NotNull AndroidModuleExtension facet,
                                           @NotNull PsiDirectory dir,
                                           @NotNull final String resName,
                                           @NotNull final String value,
@@ -307,7 +308,7 @@ public class OverrideResourceAction extends AbstractIntentionAction {
     }
     Configuration configuration = null;
     if (folderType == ResourceFolderType.LAYOUT) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         configuration = facet.getConfigurationManager().getConfiguration(file);
       }
@@ -529,7 +530,7 @@ public class OverrideResourceAction extends AbstractIntentionAction {
           } else {
             XmlTag tag = getValueTag(PsiTreeUtil.getParentOfType(startElement, XmlTag.class, false));
             if (tag != null) {
-              AndroidFacet facet = AndroidFacet.getInstance(startElement);
+              AndroidModuleExtension facet = ModuleUtilCore.getExtension(startElement, AndroidModuleExtension.class);
               if (facet != null) {
                 PsiDirectory dir = null;
                 if (myFolder != null) {

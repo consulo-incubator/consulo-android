@@ -21,6 +21,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,9 +32,9 @@ import java.util.List;
  */
 public class AssetRepositoryImpl extends AssetRepository {
 
-  private AndroidFacet myFacet;
+  private AndroidModuleExtension<?> myFacet;
 
-  public AssetRepositoryImpl(@NotNull AndroidFacet facet) {
+  public AssetRepositoryImpl(@NotNull AndroidModuleExtension<?> facet) {
     myFacet = facet;
   }
 

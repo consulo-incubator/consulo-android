@@ -18,8 +18,8 @@ package com.android.tools.idea.databinding;
 import com.android.tools.idea.rendering.LocalResourceRepository;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.util.CachedValueProvider;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 abstract public class ResourceCacheValueProvider<T> implements CachedValueProvider<T>, ModificationTracker {
   ModificationTracker[] myAdditionalTrackers;
@@ -38,14 +38,14 @@ abstract public class ResourceCacheValueProvider<T> implements CachedValueProvid
       return myVersion;
     }
   };
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension<?> myFacet;
 
-  public ResourceCacheValueProvider(AndroidFacet facet, ModificationTracker... additionalTrackers) {
+  public ResourceCacheValueProvider(AndroidModuleExtension<?> facet, ModificationTracker... additionalTrackers) {
     myFacet = facet;
     myAdditionalTrackers = additionalTrackers;
   }
 
-  public AndroidFacet getFacet() {
+  public AndroidModuleExtension<?> getFacet() {
     return myFacet;
   }
 

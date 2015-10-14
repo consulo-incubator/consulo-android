@@ -24,6 +24,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupItemUtil;
 import com.intellij.codeInsight.lookup.VariableLookupItem;
 import com.intellij.codeInspection.magicConstant.MagicCompletionContributor;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.patterns.ElementPattern;
@@ -35,6 +36,7 @@ import gnu.trove.TObjectHashingStrategy;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Arrays;
 import java.util.List;
@@ -82,7 +84,7 @@ public class ResourceTypeCompletionContributor extends CompletionContributor {
       return;
     }
 
-    AndroidFacet facet = AndroidFacet.getInstance(pos);
+    AndroidModuleExtension<?> facet = ModuleUtilCore.getExtension(pos, AndroidModuleExtension.class);
     if (facet == null) {
       return;
     }

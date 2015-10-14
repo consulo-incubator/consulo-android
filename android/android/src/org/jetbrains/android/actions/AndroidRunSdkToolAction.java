@@ -17,9 +17,12 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +39,7 @@ public abstract class AndroidRunSdkToolAction extends DumbAwareAction {
   @Override
   public void update(AnActionEvent e) {
     Project project = e.getData(CommonDataKeys.PROJECT);
-    e.getPresentation().setEnabled(project != null && ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID).size() > 0);
+    e.getPresentation().setEnabled(project != null && ModuleExtensionHelper.getInstance(project).hasModuleExtension(AndroidModuleExtension.class));
   }
 
   @Override
@@ -69,10 +72,10 @@ public abstract class AndroidRunSdkToolAction extends DumbAwareAction {
       LOG.info(String.format("Unable to read local.properties file from project '%1$s'", project.getName()), ignored);
     }
 
-    List<AndroidFacet> facets = ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID);
+    Collection<AndroidModuleExtension> facets = ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class);
     assert facets.size() > 0;
     Set<String> sdkSet = new HashSet<String>();
-    for (AndroidFacet facet : facets) {
+    for (AndroidModuleExtension facet : facets) {
       AndroidSdkData sdkData = facet.getConfiguration().getAndroidSdk();
       if (sdkData != null) {
         sdkSet.add(sdkData.getPath());

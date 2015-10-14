@@ -18,21 +18,25 @@ package com.android.tools.idea.editors.navigation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.JBColor;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class NavigationEditorUtils {
@@ -269,7 +273,7 @@ public class NavigationEditorUtils {
     Module[] modules = ModuleManager.getInstance(project).getModules();
     List<Module> result = new ArrayList<Module>(modules.length);
     for (Module module : modules) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         List<VirtualFile> resourceDirectories = facet.getAllResourceDirectories();
         VirtualFile layoutFile = findLayoutFile(resourceDirectories, NavigationEditor.DEFAULT_RESOURCE_FOLDER);

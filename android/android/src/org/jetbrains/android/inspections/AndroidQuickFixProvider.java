@@ -5,13 +5,14 @@ import com.intellij.codeInsight.daemon.QuickFixActionRegistrar;
 import com.intellij.codeInsight.quickfix.UnresolvedReferenceQuickFixProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReferenceExpression;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -24,7 +25,7 @@ public class AndroidQuickFixProvider extends UnresolvedReferenceQuickFixProvider
       return;
     }
 
-    final AndroidFacet facet = AndroidFacet.getInstance(contextModule);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(contextModule, AndroidModuleExtension.class);
     if (facet == null) {
       return;
     }

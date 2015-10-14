@@ -22,12 +22,13 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 
@@ -58,7 +59,7 @@ public class AndroidAssetStudioAction extends AnAction {
     if (module == null ||
         view == null ||
         view.getDirectories().length == 0 ||
-        AndroidFacet.getInstance(module) == null) {
+        ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) == null) {
       return false;
     }
     return true;
@@ -89,7 +90,7 @@ public class AndroidAssetStudioAction extends AnAction {
       return;
     }
 
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       return;
     }

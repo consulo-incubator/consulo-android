@@ -23,11 +23,12 @@ import com.google.common.collect.ImmutableSet;
 import com.intellij.ide.IdeView;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.Set;
@@ -96,7 +97,7 @@ public class NewAndroidComponentAction extends AnAction {
     final Module module = LangDataKeys.MODULE.getData(dataContext);
 
     if (module == null) return;
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null || facet.getIdeaAndroidProject() == null) {
       return;
     }

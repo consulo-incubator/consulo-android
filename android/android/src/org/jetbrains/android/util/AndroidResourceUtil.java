@@ -162,7 +162,7 @@ public class AndroidResourceUtil {
   }
 
   /**
-   * Like {@link #findResourceFields(org.jetbrains.android.facet.AndroidFacet, String, String, boolean)} but
+   * Like {@link #findResourceFields(AndroidModuleExtension, String, String, boolean)} but
    * can match than more than a single field name
    */
   @NotNull
@@ -259,7 +259,7 @@ public class AndroidResourceUtil {
         }
       });
     }
-    final AndroidFacet ownFacet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension ownFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     String ownPackageName = null;
 
     if (ownFacet != null) {
@@ -301,7 +301,7 @@ public class AndroidResourceUtil {
 
   @NotNull
   public static PsiField[] findResourceFieldsForFileResource(@NotNull PsiFile file, boolean onlyInOwnPackages) {
-    final AndroidFacet facet = AndroidFacet.getInstance(file);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
     if (facet == null) {
       return PsiField.EMPTY_ARRAY;
     }
@@ -317,7 +317,7 @@ public class AndroidResourceUtil {
 
   @NotNull
   public static PsiField[] findResourceFieldsForValueResource(XmlTag tag, boolean onlyInOwnPackages) {
-    final AndroidFacet facet = AndroidFacet.getInstance(tag);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(tag, AndroidModuleExtension.class);
     if (facet == null) {
       return PsiField.EMPTY_ARRAY;
     }
@@ -346,7 +346,7 @@ public class AndroidResourceUtil {
       if (styleableName == null) {
         return PsiField.EMPTY_ARRAY;
       }
-      AndroidFacet facet = AndroidFacet.getInstance(tag);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(tag, AndroidModuleExtension.class);
       if (facet == null) {
         return PsiField.EMPTY_ARRAY;
       }
@@ -367,7 +367,7 @@ public class AndroidResourceUtil {
       if (parentTag != null && TAG_DECLARE_STYLEABLE.equals(parentTag.getName())) {
         String styleName = parentTag.getAttributeValue(ATTR_NAME);
         String attributeName = tag.getAttributeValue(ATTR_NAME);
-        AndroidFacet facet = AndroidFacet.getInstance(tag);
+        AndroidModuleExtension facet = ModuleUtilCore.getExtension(tag, AndroidModuleExtension.class);
         if (facet != null && styleName != null && attributeName != null) {
           return findResourceFields(facet, STYLEABLE.getName(), styleName + '_' + attributeName, onlyInOwnPackages);
         }
@@ -454,7 +454,7 @@ public class AndroidResourceUtil {
   // result contains XmlAttributeValue or PsiFile
   @NotNull
   public static List<PsiElement> findResourcesByField(@NotNull PsiField field) {
-    final AndroidFacet facet = AndroidFacet.getInstance(field);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(field, AndroidModuleExtension.class);
     return facet != null
            ? facet.getLocalResourceManager().findResourcesByField(field)
            : Collections.<PsiElement>emptyList();
@@ -465,7 +465,7 @@ public class AndroidResourceUtil {
     if (c == null) return false;
     c = c.getContainingClass();
     if (c != null && AndroidUtils.R_CLASS_NAME.equals(c.getName())) {
-      AndroidFacet facet = AndroidFacet.getInstance(field);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(field, AndroidModuleExtension.class);
       if (facet != null) {
         PsiFile file = c.getContainingFile();
         if (file != null && isRJavaFile(facet, file)) {
@@ -504,7 +504,7 @@ public class AndroidResourceUtil {
       final String id = getResourceNameByReferenceText(attribute.getValue());
 
       if (id != null) {
-        final AndroidFacet facet = AndroidFacet.getInstance(attribute);
+        final AndroidModuleExtension facet = ModuleUtilCore.getExtension(attribute, AndroidModuleExtension.class);
 
         if (facet != null) {
           return findResourceFields(facet, ResourceType.ID.getName(), id, false);
@@ -719,7 +719,7 @@ public class AndroidResourceUtil {
     return psiDirectory.findFile(SdkConstants.FN_FRAMEWORK_LIBRARY) != null;
   }
 
-  public static boolean isRJavaFile(@NotNull AndroidFacet facet, @NotNull PsiFile file) {
+  public static boolean isRJavaFile(@NotNull AndroidModuleExtension facet, @NotNull PsiFile file) {
     if (file.getName().equals(AndroidCommonUtils.R_JAVA_FILENAME) && file instanceof PsiJavaFile) {
       final PsiJavaFile javaFile = (PsiJavaFile)file;
 
@@ -742,7 +742,7 @@ public class AndroidResourceUtil {
     return false;
   }
 
-  public static boolean isManifestJavaFile(@NotNull AndroidFacet facet, @NotNull PsiFile file) {
+  public static boolean isManifestJavaFile(@NotNull AndroidModuleExtension facet, @NotNull PsiFile file) {
     if (file.getName().equals(AndroidCommonUtils.MANIFEST_JAVA_FILE_NAME) && file instanceof PsiJavaFile) {
       final Manifest manifest = facet.getManifest();
       final PsiJavaFile javaFile = (PsiJavaFile)file;
@@ -776,7 +776,7 @@ public class AndroidResourceUtil {
                                               @NotNull List<String> dirNames,
                                               @NotNull Processor<ResourceElement> afterAddedProcessor) {
     final Project project = module.getProject();
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     assert facet != null;
 
     try {
@@ -832,7 +832,7 @@ public class AndroidResourceUtil {
     });
   }
 
-  private static boolean addValueResource(@NotNull AndroidFacet facet,
+  private static boolean addValueResource(@NotNull AndroidModuleExtension facet,
                                           @NotNull final String resourceName,
                                           @NotNull final ResourceType resourceType,
                                           @NotNull String fileName,
@@ -890,7 +890,7 @@ public class AndroidResourceUtil {
     return true;
   }
 
-  public static boolean changeColorResource(@NotNull AndroidFacet facet,
+  public static boolean changeColorResource(@NotNull AndroidModuleExtension facet,
                                             @NotNull final String colorName,
                                             @NotNull final String newValue,
                                             @NotNull String fileName,
@@ -951,7 +951,7 @@ public class AndroidResourceUtil {
   }
 
   @Nullable
-  private static VirtualFile findResourceFile(@NotNull AndroidFacet facet,
+  private static VirtualFile findResourceFile(@NotNull AndroidModuleExtension facet,
                                               @NotNull final String fileName,
                                               @NotNull String dirName) {
     final VirtualFile resDir = facet.getPrimaryResourceDir();
@@ -968,7 +968,7 @@ public class AndroidResourceUtil {
   }
 
   @Nullable
-  private static VirtualFile findOrCreateResourceFile(@NotNull AndroidFacet facet,
+  private static VirtualFile findOrCreateResourceFile(@NotNull AndroidModuleExtension facet,
                                                       @NotNull final String fileName,
                                                       @NotNull String dirName) throws Exception {
     final Module module = facet.getModule();
@@ -1175,7 +1175,7 @@ public class AndroidResourceUtil {
                                            @NotNull String rootTagName,
                                            @NotNull String resourceType,
                                            boolean valuesResourceFile) throws Exception {
-    FileTemplateManager manager = FileTemplateManager.getInstance(resSubdir.getProject());
+    FileTemplateManager manager = FileTemplateManager.getInstance();
     String templateName = getTemplateName(resourceType, valuesResourceFile, rootTagName);
     FileTemplate template = manager.getJ2eeTemplate(templateName);
     Properties properties = new Properties();

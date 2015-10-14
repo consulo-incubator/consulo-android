@@ -20,10 +20,11 @@ import com.android.builder.model.BuildTypeContainer;
 import com.android.sdklib.AndroidVersion;
 import com.android.tools.idea.gradle.IdeaAndroidProject;
 import com.intellij.openapi.module.Module;
-import org.jetbrains.android.facet.AndroidFacet;
+import com.intellij.openapi.module.ModuleUtilCore;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * Android information about a module, such as its application package, its minSdkVersion, and so on. This
@@ -35,25 +36,25 @@ import org.jetbrains.annotations.Nullable;
  * (e.g. minSdk, targetSdk, packageName, etc), or use {@link ManifestInfo#get(Module, boolean)}.
  */
 public class AndroidModuleInfo {
-  private final @NotNull AndroidFacet myFacet;
+  private final @NotNull AndroidModuleExtension<?> myFacet;
 
-  private AndroidModuleInfo(@NotNull AndroidFacet facet) {
+  private AndroidModuleInfo(@NotNull AndroidModuleExtension<?> facet) {
     myFacet = facet;
   }
 
   @NotNull
-  public static AndroidModuleInfo create(@NotNull AndroidFacet facet) {
+  public static AndroidModuleInfo create(@NotNull AndroidModuleExtension<?> facet) {
     return new AndroidModuleInfo(facet);
   }
 
   @NotNull
-  public static AndroidModuleInfo get(@NotNull AndroidFacet facet) {
+  public static AndroidModuleInfo get(@NotNull AndroidModuleExtension<?> facet) {
     return facet.getAndroidModuleInfo();
   }
 
   @Nullable
   public static AndroidModuleInfo get(@NotNull Module module) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet =  ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     return facet != null ? facet.getAndroidModuleInfo() : null;
   }
 
@@ -149,7 +150,7 @@ public class AndroidModuleInfo {
   @Nullable
   public static AndroidVersion getBuildSdkVersion(@Nullable Module module) {
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         AndroidModuleInfo moduleInfo = get(facet.getModule());
         if (moduleInfo != null) {
@@ -169,7 +170,7 @@ public class AndroidModuleInfo {
   @NotNull
   public static AndroidVersion getTargetSdkVersion(@Nullable Module module) {
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         AndroidModuleInfo moduleInfo = get(facet.getModule());
         if (moduleInfo != null) {
@@ -184,7 +185,7 @@ public class AndroidModuleInfo {
   @NotNull
   public static AndroidVersion getMinSdkVersion(@Nullable Module module) {
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         AndroidModuleInfo moduleInfo = get(facet.getModule());
         if (moduleInfo != null) {

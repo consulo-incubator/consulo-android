@@ -18,6 +18,7 @@ package org.jetbrains.android.dom;
 import com.android.SdkConstants;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -57,13 +58,13 @@ import org.jetbrains.android.dom.xml.AndroidXmlResourcesUtil;
 import org.jetbrains.android.dom.xml.Intent;
 import org.jetbrains.android.dom.xml.PreferenceElement;
 import org.jetbrains.android.dom.xml.XmlResourceElement;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.SimpleClassMapConstructor;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.resourceManagers.SystemResourceManager;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -115,13 +116,13 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }
   };
 
-  @Override
+  /*@Override
   public boolean supportsStubs() {
     return false;
-  }
+  }*/
 
   @Nullable
-  public static String getNamespaceKeyByResourcePackage(@NotNull AndroidFacet facet, @Nullable String resPackage) {
+  public static String getNamespaceKeyByResourcePackage(@NotNull AndroidModuleExtension facet, @Nullable String resPackage) {
     if (resPackage == null) {
       if (facet.getProperties().LIBRARY_PROJECT || facet.isGradleProject()) {
         return AUTO_URI;
@@ -197,7 +198,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }
   }
 
-  protected static void registerAttributes(AndroidFacet facet,
+  protected static void registerAttributes(AndroidModuleExtension facet,
                                            DomElement element,
                                            @NotNull String[] styleableNames,
                                            MyCallback callback,
@@ -218,7 +219,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     return styleables.toArray(new StyleableDefinition[styleables.size()]);
   }
 
-  protected static void registerAttributes(AndroidFacet facet,
+  protected static void registerAttributes(AndroidModuleExtension facet,
                                            DomElement element,
                                            @NotNull String styleableName,
                                            @Nullable String resPackage,
@@ -227,7 +228,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     registerAttributes(facet, element, new String[]{styleableName}, resPackage, callback, null, skipNames);
   }
 
-  protected static void registerAttributes(AndroidFacet facet,
+  protected static void registerAttributes(AndroidModuleExtension facet,
                                            DomElement element,
                                            @NotNull String[] styleableNames,
                                            @Nullable String resPackage,
@@ -242,7 +243,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     registerAttributes(facet, element, styleables, resPackage, callback, processor, skipNames);
   }
 
-  private static void registerAttributes(AndroidFacet facet,
+  private static void registerAttributes(AndroidModuleExtension facet,
                                          DomElement element,
                                          StyleableDefinition[] styleables, String resPackage,
                                          MyCallback callback,
@@ -267,7 +268,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }
   }
 
-  protected static void registerAttributesForClassAndSuperclasses(AndroidFacet facet,
+  protected static void registerAttributesForClassAndSuperclasses(AndroidModuleExtension facet,
                                                                   DomElement element,
                                                                   PsiClass c,
                                                                   MyCallback callback,
@@ -298,7 +299,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     return preferenceClass != null && (preferenceClass == c || c.isInheritor(preferenceClass, true));
   }
 
-  public static void registerExtensionsForXmlResources(AndroidFacet facet,
+  public static void registerExtensionsForXmlResources(AndroidModuleExtension facet,
                                                        XmlTag tag,
                                                        XmlResourceElement element,
                                                        MyCallback callback,
@@ -372,11 +373,11 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
   }
 
   @NotNull
-  public static Map<String, PsiClass> getPreferencesClassMap(@NotNull AndroidFacet facet) {
+  public static Map<String, PsiClass> getPreferencesClassMap(@NotNull AndroidModuleExtension facet) {
     return facet.getClassMap(AndroidXmlResourcesUtil.PREFERENCE_CLASS_NAME, SimpleClassMapConstructor.getInstance());
   }
 
-  public static void registerExtensionsForAnimation(final AndroidFacet facet,
+  public static void registerExtensionsForAnimation(final AndroidModuleExtension facet,
                                                     String tagName,
                                                     AnimationElement element,
                                                     MyCallback callback,
@@ -412,7 +413,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }
   }
 
-  public static void registerExtensionsForAnimator(final AndroidFacet facet,
+  public static void registerExtensionsForAnimator(final AndroidModuleExtension facet,
                                                    String tagName,
                                                    AnimatorElement element,
                                                    MyCallback callback,
@@ -431,7 +432,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }
   }
 
-  public static Map<String, PsiClass> getViewClassMap(@NotNull AndroidFacet facet) {
+  public static Map<String, PsiClass> getViewClassMap(@NotNull AndroidModuleExtension facet) {
     if (DumbService.isDumb(facet.getModule().getProject())) {
       return Collections.emptyMap();
     }
@@ -446,7 +447,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     return ArrayUtil.toStringArray(names);
   }
 
-  private static void registerLayoutAttributes(AndroidFacet facet,
+  private static void registerLayoutAttributes(AndroidModuleExtension facet,
                                                DomElement element,
                                                XmlTag tag,
                                                MyCallback callback,
@@ -472,7 +473,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }
   }
 
-  private static void registerLayoutAttributes(AndroidFacet facet,
+  private static void registerLayoutAttributes(AndroidModuleExtension facet,
                                                DomElement element,
                                                PsiClass c,
                                                MyCallback callback,
@@ -486,7 +487,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }
   }
 
-  public static void registerExtensionsForLayout(AndroidFacet facet,
+  public static void registerExtensionsForLayout(AndroidModuleExtension facet,
                                                  XmlTag tag,
                                                  LayoutElement element,
                                                  MyCallback callback,
@@ -561,7 +562,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }, type);
   }
 
-  public static void registerExtensionsForManifest(AndroidFacet facet,
+  public static void registerExtensionsForManifest(AndroidModuleExtension facet,
                                                    String tagName,
                                                    ManifestElement element,
                                                    MyCallback callback,
@@ -618,7 +619,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
 
   public static void processAttrsAndSubtags(@NotNull AndroidDomElement element,
                                             @NotNull MyCallback callback,
-                                            @NotNull AndroidFacet facet,
+                                            @NotNull AndroidModuleExtension facet,
                                             boolean processAllExistingAttrsFirst,
                                             boolean processStaticallyDefinedElements) {
     try {
@@ -666,7 +667,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }
   }
 
-  private static void registerExtensionsForDrawable(AndroidFacet facet,
+  private static void registerExtensionsForDrawable(AndroidModuleExtension facet,
                                                     String tagName,
                                                     AndroidDomElement element,
                                                     MyCallback callback,
@@ -710,7 +711,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }
   }
 
-  public static void registerExtensionsForTransition(final AndroidFacet facet,
+  public static void registerExtensionsForTransition(final AndroidModuleExtension facet,
                                                    String tagName,
                                                    TransitionDomElement element,
                                                    MyCallback callback,
@@ -768,7 +769,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
     }
   }
 
-  public static void registerTransition(AndroidFacet facet,
+  public static void registerTransition(AndroidModuleExtension facet,
                                         TransitionDomElement element,
                                         MyCallback callback,
                                         Set<String> registeredSubTags,
@@ -782,7 +783,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
   }
 
   @Nullable
-  private static AttributeDefinitions getAttrDefs(AndroidFacet facet) {
+  private static AttributeDefinitions getAttrDefs(AndroidModuleExtension facet) {
     final SystemResourceManager manager = facet.getSystemResourceManager();
     return manager != null ? manager.getAttributeDefinitions() : null;
   }
@@ -808,7 +809,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
   }
 
   @NotNull
-  private static Set<XmlName> registerExistingAttributes(AndroidFacet facet,
+  private static Set<XmlName> registerExistingAttributes(AndroidModuleExtension facet,
                                                          XmlTag tag,
                                                          MyCallback callback,
                                                          AndroidDomElement element) {
@@ -835,7 +836,7 @@ public class AndroidDomExtender extends DomExtender<AndroidDomElement> {
 
   @Override
   public void registerExtensions(@NotNull AndroidDomElement element, @NotNull final DomExtensionsRegistrar registrar) {
-    final AndroidFacet facet = AndroidFacet.getInstance(element);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(element.getXmlElement(), AndroidModuleExtension.class);
 
     if (facet == null) {
       return;

@@ -22,11 +22,11 @@ import com.intellij.util.xml.DomFileDescription;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.android.actions.CreateXmlResourceDialog;
 import org.jetbrains.android.dom.resources.ResourcesDomFileDescription;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.uipreview.AndroidLayoutPreviewToolWindowManager;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,13 +35,13 @@ import java.util.List;
 * @author Eugene.Kudelevsky
 */
 public class CreateValueResourceQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction {
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension<?> myFacet;
   private final ResourceType myResourceType;
   private final String myResourceName;
   private final PsiFile myFile;
   private final boolean myChooseName;
 
-  public CreateValueResourceQuickFix(@NotNull AndroidFacet facet,
+  public CreateValueResourceQuickFix(@NotNull AndroidModuleExtension<?> facet,
                                      @NotNull ResourceType resourceType,
                                      @NotNull String resourceName,
                                      @NotNull PsiFile file,

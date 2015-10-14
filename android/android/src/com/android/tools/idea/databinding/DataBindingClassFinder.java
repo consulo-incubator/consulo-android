@@ -21,13 +21,13 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFinder;
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.PsiJavaPackage;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValuesManager;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,17 +38,17 @@ import java.util.Set;
  * PsiElementFinder extensions that finds classes generated for layout files.
  */
 public class DataBindingClassFinder extends PsiElementFinder {
-  private final CachedValue<Map<String, PsiPackage>> myPackageCache;
+  private final CachedValue<Map<String, PsiJavaPackage>> myPackageCache;
   private final DataBindingProjectComponent myComponent;
   public DataBindingClassFinder(DataBindingProjectComponent component) {
     myComponent = component;
     myPackageCache = CachedValuesManager.getManager(myComponent.getProject()).createCachedValue(
-      new ProjectResourceCachedValueProvider<Map<String, PsiPackage>, Set<String>>(myComponent) {
+      new ProjectResourceCachedValueProvider<Map<String, PsiJavaPackage>, Set<String>>(myComponent) {
 
         @NotNull
         @Override
-        protected Map<String, PsiPackage> merge(List<Set<String>> results) {
-          Map<String, PsiPackage> merged = Maps.newHashMap();
+        protected Map<String, PsiJavaPackage> merge(List<Set<String>> results) {
+          Map<String, PsiJavaPackage> merged = Maps.newHashMap();
           for (Set<String> result : results) {
             for (String qualifiedPackage : result) {
               if (!merged.containsKey(qualifiedPackage)) {
@@ -60,7 +60,7 @@ public class DataBindingClassFinder extends PsiElementFinder {
         }
 
         @Override
-        ResourceCacheValueProvider<Set<String>> createCacheProvider(AndroidFacet facet) {
+        ResourceCacheValueProvider<Set<String>> createCacheProvider(AndroidModuleExtension<?> facet) {
           return new ResourceCacheValueProvider<Set<String>>(facet) {
             @Override
             Set<String> doCompute() {
@@ -94,7 +94,7 @@ public class DataBindingClassFinder extends PsiElementFinder {
     if (!myComponent.hasAnyDataBindingEnabledFacet()) {
       return null;
     }
-    for (AndroidFacet facet : myComponent.getDataBindingEnabledFacets()) {
+    for (AndroidModuleExtension<?> facet : myComponent.getDataBindingEnabledFacets()) {
       LocalResourceRepository moduleResources = facet.getModuleResources(false);
       if (moduleResources == null) {
         continue;
@@ -127,7 +127,7 @@ public class DataBindingClassFinder extends PsiElementFinder {
 
   @Nullable
   @Override
-  public PsiPackage findPackage(@NotNull String qualifiedName) {
+  public PsiJavaPackage findPackage(@NotNull String qualifiedName) {
     if (!myComponent.hasAnyDataBindingEnabledFacet()) {
       return null;
     }

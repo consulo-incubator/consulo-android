@@ -5,15 +5,17 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.siyeh.ipp.switchtoif.ReplaceSwitchWithIfIntention;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.RequiredReadAction;
 
 /**
  * @author Eugene.Kudelevsky
@@ -46,8 +48,9 @@ public class AndroidNonConstantResIdsInSwitchInspection extends LocalInspectionT
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
     return new JavaElementVisitor() {
       @Override
+      @RequiredReadAction
       public void visitSwitchLabelStatement(PsiSwitchLabelStatement statement) {
-        final AndroidFacet facet = AndroidFacet.getInstance(statement);
+        final AndroidModuleExtension facet = ModuleUtilCore.getExtension(statement, AndroidModuleExtension.class);
         if (facet == null || !facet.isLibraryProject()) {
           return;
         }

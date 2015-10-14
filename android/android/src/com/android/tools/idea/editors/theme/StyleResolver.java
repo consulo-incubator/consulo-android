@@ -26,12 +26,13 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import org.jetbrains.android.dom.attrs.AttributeDefinition;
 import org.jetbrains.android.dom.attrs.AttributeDefinitions;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidTargetData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -117,7 +118,7 @@ public class StyleResolver {
       definitions = androidTargetData.getAllAttrDefs(module.getProject());
     }
     else {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       assert facet != null : String.format("Module %s is not an Android module", module.getName());
 
       definitions = facet.getLocalResourceManager().getAttributeDefinitions();

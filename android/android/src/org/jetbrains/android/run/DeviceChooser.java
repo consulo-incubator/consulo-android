@@ -43,10 +43,10 @@ import com.intellij.util.containers.HashSet;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.android.dom.AndroidAttributeValue;
 import org.jetbrains.android.dom.manifest.UsesFeature;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidSdkUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -94,7 +94,7 @@ public class DeviceChooser implements Disposable {
   private JComponent myPanel;
   private JBTable myDeviceTable;
 
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
   private final Condition<IDevice> myFilter;
   private final AndroidVersion myMinSdkVersion;
   private final IAndroidTarget myProjectTarget;
@@ -105,7 +105,7 @@ public class DeviceChooser implements Disposable {
 
   public DeviceChooser(boolean multipleSelection,
                        @NotNull final Action okAction,
-                       @NotNull AndroidFacet facet,
+                       @NotNull AndroidModuleExtension facet,
                        @NotNull IAndroidTarget projectTarget,
                        @Nullable Condition<IDevice> filter) {
 

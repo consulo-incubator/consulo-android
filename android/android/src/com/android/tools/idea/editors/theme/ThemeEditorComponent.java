@@ -20,11 +20,7 @@ import com.android.ide.common.rendering.api.ItemResourceValue;
 import com.android.ide.common.resources.ResourceResolver;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
-import com.android.tools.idea.configurations.Configuration;
-import com.android.tools.idea.configurations.ConfigurationListener;
-import com.android.tools.idea.configurations.ConfigurationManager;
-import com.android.tools.idea.configurations.DeviceMenuAction;
-import com.android.tools.idea.configurations.ThemeSelectionDialog;
+import com.android.tools.idea.configurations.*;
 import com.android.tools.idea.editors.theme.attributes.*;
 import com.android.tools.idea.editors.theme.attributes.editors.*;
 import com.android.tools.idea.editors.theme.datamodels.EditedStyleItem;
@@ -45,6 +41,7 @@ import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -63,6 +60,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -139,7 +137,7 @@ public class ThemeEditorComponent extends Splitter {
     assert firstTheme != null : "Trying to launch Theme Editor without any themes";
 
     final Module module = firstTheme.getSourceModule();
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
     // Module is a source of a theme, thus, should be Android module
     assert facet != null : String.format("Module %s is not Android module", module.getName());
@@ -425,7 +423,7 @@ public class ThemeEditorComponent extends Splitter {
     if (renameDialog.isOK()) {
       String newName = renameDialog.getNewName();
       String newQualifiedName = mySelectedTheme.getName().replace(mySelectedTheme.getSimpleName(), newName);
-      AndroidFacet facet = AndroidFacet.getInstance(myThemeEditorContext.getCurrentThemeModule());
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(myThemeEditorContext.getCurrentThemeModule(), AndroidModuleExtension.class);
       if (facet != null) {
         facet.refreshResources();
       }
@@ -507,7 +505,7 @@ public class ThemeEditorComponent extends Splitter {
       });
 
     if (isCreated) {
-      AndroidFacet facet = AndroidFacet.getInstance(myThemeEditorContext.getCurrentThemeModule());
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(myThemeEditorContext.getCurrentThemeModule(), AndroidModuleExtension.class);
       if (facet != null) {
         facet.refreshResources();
       }

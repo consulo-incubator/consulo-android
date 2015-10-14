@@ -33,10 +33,11 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
-import org.jetbrains.android.facet.AndroidFacet;
+import com.intellij.util.indexing.IdFilter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.lang.reflect.Array;
 import java.util.Collections;
@@ -247,6 +248,21 @@ public class DataBindingShortNamesCache extends PsiShortNamesCache {
     return true;
   }
 
+  @Override
+  public boolean processMethodsWithName(@NonNls @NotNull String s, @NotNull Processor<? super PsiMethod> processor, @NotNull GlobalSearchScope globalSearchScope, @Nullable IdFilter idFilter) {
+    return true;
+  }
+
+  @Override
+  public boolean processFieldsWithName(@NotNull String s, @NotNull Processor<? super PsiField> processor, @NotNull GlobalSearchScope globalSearchScope, @Nullable IdFilter idFilter) {
+    return true;
+  }
+
+  @Override
+  public boolean processClassesWithName(@NotNull String s, @NotNull Processor<? super PsiClass> processor, @NotNull GlobalSearchScope globalSearchScope, @Nullable IdFilter idFilter) {
+    return true;
+  }
+
   @NotNull
   @Override
   public String[] getAllMethodNames() {
@@ -298,13 +314,13 @@ public class DataBindingShortNamesCache extends PsiShortNamesCache {
     }
 
     @Override
-    ResourceCacheValueProvider<Map<String, List<DataBindingInfo>>> createCacheProvider(AndroidFacet facet) {
+    ResourceCacheValueProvider<Map<String, List<DataBindingInfo>>> createCacheProvider(AndroidModuleExtension<?> facet) {
       return new FacetNameCacheProvider(facet);
     }
   }
 
   private static class FacetNameCacheProvider extends ResourceCacheValueProvider<Map<String, List<DataBindingInfo>>> {
-    public FacetNameCacheProvider(AndroidFacet facet) {
+    public FacetNameCacheProvider(AndroidModuleExtension<?> facet) {
       super(facet);
     }
 

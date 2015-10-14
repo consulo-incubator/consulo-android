@@ -18,12 +18,13 @@ package org.jetbrains.android.intentions;
 import com.android.resources.ResourceType;
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 public class AndroidExtractDimensionAction extends AndroidAddStringResourceAction {
   @Override
@@ -47,7 +48,7 @@ public class AndroidExtractDimensionAction extends AndroidAddStringResourceActio
     // into resource files; they should be dips, but of course the pixel to dp depends
     // on the screen dpi.
     if (file.getFileType() == XmlFileType.INSTANCE) {
-      AndroidFacet facet = AndroidFacet.getInstance(file);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
       if (facet != null) {
         PsiElement element = getPsiElement(file, editor);
         if (element != null) {

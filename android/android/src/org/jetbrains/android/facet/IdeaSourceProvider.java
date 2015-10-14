@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.Collection;
@@ -54,7 +55,7 @@ public abstract class IdeaSourceProvider {
   }
 
   @NotNull
-  public static IdeaSourceProvider create(@NotNull final AndroidFacet facet) {
+  public static IdeaSourceProvider create(@NotNull final AndroidModuleExtension facet) {
     return new IdeaSourceProvider.Legacy(facet);
   }
 
@@ -211,9 +212,9 @@ public abstract class IdeaSourceProvider {
 
   /** {@linkplain IdeaSourceProvider} for a legacy (non-Gradle) Android project */
   private static class Legacy extends IdeaSourceProvider {
-    @NotNull private final AndroidFacet myFacet;
+    @NotNull private final AndroidModuleExtension myFacet;
 
-    private Legacy(@NotNull AndroidFacet facet) {
+    private Legacy(@NotNull AndroidModuleExtension facet) {
       myFacet = facet;
     }
 
@@ -332,7 +333,7 @@ public abstract class IdeaSourceProvider {
    * The overlay source order is defined by the Android Gradle plugin.
    */
   @NotNull
-  public static List<IdeaSourceProvider> getCurrentSourceProviders(@NotNull AndroidFacet facet) {
+  public static List<IdeaSourceProvider> getCurrentSourceProviders(@NotNull AndroidModuleExtension facet) {
     if (!facet.isGradleProject()) {
       return Collections.singletonList(facet.getMainIdeaSourceProvider());
     }
@@ -366,7 +367,7 @@ public abstract class IdeaSourceProvider {
   }
 
   @NotNull
-  public static List<IdeaSourceProvider> getCurrentTestSourceProviders(@NotNull AndroidFacet facet) {
+  public static List<IdeaSourceProvider> getCurrentTestSourceProviders(@NotNull AndroidModuleExtension facet) {
     if (!facet.isGradleProject()) {
       return Collections.emptyList();
     }
@@ -518,7 +519,7 @@ public abstract class IdeaSourceProvider {
    * The overlay source order is defined by the Android Gradle plugin.
    */
   @NotNull
-  public static List<SourceProvider> getAllSourceProviders(@NotNull AndroidFacet facet) {
+  public static List<SourceProvider> getAllSourceProviders(@NotNull AndroidModuleExtension<?> facet) {
     if (!facet.isGradleProject() || facet.getIdeaAndroidProject() == null) {
       return Collections.singletonList(facet.getMainSourceProvider());
     }
@@ -573,7 +574,7 @@ public abstract class IdeaSourceProvider {
    * empty source sets for all other source providers (since VirtualFiles MUST exist on disk).
    */
   @NotNull
-  public static List<IdeaSourceProvider> getAllIdeaSourceProviders(@NotNull AndroidFacet facet) {
+  public static List<IdeaSourceProvider> getAllIdeaSourceProviders(@NotNull AndroidModuleExtension<?> facet) {
     if (!facet.isGradleProject() || facet.getIdeaAndroidProject() == null) {
       return Collections.singletonList(facet.getMainIdeaSourceProvider());
     }
@@ -603,7 +604,7 @@ public abstract class IdeaSourceProvider {
    * are descendants of "src."
    */
   @NotNull
-  public static List<IdeaSourceProvider> getIdeaSourceProvidersForFile(@NotNull AndroidFacet facet,
+  public static List<IdeaSourceProvider> getIdeaSourceProvidersForFile(@NotNull AndroidModuleExtension facet,
                                                                        @Nullable VirtualFile targetFolder,
                                                                        @Nullable IdeaSourceProvider defaultIdeaSourceProvider) {
     List<IdeaSourceProvider> sourceProviderList = Lists.newArrayList();
@@ -642,7 +643,7 @@ public abstract class IdeaSourceProvider {
    * are descendants of "src."
    */
   @NotNull
-  public static List<SourceProvider> getSourceProvidersForFile(@NotNull AndroidFacet facet, @Nullable VirtualFile targetFolder,
+  public static List<SourceProvider> getSourceProvidersForFile(@NotNull AndroidModuleExtension facet, @Nullable VirtualFile targetFolder,
                                                                @Nullable SourceProvider defaultSourceProvider) {
     List<SourceProvider> sourceProviderList = Lists.newArrayList();
 
@@ -664,7 +665,7 @@ public abstract class IdeaSourceProvider {
   }
 
   /** Returns true if the given candidate file is a manifest file in the given module */
-  public static boolean isManifestFile(@NotNull AndroidFacet facet, @Nullable VirtualFile candidate) {
+  public static boolean isManifestFile(@NotNull AndroidModuleExtension facet, @Nullable VirtualFile candidate) {
     if (candidate == null) {
       return false;
     }
@@ -683,7 +684,7 @@ public abstract class IdeaSourceProvider {
 
   /** Returns the manifest files in the given module */
   @NotNull
-  public static List<VirtualFile> getManifestFiles(@NotNull AndroidFacet facet) {
+  public static List<VirtualFile> getManifestFiles(@NotNull AndroidModuleExtension facet) {
     VirtualFile main = facet.getMainIdeaSourceProvider().getManifestFile();
     if (!facet.isGradleProject()) {
       return main != null ? Collections.singletonList(main) : Collections.<VirtualFile>emptyList();

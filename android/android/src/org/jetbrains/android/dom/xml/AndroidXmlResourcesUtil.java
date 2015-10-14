@@ -19,10 +19,10 @@ package org.jetbrains.android.dom.xml;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.android.dom.AndroidDomExtender;
 import org.jetbrains.android.dom.AndroidDomUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.SimpleClassMapConstructor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -68,7 +68,7 @@ public class AndroidXmlResourcesUtil {
   }
 
   @NotNull
-  public static List<String> getPossibleRoots(@NotNull AndroidFacet facet) {
+  public static List<String> getPossibleRoots(@NotNull AndroidModuleExtension facet) {
     List<String> result = new ArrayList<String>();
     result.addAll(AndroidDomUtil.removeUnambiguousNames(AndroidDomExtender.getPreferencesClassMap(facet)));
     result.addAll(Arrays.asList(ROOT_TAGS));
@@ -76,7 +76,7 @@ public class AndroidXmlResourcesUtil {
     return result;
   }
 
-  public static boolean isSupportedRootTag(@NotNull AndroidFacet facet, @NotNull String rootTagName) {
+  public static boolean isSupportedRootTag(@NotNull AndroidModuleExtension facet, @NotNull String rootTagName) {
     return ROOT_TAGS_SET.contains(rootTagName) ||
            SimpleClassMapConstructor.findClassByTagName(facet, rootTagName, PREFERENCE_CLASS_NAME) != null;
   }

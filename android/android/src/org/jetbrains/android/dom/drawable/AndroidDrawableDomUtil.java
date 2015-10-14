@@ -23,8 +23,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.android.dom.AndroidResourceDomFileDescription;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -79,7 +79,7 @@ public class AndroidDrawableDomUtil {
     return AndroidResourceDomFileDescription.doIsMyFile(file, new String[]{ResourceType.DRAWABLE.getName()});
   }
 
-  public static List<String> getPossibleRoots(AndroidFacet facet) {
+  public static List<String> getPossibleRoots(AndroidModuleExtension facet) {
     AndroidVersion sdkVersion = AndroidModuleInfo.get(facet).getBuildSdkVersion();
     List<String> result = Lists.newArrayListWithExpectedSize(DRAWABLE_ROOTS_V1.length + DRAWABLE_ROOTS_V21.length);
     Collections.addAll(result, DRAWABLE_ROOTS_V1);

@@ -27,12 +27,14 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import icons.AndroidIcons;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 
@@ -90,7 +92,7 @@ public class TargetMenuAction extends FlatComboAction {
     Module module = myRenderContext.getModule();
     int minSdk = -1;
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         minSdk = facet.getAndroidModuleInfo().getMinSdkVersion().getFeatureLevel();
       }

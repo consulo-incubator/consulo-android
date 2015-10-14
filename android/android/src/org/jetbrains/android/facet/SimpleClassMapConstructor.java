@@ -26,6 +26,7 @@ import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * Created by IntelliJ IDEA.
@@ -75,7 +76,7 @@ public class SimpleClassMapConstructor implements ClassMapConstructor {
   }
 
   @Nullable
-  public static PsiClass findClassByTagName(@NotNull AndroidFacet facet, @NotNull String name, @NotNull PsiClass baseClass) {
+  public static PsiClass findClassByTagName(@NotNull AndroidModuleExtension facet, @NotNull String name, @NotNull PsiClass baseClass) {
     final Module module = facet.getModule();
     final Project project = module.getProject();
 
@@ -106,7 +107,7 @@ public class SimpleClassMapConstructor implements ClassMapConstructor {
   }
 
   @Nullable
-  public static PsiClass findClassByTagName(@NotNull AndroidFacet facet, @NotNull String name, @NotNull String baseClassQName) {
+  public static PsiClass findClassByTagName(@NotNull AndroidModuleExtension facet, @NotNull String name, @NotNull String baseClassQName) {
     final PsiClass baseClass = JavaPsiFacade.getInstance(facet.getModule().getProject()).findClass(
       baseClassQName, facet.getModule().getModuleWithLibrariesScope());
     return baseClass != null ? findClassByTagName(facet, name, baseClass) : null;

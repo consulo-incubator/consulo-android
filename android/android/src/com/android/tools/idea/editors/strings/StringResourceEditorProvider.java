@@ -21,15 +21,16 @@ import com.android.tools.idea.rendering.ResourceHelper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 public class StringResourceEditorProvider implements FileEditorProvider, DumbAware {
   public static final String ID = "string-resource-editor";
@@ -44,7 +45,7 @@ public class StringResourceEditorProvider implements FileEditorProvider, DumbAwa
     }
 
     Module m = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file);
-    return m != null && AndroidFacet.getInstance(m) != null;
+    return m != null && ModuleUtilCore.getExtension(m, AndroidModuleExtension.class) != null;
   }
 
   public static void openEditor(@NotNull final Module module) {

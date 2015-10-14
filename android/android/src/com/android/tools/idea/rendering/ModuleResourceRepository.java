@@ -16,15 +16,18 @@
 package com.android.tools.idea.rendering;
 
 import com.android.annotations.VisibleForTesting;
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.ResourceFolderManager;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -32,9 +35,9 @@ import java.util.*;
  * Resource repository for a single module (which can possibly have multiple resource folders)
  */
 public final class ModuleResourceRepository extends MultiResourceRepository {
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
 
-  private ModuleResourceRepository(@NotNull AndroidFacet facet,
+  private ModuleResourceRepository(@NotNull AndroidModuleExtension facet,
                                    @NotNull List<? extends LocalResourceRepository> delegates) {
     super(facet.getModule().getName(), delegates);
     myFacet = facet;
@@ -50,7 +53,7 @@ public final class ModuleResourceRepository extends MultiResourceRepository {
    */
   @Nullable
   public static LocalResourceRepository getModuleResources(@NotNull Module module, boolean createIfNecessary) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet != null) {
       return facet.getModuleResources(createIfNecessary);
     }
@@ -68,7 +71,7 @@ public final class ModuleResourceRepository extends MultiResourceRepository {
    */
   @Contract("!null, true -> !null")
   @Nullable
-  public static LocalResourceRepository getModuleResources(@NotNull AndroidFacet facet, boolean createIfNecessary) {
+  public static LocalResourceRepository getModuleResources(@NotNull AndroidModuleExtension facet, boolean createIfNecessary) {
     return facet.getModuleResources(createIfNecessary);
   }
 
@@ -79,7 +82,7 @@ public final class ModuleResourceRepository extends MultiResourceRepository {
    * @return the resource repository
    */
   @NotNull
-  public static LocalResourceRepository create(@NotNull final AndroidFacet facet) {
+  public static LocalResourceRepository create(@NotNull final AndroidModuleExtension facet) {
     boolean gradleProject = facet.isGradleProject();
     if (!gradleProject) {
       // Always just a single resource folder: simple
@@ -110,7 +113,7 @@ public final class ModuleResourceRepository extends MultiResourceRepository {
 
     folderManager.addListener(new ResourceFolderManager.ResourceFolderListener() {
       @Override
-      public void resourceFoldersChanged(@NotNull AndroidFacet facet, @NotNull List<VirtualFile> folders,
+      public void resourceFoldersChanged(@NotNull AndroidModuleExtension facet, @NotNull List<VirtualFile> folders,
                                          @NotNull Collection<VirtualFile> added, @NotNull Collection<VirtualFile> removed) {
         repository.updateRoots();
       }
@@ -182,7 +185,7 @@ public final class ModuleResourceRepository extends MultiResourceRepository {
    */
   @VisibleForTesting
   @NotNull
-  public static ModuleResourceRepository createForTest(@NotNull final AndroidFacet facet, @NotNull List<VirtualFile> resourceDirectories) {
+  public static ModuleResourceRepository createForTest(@NotNull final AndroidModuleExtension facet, @NotNull List<VirtualFile> resourceDirectories) {
     assert ApplicationManager.getApplication().isUnitTestMode();
     List<ResourceFolderRepository> resources = Lists.newArrayListWithExpectedSize(resourceDirectories.size());
     for (VirtualFile resourceDirectory : resourceDirectories) {

@@ -16,17 +16,17 @@
 
 package org.jetbrains.android.dom.animation;
 
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiClass;
+import com.intellij.util.ArrayUtil;
+import org.jetbrains.android.facet.ClassMapConstructor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.android.facet.AndroidFacet;
-import org.jetbrains.android.facet.ClassMapConstructor;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.psi.PsiClass;
+import org.must.android.module.extension.AndroidModuleExtension;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -57,7 +57,7 @@ public class AndroidAnimationUtils {
     return capitalizedTagName;
   }
 
-  public static List<String> getPossibleChildren(@NotNull AndroidFacet facet) {
+  public static List<String> getPossibleChildren(@NotNull AndroidModuleExtension facet) {
     List<String> children = new ArrayList<String>();
     Collections.addAll(children, TAG_NAMES);
     children.addAll(facet.getClassMap(INTERPOLATOR_CLASS_NAME, new ClassMapConstructor() {

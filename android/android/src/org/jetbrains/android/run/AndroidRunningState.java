@@ -23,7 +23,6 @@ import com.android.builder.model.AndroidArtifactOutput;
 import com.android.builder.model.BaseArtifact;
 import com.android.builder.model.Variant;
 import com.android.ddmlib.*;
-import com.android.ddmlib.TimeoutException;
 import com.android.ide.common.build.SplitOutputMatcher;
 import com.android.prefs.AndroidLocation;
 import com.android.sdklib.IAndroidTarget;
@@ -76,6 +75,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -116,6 +116,7 @@ import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.io.File;
@@ -160,10 +161,10 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
   private String myTestPackageName;
 
   private String myTargetPackageName;
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
   private final String myCommandLine;
   private final AndroidApplicationLauncher myApplicationLauncher;
-  private Map<AndroidFacet, String> myAdditionalFacet2PackageName;
+  private Map<AndroidModuleExtension, String> myAdditionalFacet2PackageName;
   private final AndroidRunConfigurationBase myConfiguration;
 
   private final Object myDebugLock = new Object();
@@ -362,7 +363,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
   }
 
   @Nullable
-  private String computePackageName(@NotNull final AndroidFacet facet) {
+  private String computePackageName(@NotNull final AndroidModuleExtension facet) {
     if (facet.getProperties().USE_CUSTOM_MANIFEST_PACKAGE) {
       return facet.getProperties().CUSTOM_MANIFEST_PACKAGE;
     }
@@ -426,13 +427,13 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
   }
 
   private boolean fillRuntimeAndTestDependencies(@NotNull Module module,
-                                                 @NotNull Map<AndroidFacet, String> module2PackageName) {
+                                                 @NotNull Map<AndroidModuleExtension, String> module2PackageName) {
     for (OrderEntry entry : ModuleRootManager.getInstance(module).getOrderEntries()) {
       if (entry instanceof ModuleOrderEntry) {
         ModuleOrderEntry moduleOrderEntry = (ModuleOrderEntry)entry;
         Module depModule = moduleOrderEntry.getModule();
         if (depModule != null) {
-          AndroidFacet depFacet = AndroidFacet.getInstance(depModule);
+          AndroidModuleExtension depFacet = ModuleUtilCore.getExtension(depModule, AndroidModuleExtension.class);
           if (depFacet != null &&
               !module2PackageName.containsKey(depFacet) &&
               !depFacet.isLibraryProject()) {
@@ -482,7 +483,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
   }
 
   @NotNull
-  public AndroidFacet getFacet() {
+  public AndroidModuleExtension getFacet() {
     return myFacet;
   }
 
@@ -535,7 +536,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
   }
 
   public AndroidRunningState(@NotNull ExecutionEnvironment environment,
-                             @NotNull AndroidFacet facet,
+                             @NotNull AndroidModuleExtension facet,
                              @Nullable TargetChooser targetChooser,
                              @NotNull String commandLine,
                              AndroidApplicationLauncher applicationLauncher,
@@ -1118,7 +1119,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
     final Map<String, List<String>> packageName2ModuleNames = new HashMap<String, List<String>>();
     packageName2ModuleNames.put(myPackageName, new ArrayList<String>(Arrays.asList(myFacet.getModule().getName())));
 
-    for (Map.Entry<AndroidFacet, String> entry : myAdditionalFacet2PackageName.entrySet()) {
+    for (Map.Entry<AndroidModuleExtension, String> entry : myAdditionalFacet2PackageName.entrySet()) {
       final String moduleName = entry.getKey().getModule().getName();
       final String packageName = entry.getValue();
       List<String> list = packageName2ModuleNames.get(packageName);
@@ -1205,7 +1206,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
 
   private boolean uploadAndInstallDependentModules(@NotNull IDevice device)
     throws IOException, AdbCommandRejectedException, TimeoutException {
-    for (AndroidFacet depFacet : myAdditionalFacet2PackageName.keySet()) {
+    for (AndroidModuleExtension depFacet : myAdditionalFacet2PackageName.keySet()) {
       String packageName = AndroidModuleInfo.get(depFacet).getPackage();
       if (packageName == null) {
         packageName = myAdditionalFacet2PackageName.get(depFacet);
@@ -1218,7 +1219,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
     return true;
   }
 
-  private static String computeTestPackageName(@NotNull AndroidFacet facet, @NotNull String packageName) {
+  private static String computeTestPackageName(@NotNull AndroidModuleExtension facet, @NotNull String packageName) {
     IdeaAndroidProject ideaAndroidProject = facet.getIdeaAndroidProject();
     if (ideaAndroidProject == null || !Projects.isBuildWithGradle(facet.getModule())) {
       return packageName;
@@ -1231,7 +1232,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
     return (testPackageName != null) ? testPackageName : packageName + DEFAULT_TEST_PACKAGE_SUFFIX;
   }
 
-  private boolean uploadAndInstall(@NotNull IDevice device, @NotNull String packageName, AndroidFacet facet)
+  private boolean uploadAndInstall(@NotNull IDevice device, @NotNull String packageName, AndroidModuleExtension facet)
     throws IOException, AdbCommandRejectedException, TimeoutException {
     final Module module = facet.getModule();
     String localPath;

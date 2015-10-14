@@ -33,6 +33,7 @@ import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.InputValidatorEx;
@@ -47,13 +48,13 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.PsiNavigateUtil;
 import com.intellij.xml.refactoring.XmlTagInplaceRenamer;
 import org.jetbrains.android.dom.transition.TransitionDomUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.uipreview.AndroidEditorSettings;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -176,12 +177,12 @@ public class CreateTypedResourceFileAction extends CreateResourceActionBase {
   }
 
   @NotNull
-  public List<String> getAllowedTagNames(@NotNull AndroidFacet facet) {
+  public List<String> getAllowedTagNames(@NotNull AndroidModuleExtension facet) {
     return Collections.singletonList(getDefaultRootTag());
   }
 
   @NotNull
-  protected final List<String> getSortedAllowedTagNames(@NotNull AndroidFacet facet) {
+  protected final List<String> getSortedAllowedTagNames(@NotNull AndroidModuleExtension facet) {
     final List<String> result = new ArrayList<String>(getAllowedTagNames(facet));
     Collections.sort(result);
     return result;
@@ -193,7 +194,7 @@ public class CreateTypedResourceFileAction extends CreateResourceActionBase {
 
   static boolean doIsAvailable(DataContext context, final String resourceType) {
     final PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(context);
-    if (element == null || AndroidFacet.getInstance(element) == null) {
+    if (element == null || ModuleUtilCore.getExtension(element, AndroidModuleExtension.class) == null) {
       return false;
     }
 

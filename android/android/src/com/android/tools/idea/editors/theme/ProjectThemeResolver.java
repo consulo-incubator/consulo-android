@@ -27,18 +27,16 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import static com.android.ide.common.resources.ResourceResolver.THEME_NAME;
-import static com.android.ide.common.resources.ResourceResolver.THEME_NAME_DOT;
 
 /**
  * Provides the ability to resolve all themes available in a particular project.
@@ -88,7 +86,7 @@ public class ProjectThemeResolver {
 
     // Looping through all modules in the project to collect all available themes.
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet == null) {
         // Not an Android module, skipping it.
         continue;

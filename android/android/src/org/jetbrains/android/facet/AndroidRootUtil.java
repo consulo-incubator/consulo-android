@@ -27,6 +27,7 @@ import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -35,14 +36,17 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.OrderedSet;
+import org.consulo.compiler.ModuleCompilerPathsManager;
 import org.jetbrains.android.compiler.AndroidDexCompiler;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.roots.impl.ProductionContentFolderTypeProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,10 +78,10 @@ public class AndroidRootUtil {
    * Returns the main manifest file of the module.
    *
    * @deprecated Modules can have multiple manifests. If you really want the main manifest
-   * of the module, use {@link #getPrimaryManifestFile(AndroidFacet)}, but to test if
+   * of the module, use {@link #getPrimaryManifestFile(AndroidModuleExtension)}, but to test if
    * a given file is a manifest, or to process all of them, use
-   * {@link IdeaSourceProvider#isManifestFile(AndroidFacet, VirtualFile)} or
-   * {@link IdeaSourceProvider#getManifestFiles(AndroidFacet)}.
+   * {@link IdeaSourceProvider#isManifestFile(AndroidModuleExtension, VirtualFile)} or
+   * {@link IdeaSourceProvider#getManifestFiles(AndroidModuleExtension)}.
    */
   @Nullable
   @Deprecated
@@ -91,35 +95,35 @@ public class AndroidRootUtil {
   /**
    * Returns the main manifest file of the module. Note that a module can have multiple
    * manifests so only use this if you really know you need to only look at the main manifests.
-   * To look at all manifests, use  {@link IdeaSourceProvider#getManifestFiles(AndroidFacet)}.
+   * To look at all manifests, use  {@link IdeaSourceProvider#getManifestFiles(AndroidModuleExtension)}.
    */
   @Nullable
-  public static VirtualFile getPrimaryManifestFile(@NotNull AndroidFacet facet) {
+  public static VirtualFile getPrimaryManifestFile(@NotNull AndroidModuleExtension<?> facet) {
     return facet.getMainIdeaSourceProvider().getManifestFile();
   }
 
   @Nullable
-  public static VirtualFile getCustomManifestFileForCompiler(@NotNull AndroidFacet facet) {
+  public static VirtualFile getCustomManifestFileForCompiler(@NotNull AndroidModuleExtension<?> facet) {
     return getFileByRelativeModulePath(facet.getModule(), facet.getProperties().CUSTOM_COMPILER_MANIFEST, false);
   }
 
   // DO NOT get PSI or DOM from this file, because it may be excluded (f.ex. it can be in /target/ directory)
   @Nullable
-  public static VirtualFile getManifestFileForCompiler(@NotNull AndroidFacet facet) {
+  public static VirtualFile getManifestFileForCompiler(@NotNull AndroidModuleExtension facet) {
     return facet.getProperties().USE_CUSTOM_COMPILER_MANIFEST ? getCustomManifestFileForCompiler(facet) : getPrimaryManifestFile(facet);
   }
 
   /**
-   * @deprecated You must use {@link AndroidFacet#getAllResourceDirectories()} instead
+   * @deprecated You must use {@link AndroidModuleExtension#getAllResourceDirectories()} instead
    */
   @Deprecated
   @Nullable
-  public static VirtualFile getResourceDir(@NotNull AndroidFacet facet) {
+  public static VirtualFile getResourceDir(@NotNull AndroidModuleExtension facet) {
     return facet.getPrimaryResourceDir();
   }
 
   @Nullable
-  private static String suggestResourceDirPath(@NotNull AndroidFacet facet) {
+  private static String suggestResourceDirPath(@NotNull AndroidModuleExtension facet) {
     Module module = facet.getModule();
 
     VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
@@ -130,7 +134,7 @@ public class AndroidRootUtil {
     VirtualFile root = contentRoots[0];
 
     if (contentRoots.length > 1) {
-      String moduleFileParentDirPath = toSystemIndependentName(new File(module.getModuleFilePath()).getParent());
+      String moduleFileParentDirPath = toSystemIndependentName(module.getModuleDirPath());
       VirtualFile moduleFileParentDir = LocalFileSystem.getInstance().findFileByPath(moduleFileParentDirPath);
       if (moduleFileParentDir != null) {
         for (VirtualFile contentRoot : contentRoots) {
@@ -144,7 +148,7 @@ public class AndroidRootUtil {
   }
 
   @Nullable
-  public static String getResourceDirPath(@NotNull AndroidFacet facet) {
+  public static String getResourceDirPath(@NotNull AndroidModuleExtension facet) {
     VirtualFile resourceDir = getResourceDir(facet);
     return resourceDir != null ? resourceDir.getPath() : suggestResourceDirPath(facet);
   }
@@ -157,7 +161,7 @@ public class AndroidRootUtil {
 
     VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
 
-    String moduleDirPath = new File(module.getModuleFilePath()).getParent();
+    String moduleDirPath = module.getModuleDirPath();
     if (moduleDirPath != null) {
       String absPath = toSystemIndependentName(moduleDirPath + relativePath);
       VirtualFile file = LocalFileSystem.getInstance().findFileByPath(absPath);
@@ -179,35 +183,35 @@ public class AndroidRootUtil {
   }
 
   @Nullable
-  public static VirtualFile getAssetsDir(@NotNull AndroidFacet facet) {
+  public static VirtualFile getAssetsDir(@NotNull AndroidModuleExtension facet) {
     return getFileByRelativeModulePath(facet.getModule(), facet.getProperties().ASSETS_FOLDER_RELATIVE_PATH, false);
   }
 
   @Nullable
-  public static VirtualFile getLibsDir(@NotNull AndroidFacet facet) {
+  public static VirtualFile getLibsDir(@NotNull AndroidModuleExtension facet) {
     return getFileByRelativeModulePath(facet.getModule(), facet.getProperties().LIBS_FOLDER_RELATIVE_PATH, false);
   }
 
   @Nullable
-  public static VirtualFile getAidlGenDir(@NotNull AndroidFacet facet) {
+  public static VirtualFile getAidlGenDir(@NotNull AndroidModuleExtension facet) {
     String genPath = getAidlGenSourceRootPath(facet);
     return genPath != null ? LocalFileSystem.getInstance().findFileByPath(genPath) : null;
   }
 
   @Nullable
-  public static VirtualFile getAaptGenDir(@NotNull AndroidFacet facet) {
+  public static VirtualFile getAaptGenDir(@NotNull AndroidModuleExtension facet) {
     String genPath = getAptGenSourceRootPath(facet);
     return genPath != null ? LocalFileSystem.getInstance().findFileByPath(genPath) : null;
   }
 
   @Nullable
-  public static VirtualFile getRenderscriptGenDir(@NotNull AndroidFacet facet) {
+  public static VirtualFile getRenderscriptGenDir(@NotNull AndroidModuleExtension facet) {
     String path = getRenderscriptGenSourceRootPath(facet);
     return path != null ? LocalFileSystem.getInstance().findFileByPath(path) : null;
   }
 
   @Nullable
-  public static VirtualFile getBuildconfigGenDir(@NotNull AndroidFacet facet) {
+  public static VirtualFile getBuildconfigGenDir(@NotNull AndroidModuleExtension facet) {
     String path = getBuildconfigGenSourceRootPath(facet);
     return path != null ? LocalFileSystem.getInstance().findFileByPath(path) : null;
   }
@@ -232,7 +236,7 @@ public class AndroidRootUtil {
         }
         else if ("jar".equals(child.getExtension()) || "class".equals(child.getExtension())) {
           if (child.getFileSystem() instanceof JarFileSystem) {
-            VirtualFile localFile = JarFileSystem.getInstance().getVirtualFileForJar(child);
+            VirtualFile localFile = ArchiveVfsUtil.getVirtualFileForJar(child);
             if (localFile != null) {
               result.add(localFile);
             }
@@ -273,7 +277,7 @@ public class AndroidRootUtil {
 
                 if (file.getFileType() instanceof ArchiveFileType) {
                   if (file.getFileSystem() instanceof JarFileSystem) {
-                    VirtualFile localFile = JarFileSystem.getInstance().getVirtualFileForJar(file);
+                    VirtualFile localFile = ArchiveVfsUtil.getVirtualFileForJar(file);
                     if (localFile != null) {
                       libraries.add(localFile);
                     }
@@ -293,12 +297,12 @@ public class AndroidRootUtil {
             if (depModule == null) {
               continue;
             }
-            AndroidFacet facet = AndroidFacet.getInstance(depModule);
+            AndroidModuleExtension facet = ModuleUtilCore.getExtension(depModule, AndroidModuleExtension.class);
             boolean libraryProject = facet != null && facet.isLibraryProject();
 
-            CompilerModuleExtension extension = CompilerModuleExtension.getInstance(depModule);
+            ModuleCompilerPathsManager extension = ModuleCompilerPathsManager.getInstance(depModule);
             if (extension != null) {
-              VirtualFile classDir = extension.getCompilerOutputPath();
+              VirtualFile classDir = extension.getCompilerOutput(ProductionContentFolderTypeProvider.getInstance());
 
               if (libraryProject) {
                 VirtualFile tmpArtifactsDir = AndroidDexCompiler.getOutputDirectoryForDex(depModule);
@@ -339,7 +343,7 @@ public class AndroidRootUtil {
   }
 
   private static void addAnnotationsJar(@NotNull Module module, @NotNull OrderedSet<VirtualFile> libs) {
-    Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
+    Sdk sdk = ModuleUtilCore.getSdk(module, AndroidModuleExtension.class);
     if (sdk == null || !isAndroidSdk(sdk)) {
       return;
     }
@@ -382,28 +386,23 @@ public class AndroidRootUtil {
 
   @Nullable
   public static String getModuleDirPath(Module module) {
-    String moduleFilePath = module.getModuleFilePath();
-    String moduleDirPath = new File(moduleFilePath).getParent();
-    if (moduleDirPath != null) {
-      moduleDirPath = toSystemIndependentName(moduleDirPath);
-    }
-    return moduleDirPath;
+    return module.getModuleDirPath();
   }
 
   @Nullable
-  public static String getRenderscriptGenSourceRootPath(@NotNull AndroidFacet facet) {
+  public static String getRenderscriptGenSourceRootPath(@NotNull AndroidModuleExtension facet) {
     // todo: return correct path for mavenized module when it'll be supported
     return getAidlGenSourceRootPath(facet);
   }
 
   @Nullable
-  public static String getBuildconfigGenSourceRootPath(@NotNull AndroidFacet facet) {
+  public static String getBuildconfigGenSourceRootPath(@NotNull AndroidModuleExtension facet) {
     // todo: return correct path for mavenized module when it'll be supported
     return getAptGenSourceRootPath(facet);
   }
 
   @Nullable
-  public static VirtualFile getMainContentRoot(@NotNull AndroidFacet facet) {
+  public static VirtualFile getMainContentRoot(@NotNull AndroidModuleExtension facet) {
     Module module = facet.getModule();
 
     VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
@@ -502,7 +501,7 @@ public class AndroidRootUtil {
   }
 
   @Nullable
-  public static String getAptGenSourceRootPath(@NotNull AndroidFacet facet) {
+  public static String getAptGenSourceRootPath(@NotNull AndroidModuleExtension facet) {
     String path = facet.getProperties().GEN_FOLDER_RELATIVE_PATH_APT;
     if (path.length() == 0) return null;
     String moduleDirPath = getModuleDirPath(facet.getModule());
@@ -510,7 +509,7 @@ public class AndroidRootUtil {
   }
 
   @Nullable
-  public static String getAidlGenSourceRootPath(@NotNull AndroidFacet facet) {
+  public static String getAidlGenSourceRootPath(@NotNull AndroidModuleExtension facet) {
     String path = facet.getProperties().GEN_FOLDER_RELATIVE_PATH_AIDL;
     if (path.length() == 0) return null;
     String moduleDirPath = getModuleDirPath(facet.getModule());
@@ -518,7 +517,7 @@ public class AndroidRootUtil {
   }
 
   @Nullable
-  public static String getApkPath(@NotNull AndroidFacet facet) {
+  public static String getApkPath(@NotNull AndroidModuleExtension facet) {
     IdeaAndroidProject ideaAndroidProject = facet.getIdeaAndroidProject();
     if (ideaAndroidProject != null) {
       // For Android-Gradle projects, IdeaAndroidProject is not null.

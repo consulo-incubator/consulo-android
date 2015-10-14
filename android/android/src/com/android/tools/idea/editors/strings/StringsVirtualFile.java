@@ -28,6 +28,7 @@ import icons.AndroidIcons;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 
@@ -35,15 +36,15 @@ public class StringsVirtualFile extends LightVirtualFile {
   public static final String NAME = "Translations Editor";
 
   private static final Key<StringsVirtualFile> KEY = Key.create(StringsVirtualFile.class.getName());
-  @NotNull private final AndroidFacet myFacet;
+  @NotNull private final AndroidModuleExtension myFacet;
 
-  private StringsVirtualFile(@NotNull AndroidFacet facet) {
+  private StringsVirtualFile(@NotNull AndroidModuleExtension facet) {
     super(NAME, StringsResourceFileType.INSTANCE, "");
     myFacet = facet;
   }
 
   @NotNull
-  public AndroidFacet getFacet() {
+  public AndroidModuleExtension getFacet() {
     return myFacet;
   }
 
@@ -51,8 +52,7 @@ public class StringsVirtualFile extends LightVirtualFile {
   public VirtualFile getParent() {
     // Returns the module folder as the parent of this file. This is only so that the breadcrumb at the top looks like
     // "project > module > Translations Editor" instead of just "Translations Editor"
-    VirtualFile moduleFile = myFacet.getModule().getModuleFile();
-    return moduleFile == null ? null : moduleFile.getParent();
+    return myFacet.getModule().getModuleDir();
   }
 
   @NotNull
@@ -69,7 +69,7 @@ public class StringsVirtualFile extends LightVirtualFile {
 
   @Nullable
   public static StringsVirtualFile getStringsVirtualFile(@NotNull Module module) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }

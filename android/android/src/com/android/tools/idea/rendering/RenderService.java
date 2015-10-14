@@ -39,7 +39,6 @@ import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiFile;
 import org.intellij.lang.annotations.MagicConstant;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.maven.AndroidMavenUtil;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.sdk.AndroidSdkUtils;
@@ -47,6 +46,7 @@ import org.jetbrains.android.uipreview.RenderingException;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.IOException;
 import java.util.List;
@@ -64,11 +64,11 @@ public class RenderService {
   private static final Object RENDERING_LOCK = new Object();
 
   @NotNull
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
 
   private final Object myCredential = new Object();
 
-  public RenderService(@NotNull AndroidFacet facet) {
+  public RenderService(@NotNull AndroidModuleExtension facet) {
     myFacet = facet;
   }
 
@@ -76,7 +76,7 @@ public class RenderService {
    * Returns the {@linkplain RenderService} for the given facet
    */
   @NotNull
-  public static RenderService get(@NotNull AndroidFacet facet) {
+  public static RenderService get(@NotNull AndroidModuleExtension facet) {
     return facet.getRenderService();
   }
 
@@ -204,7 +204,7 @@ public class RenderService {
   }
 
   @NotNull
-  public AndroidFacet getFacet() {
+  public AndroidModuleExtension getFacet() {
     return myFacet;
   }
 

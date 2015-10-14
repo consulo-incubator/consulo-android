@@ -23,10 +23,10 @@ import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.run.AndroidRunningState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -51,14 +51,14 @@ public abstract class CloudConfigurationProvider {
    * default configurations applicable for the project, and custom configurations specifically created by the user for that project.
    * */
   @NotNull
-  public abstract List<? extends CloudConfiguration> getCloudConfigurations(@NotNull AndroidFacet facet,
+  public abstract List<? extends CloudConfiguration> getCloudConfigurations(@NotNull AndroidModuleExtension facet,
                                                                             @NotNull Kind configurationKind);
 
   /** Shows a dialog that allows specifying a set of device configurations and returns the selected configuration.
    * Uses {@code kind} only if {@code selectedConfig} is {@code null}, otherwise the kind of the dialog matches the kind of
    * {@code selectedConfig}.*/
   @Nullable
-  public abstract CloudConfiguration openMatrixConfigurationDialog(@NotNull AndroidFacet facet,
+  public abstract CloudConfiguration openMatrixConfigurationDialog(@NotNull AndroidModuleExtension facet,
                                                                    @Nullable CloudConfiguration selectedConfig,
                                                                    @NotNull Kind configurationKind);
   /** Returns the cloud project id to use. */
@@ -70,7 +70,7 @@ public abstract class CloudConfigurationProvider {
    */
   public abstract void launchCloudDevice(int selectedConfigurationId,
                                          @NotNull String cloudProjectId,
-                                         @NotNull AndroidFacet facet);
+                                         @NotNull AndroidModuleExtension facet);
 
   @NotNull
   public abstract ExecutionResult executeCloudMatrixTests(int selectedConfigurationId,

@@ -29,6 +29,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Map;
 
@@ -37,10 +38,10 @@ import java.util.Map;
  */
 public class DynamicResourceValueRepository extends LocalResourceRepository implements GradleSyncListener,
                                                                                        BuildVariantView.BuildVariantSelectionChangeListener {
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
   private final Map<ResourceType, ListMultimap<String, ResourceItem>> mItems = Maps.newEnumMap(ResourceType.class);
 
-  private DynamicResourceValueRepository(@NotNull AndroidFacet facet) {
+  private DynamicResourceValueRepository(@NotNull AndroidModuleExtension facet) {
     super("Gradle Dynamic");
     myFacet = facet;
     assert facet.isGradleProject();
@@ -49,7 +50,7 @@ public class DynamicResourceValueRepository extends LocalResourceRepository impl
   }
 
   @NotNull
-  public static DynamicResourceValueRepository create(@NotNull AndroidFacet facet) {
+  public static DynamicResourceValueRepository create(@NotNull AndroidModuleExtension facet) {
     return new DynamicResourceValueRepository(facet);
   }
 

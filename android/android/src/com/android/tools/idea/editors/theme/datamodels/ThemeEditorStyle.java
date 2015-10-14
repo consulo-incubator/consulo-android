@@ -30,10 +30,10 @@ import com.android.tools.idea.editors.theme.ThemeEditorUtils;
 import com.android.tools.idea.rendering.AppResourceRepository;
 import com.android.tools.idea.rendering.LocalResourceRepository;
 import com.android.tools.idea.rendering.ProjectResourceRepository;
-import com.android.tools.idea.rendering.ResourceHelper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -48,6 +48,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidTargetData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -238,7 +239,7 @@ public class ThemeEditorStyle {
           // copy this theme at the minimum api level for this attribute
           ThemeEditorUtils.copyTheme(minAcceptableApi, apiInformation.toBeCopied);
 
-          AndroidFacet facet = AndroidFacet.getInstance(myConfiguration.getModule());
+          AndroidModuleExtension facet = ModuleUtilCore.getExtension(myConfiguration.getModule(), AndroidModuleExtension.class);
           if (facet != null) {
             facet.refreshResources();
           }

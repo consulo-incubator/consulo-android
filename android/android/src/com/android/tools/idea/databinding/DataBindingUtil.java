@@ -29,7 +29,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.lang.Language;
 import com.intellij.lang.java.JavaLanguage;
-import com.intellij.lang.java.JavaParserDefinition;
+import com.intellij.lexer.JavaLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -37,7 +37,9 @@ import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.light.*;
+import com.intellij.psi.impl.light.LightField;
+import com.intellij.psi.impl.light.LightIdentifier;
+import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.scope.ElementClassHint;
 import com.intellij.psi.scope.NameHint;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -50,10 +52,10 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.android.augment.AndroidLightClassBase;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -78,7 +80,7 @@ public class DataBindingUtil {
    * @param facet The facet for which the BR file is necessary.
    * @return The LightBRClass that belongs to the given AndroidFacet
    */
-  static LightBrClass getOrCreateBrClassFor(AndroidFacet facet) {
+  static LightBrClass getOrCreateBrClassFor(AndroidModuleExtension<?> facet) {
     LightBrClass existing = facet.getLightBrClass();
     if (existing == null) {
       //noinspection SynchronizationOnLocalVariableOrMethodParameter
@@ -93,11 +95,11 @@ public class DataBindingUtil {
     return existing;
   }
 
-  private static PsiType parsePsiType(String text, AndroidFacet facet, PsiElement context) {
+  private static PsiType parsePsiType(String text, AndroidModuleExtension<?> facet, PsiElement context) {
     return PsiElementFactory.SERVICE.getInstance(facet.getModule().getProject()).createTypeFromText(text, context);
   }
 
-  private static void handleGradleSyncResult(Project project, AndroidFacet facet) {
+  private static void handleGradleSyncResult(Project project, AndroidModuleExtension<?> facet) {
     boolean wasEnabled = facet.isDataBindingEnabled();
     boolean enabled = project != null && resolveHasDataBinding(facet);
     if (enabled != wasEnabled) {
@@ -106,7 +108,7 @@ public class DataBindingUtil {
     }
   }
 
-  public static PsiType resolveViewPsiType(DataBindingInfo.ViewWithId viewWithId, AndroidFacet facet) {
+  public static PsiType resolveViewPsiType(DataBindingInfo.ViewWithId viewWithId, AndroidModuleExtension<?> facet) {
     String viewClassName = getViewClassName(viewWithId.tag, facet);
     if (StringUtil.isNotEmpty(viewClassName)) {
       return parsePsiType(viewClassName, facet, null);
@@ -120,7 +122,7 @@ public class DataBindingUtil {
    * @param tag The {@linkplain XmlTag} that represents the View
    */
   @Nullable
-  private static String getViewClassName(XmlTag tag, AndroidFacet facet) {
+  private static String getViewClassName(XmlTag tag, AndroidModuleExtension<?> facet) {
     final String elementName = getViewName(tag);
     if (elementName.indexOf('.') == -1) {
       if (VIEW_PACKAGE_ELEMENTS.contains(elementName)) {
@@ -138,16 +140,16 @@ public class DataBindingUtil {
     }
   }
 
-  private static String getViewClassNameFromInclude(XmlTag tag, AndroidFacet facet) {
+  private static String getViewClassNameFromInclude(XmlTag tag, AndroidModuleExtension<?> facet) {
     String reference = getViewClassNameFromLayoutReferenceTag(tag, facet);
     return reference == null ? SdkConstants.CLASS_VIEW : reference;
   }
 
-  private static String getViewClassNameFromMerge(XmlTag tag, AndroidFacet facet) {
+  private static String getViewClassNameFromMerge(XmlTag tag, AndroidModuleExtension<?> facet) {
     return getViewClassNameFromLayoutReferenceTag(tag, facet);
   }
 
-  private static String getViewClassNameFromLayoutReferenceTag(XmlTag tag, AndroidFacet facet) {
+  private static String getViewClassNameFromLayoutReferenceTag(XmlTag tag, AndroidModuleExtension<?> facet) {
     String layout = tag.getAttributeValue(SdkConstants.ATTR_LAYOUT);
     if (layout == null) {
       return null;
@@ -175,7 +177,7 @@ public class DataBindingUtil {
     return viewName;
   }
 
-  private static boolean resolveHasDataBinding(AndroidFacet facet) {
+  private static boolean resolveHasDataBinding(AndroidModuleExtension<?> facet) {
     if (!facet.isGradleProject()) {
       return false;
     }
@@ -253,29 +255,29 @@ public class DataBindingUtil {
   /**
    * Returns the qualified name for the BR file for the given Facet.
    *
-   * @param facet The {@linkplain AndroidFacet} to check.
+   * @param facet The {@linkplain AndroidModuleExtension} to check.
    * @return The qualified name for the BR class of the given Android Facet.
    */
-  public static String getBrQualifiedName(AndroidFacet facet) {
+  public static String getBrQualifiedName(AndroidModuleExtension facet) {
     return getGeneratedPackageName(facet) + "." + BR;
   }
 
   /**
    * Returns the package name that will be use to generate R file or BR file.
    *
-   * @param facet The {@linkplain AndroidFacet} to check.
+   * @param facet The {@linkplain org.must.android.module.extension.AndroidModuleExtension} to check.
    * @return The package name that can be used to generate R and BR classes.
    */
-  public static String getGeneratedPackageName(AndroidFacet facet) {
+  public static String getGeneratedPackageName(AndroidModuleExtension<?> facet) {
     return ManifestInfo.get(facet.getModule(), false).getPackage();
   }
 
   /**
-   * Called by the {@linkplain AndroidFacet} to refresh its data binding status.
+   * Called by the {@linkplain AndroidModuleExtension} to refresh its data binding status.
    *
-   * @param facet the {@linkplain AndroidFacet} whose IdeaProject is just set.
+   * @param facet the {@linkplain AndroidModuleExtension} whose IdeaProject is just set.
    */
-  public static void onIdeaProjectSet(AndroidFacet facet) {
+  public static void onIdeaProjectSet(AndroidModuleExtension<?> facet) {
     handleGradleSyncResult(facet.getModule().getProject(), facet);
   }
 
@@ -292,10 +294,10 @@ public class DataBindingUtil {
 
     private PsiReferenceList myExtendsList;
     private PsiClassType[] myExtendsListTypes;
-    private final AndroidFacet myFacet;
+    private final AndroidModuleExtension<?> myFacet;
     private static Lexer ourJavaLexer;
 
-    protected LightBindingClass(final AndroidFacet facet, @NotNull PsiManager psiManager, DataBindingInfo info) {
+    protected LightBindingClass(final AndroidModuleExtension<?> facet, @NotNull PsiManager psiManager, DataBindingInfo info) {
       super(psiManager);
       myInfo = info;
       myFacet = facet;
@@ -519,7 +521,7 @@ public class DataBindingUtil {
 
     private static Lexer getJavaLexer() {
       if (ourJavaLexer == null) {
-        ourJavaLexer = JavaParserDefinition.createLexer(LanguageLevel.JDK_1_6);
+        ourJavaLexer = new JavaLexer(LanguageLevel.JDK_1_6);
       }
       return ourJavaLexer;
     }
@@ -700,14 +702,14 @@ public class DataBindingUtil {
    */
   public static class LightBrClass extends AndroidLightClassBase {
     private static final String BINDABLE_QUALIFIED_NAME = "android.databinding.Bindable";
-    private final AndroidFacet myFacet;
+    private final AndroidModuleExtension<?> myFacet;
     private CachedValue<PsiField[]> myFieldCache;
     @NotNull
     private String[] myCachedFieldNames = new String[]{"_all"};
     private final String myQualifiedName;
     private PsiFile myContainingFile;
 
-    public LightBrClass(@NotNull PsiManager psiManager, final AndroidFacet facet) {
+    public LightBrClass(@NotNull PsiManager psiManager, final AndroidModuleExtension<?> facet) {
       super(psiManager);
       myQualifiedName = getBrQualifiedName(facet);
       myFacet = facet;

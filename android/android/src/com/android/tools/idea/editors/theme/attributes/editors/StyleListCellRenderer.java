@@ -19,13 +19,14 @@ import com.android.SdkConstants;
 import com.android.tools.idea.editors.theme.ProjectThemeResolver;
 import com.android.tools.idea.editors.theme.ThemeEditorContext;
 import com.android.tools.idea.editors.theme.datamodels.ThemeEditorStyle;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -90,7 +91,7 @@ public class StyleListCellRenderer extends JPanel implements ListCellRenderer {
     String parentName = parent != null ? parent.getSimpleName() : null;
 
     String defaultAppTheme = null;
-    final AndroidFacet facet = AndroidFacet.getInstance(myContext.getCurrentThemeModule());
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(myContext.getCurrentThemeModule(), AndroidModuleExtension.class);
     if (facet != null) {
       Manifest manifest = facet.getManifest();
       if (manifest != null && manifest.getApplication() != null && manifest.getApplication().getXmlTag() != null) {

@@ -19,14 +19,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElementFinder;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiPackage;
+import com.intellij.psi.PsiJavaPackage;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class BrClassFinder extends PsiElementFinder {
         @Override
         public Result<Map<String, PsiClass>> compute() {
           Map<String, PsiClass> classes = new HashMap<String, PsiClass>();
-          for (AndroidFacet facet : myComponent.getDataBindingEnabledFacets()) {
+          for (AndroidModuleExtension<?> facet : myComponent.getDataBindingEnabledFacets()) {
             if (facet.isDataBindingEnabled()) {
               classes.put(DataBindingUtil.getBrQualifiedName(facet), DataBindingUtil.getOrCreateBrClassFor(facet));
             }
@@ -88,11 +88,11 @@ public class BrClassFinder extends PsiElementFinder {
 
   @Nullable
   @Override
-  public PsiPackage findPackage(@NotNull String qualifiedName) {
+  public PsiJavaPackage findPackage(@NotNull String qualifiedName) {
     if (!myComponent.hasAnyDataBindingEnabledFacet()) {
       return null;
     }
-    for (AndroidFacet facet : myComponent.getDataBindingEnabledFacets()) {
+    for (AndroidModuleExtension facet : myComponent.getDataBindingEnabledFacets()) {
       String generatedPackageName = DataBindingUtil.getGeneratedPackageName(facet);
       if (generatedPackageName.equals(qualifiedName)) {
         return myComponent.getOrCreateDataBindingPsiPackage(generatedPackageName);

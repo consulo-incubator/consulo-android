@@ -19,6 +19,7 @@ package org.jetbrains.android.dom;
 import com.android.SdkConstants;
 import com.android.resources.ResourceType;
 import com.google.common.collect.Maps;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
@@ -42,12 +43,12 @@ import org.jetbrains.android.dom.menu.MenuItem;
 import org.jetbrains.android.dom.resources.*;
 import org.jetbrains.android.dom.xml.PreferenceElement;
 import org.jetbrains.android.dom.xml.XmlResourceElement;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -335,7 +336,7 @@ public class AndroidDomUtil {
   }
 
   @Nullable
-  public static AttributeDefinition getAttributeDefinition(@NotNull AndroidFacet facet, @NotNull XmlAttribute attribute) {
+  public static AttributeDefinition getAttributeDefinition(@NotNull AndroidModuleExtension facet, @NotNull XmlAttribute attribute) {
     String localName = attribute.getLocalName();
     String namespace = attribute.getNamespace();
     boolean isFramework = namespace.equals(ANDROID_URI);
@@ -408,7 +409,7 @@ public class AndroidDomUtil {
 
   @Nullable
   public static AndroidAttributeValue<PsiClass> findComponentDeclarationInManifest(@NotNull PsiClass aClass) {
-    final AndroidFacet facet = AndroidFacet.getInstance(aClass);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(aClass, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }

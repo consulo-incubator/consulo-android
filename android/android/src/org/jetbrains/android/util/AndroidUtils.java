@@ -90,7 +90,6 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.impl.ContentImpl;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PsiNavigateUtil;
-import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.ui.UIUtil;
@@ -108,6 +107,7 @@ import org.jetbrains.android.run.TargetSelectionMode;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -115,9 +115,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
-
-import static com.android.SdkConstants.*;
-import static com.android.utils.SdkUtils.endsWithIgnoreCase;
 
 /**
  * @author yole, coyote
@@ -245,7 +242,7 @@ public class AndroidUtils {
     return null;
   }
 
-  public static void addRunConfiguration(@NotNull final AndroidFacet facet, @Nullable final String activityClass, final boolean ask,
+  public static void addRunConfiguration(@NotNull final AndroidModuleExtension facet, @Nullable final String activityClass, final boolean ask,
                                          @Nullable final TargetSelectionMode targetSelectionMode,
                                          @Nullable final String preferredAvdName) {
     final Module module = facet.getModule();

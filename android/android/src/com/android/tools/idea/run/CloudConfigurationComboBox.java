@@ -23,9 +23,9 @@ import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.run.AndroidRunConfigurationBase;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -46,7 +46,7 @@ public class CloudConfigurationComboBox extends ComboboxWithBrowseButton {
   private final Kind myConfigurationKind;
   private AndroidRunConfigurationBase myCurrentAndroidConfiguration;
   private Module myCurrentModule;
-  private AndroidFacet myCurrentFacet;
+  private AndroidModuleExtension myCurrentFacet;
   private List<? extends CloudConfiguration> myTestingConfigurations;
   private ActionListener myActionListener;
   private final CloudConfigurationProvider myConfigurationProvider;
@@ -89,7 +89,7 @@ public class CloudConfigurationComboBox extends ComboboxWithBrowseButton {
     CloudConfigurationCoordinator.getInstance(myConfigurationKind).addComboBox(this);
   }
 
-  public void setFacet(@NotNull AndroidFacet facet) {
+  public void setFacet(@NotNull AndroidModuleExtension facet) {
     if (!CloudConfigurationProvider.isEnabled()) {
       return; // Running tests in cloud is not enabled!
     }

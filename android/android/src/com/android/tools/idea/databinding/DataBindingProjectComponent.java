@@ -19,17 +19,20 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ModificationTracker;
+import com.intellij.psi.PsiJavaPackage;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import org.jetbrains.android.facet.AndroidFacet;
+import org.consulo.psi.PsiPackageManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.java.module.extension.JavaModuleExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,21 +43,21 @@ import java.util.concurrent.atomic.AtomicLong;
  * Keeps data binding information related to a project
  */
 public class DataBindingProjectComponent implements ProjectComponent, ModificationTracker {
-  final CachedValue<AndroidFacet[]> myDataBindingEnabledModules;
+  final CachedValue<AndroidModuleExtension[]> myDataBindingEnabledModules;
   final Project myProject;
   private AtomicLong myModificationCount = new AtomicLong(0);
-  private Map<String, PsiPackage> myDataBindingPsiPackages = Maps.newConcurrentMap();
+  private Map<String, PsiJavaPackage> myDataBindingPsiPackages = Maps.newConcurrentMap();
 
   public DataBindingProjectComponent(final Project project) {
     myProject = project;
-    myDataBindingEnabledModules = CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<AndroidFacet[]>() {
+    myDataBindingEnabledModules = CachedValuesManager.getManager(project).createCachedValue(new CachedValueProvider<AndroidModuleExtension[]>() {
       @Nullable
       @Override
-      public Result<AndroidFacet[]> compute() {
+      public Result<AndroidModuleExtension[]> compute() {
         Module[] modules = ModuleManager.getInstance(myProject).getModules();
-        List<AndroidFacet> facets = new ArrayList<AndroidFacet>();
+        List<AndroidModuleExtension> facets = new ArrayList<AndroidModuleExtension>();
         for (Module module : modules) {
-          AndroidFacet facet = AndroidFacet.getInstance(module);
+          AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
           if (facet == null) {
             continue;
           }
@@ -63,7 +66,7 @@ public class DataBindingProjectComponent implements ProjectComponent, Modificati
           }
         }
         myModificationCount.incrementAndGet();
-        return Result.create(facets.toArray(new AndroidFacet[facets.size()]), DataBindingUtil.DATA_BINDING_ENABLED_TRACKER, ModuleManager.getInstance(project));
+        return Result.create(facets.toArray(new AndroidModuleExtension[facets.size()]), DataBindingUtil.DATA_BINDING_ENABLED_TRACKER, ModuleManager.getInstance(project));
       }
     }, false);
   }
@@ -77,7 +80,7 @@ public class DataBindingProjectComponent implements ProjectComponent, Modificati
     return getDataBindingEnabledFacets().length > 0;
   }
 
-  public AndroidFacet[] getDataBindingEnabledFacets() {
+  public AndroidModuleExtension[] getDataBindingEnabledFacets() {
     return myDataBindingEnabledModules.getValue();
   }
 
@@ -113,17 +116,17 @@ public class DataBindingProjectComponent implements ProjectComponent, Modificati
   }
 
   /**
-   * Returns a {@linkplain PsiPackage} instance for the given package name.
+   * Returns a {@linkplain PsiJavaPackage} instance for the given package name.
    * <p>
    * If it does not exist in the cache, a new one is created.
    *
    * @param packageName The qualified package name
-   * @return A {@linkplain PsiPackage} that represents the given qualified name
+   * @return A {@linkplain PsiJavaPackage} that represents the given qualified name
    */
-  public synchronized PsiPackage getOrCreateDataBindingPsiPackage(String packageName) {
-    PsiPackage pkg = myDataBindingPsiPackages.get(packageName);
+  public synchronized PsiJavaPackage getOrCreateDataBindingPsiPackage(String packageName) {
+    PsiJavaPackage pkg = myDataBindingPsiPackages.get(packageName);
     if (pkg == null) {
-      pkg = new PsiPackageImpl(PsiManager.getInstance(myProject), packageName) {
+      pkg = new PsiPackageImpl(PsiManager.getInstance(myProject), PsiPackageManager.getInstance(myProject), JavaModuleExtension.class, packageName) {
         @Override
         public boolean isValid() {
           return true;

@@ -20,8 +20,8 @@ import com.android.sdklib.devices.State;
 import com.android.tools.idea.configurations.Configuration;
 import com.android.tools.idea.editors.navigation.model.ModelDimension;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.awt.*;
 
@@ -32,11 +32,11 @@ public class RenderingParameters {
   @NotNull
   public final Project project;
   @NotNull
-  public final AndroidFacet facet;
+  public final AndroidModuleExtension facet;
   @NotNull
   public final Configuration configuration;
 
-  public RenderingParameters(@NotNull AndroidFacet facet, @NotNull Configuration configuration) {
+  public RenderingParameters(@NotNull AndroidModuleExtension facet, @NotNull Configuration configuration) {
     this.project = facet.getModule().getProject();
     this.facet = facet;
     this.configuration = configuration;

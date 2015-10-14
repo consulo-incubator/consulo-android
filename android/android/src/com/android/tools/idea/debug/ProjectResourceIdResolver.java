@@ -19,12 +19,13 @@ import com.android.sdklib.IAndroidTarget;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import gnu.trove.TIntObjectHashMap;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 public class ProjectResourceIdResolver implements ResourceIdResolver {
   private final Project myProject;
@@ -54,9 +55,9 @@ public class ProjectResourceIdResolver implements ResourceIdResolver {
   }
 
   private TIntObjectHashMap<String> getIdMap() {
-    AndroidFacet facet = null;
+    AndroidModuleExtension facet = null;
     for (Module m : ModuleManager.getInstance(myProject).getModules()) {
-      facet = AndroidFacet.getInstance(m);
+      facet = ModuleUtilCore.getExtension(m, AndroidModuleExtension.class);
       if (facet != null) {
         break;
       }

@@ -17,8 +17,6 @@ package com.android.tools.idea.configurations;
 
 import com.android.annotations.Nullable;
 import com.android.ide.common.rendering.HardwareConfigHelper;
-import com.android.sdklib.AndroidVersion;
-import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.devices.Device;
 import com.android.sdklib.devices.State;
 import com.android.sdklib.internal.avd.AvdInfo;
@@ -30,11 +28,12 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.AndroidIcons;
 import org.jetbrains.android.actions.RunAndroidAvdManagerAction;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.*;
@@ -200,7 +199,7 @@ public class DeviceMenuAction extends FlatComboAction {
       }
     }
 
-    AndroidFacet facet = AndroidFacet.getInstance(configurationManager.getModule());
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(configurationManager.getModule(), AndroidModuleExtension.class);
     if (facet == null) {
       // Unlikely, but has happened - see http://b.android.com/68091
       return group;
