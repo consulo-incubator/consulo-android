@@ -24,6 +24,7 @@ import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -33,14 +34,14 @@ import java.util.List;
  * @author Eugene.Kudelevsky
  */
 public class AndroidFinalPackageElement extends PackagingElement<AndroidFinalPackageElement.AndroidFinalPackageElementState>
-  implements FacetBasedPackagingElement, ModuleOutputPackagingElement {
+  implements ModuleOutputPackagingElement {
 
   @NonNls static final String FACET_ATTRIBUTE = "facet";
 
   private FacetPointer<AndroidFacet> myFacetPointer;
   private final Project myProject;
 
-  public AndroidFinalPackageElement(@NotNull Project project, @Nullable AndroidFacet facet) {
+  public AndroidFinalPackageElement(@NotNull Project project, @Nullable AndroidModuleExtension facet) {
     super(AndroidFinalPackageElementType.getInstance());
     myProject = project;
     myFacetPointer = facet != null ? FacetPointersManager.getInstance(myProject).create(facet) : null;
@@ -84,7 +85,7 @@ public class AndroidFinalPackageElement extends PackagingElement<AndroidFinalPac
   }
 
   @Nullable
-  public AndroidFacet getFacet() {
+  public AndroidModuleExtension getFacet() {
     return myFacetPointer != null ? myFacetPointer.getFacet() : null;
   }
 

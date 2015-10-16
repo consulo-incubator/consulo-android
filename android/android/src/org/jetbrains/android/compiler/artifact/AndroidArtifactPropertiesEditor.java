@@ -12,10 +12,10 @@ import com.intellij.ui.EnumComboBoxModel;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -226,7 +226,7 @@ public class AndroidArtifactPropertiesEditor extends ArtifactPropertiesEditor im
     myProGuardConfigFilesPanel = new ProGuardConfigFilesPanel() {
       @Nullable
       @Override
-      protected AndroidFacet getFacet() {
+      protected AndroidModuleExtension getFacet() {
         return AndroidArtifactUtil.getPackagedFacet(myProject, myArtifact);
       }
     };

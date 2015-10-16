@@ -1,9 +1,9 @@
 package org.jetbrains.android.compiler.artifact;
 
-import com.intellij.facet.FacetModel;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootModel;
 import com.intellij.openapi.roots.ui.configuration.artifacts.sourceItems.LibrarySourceItem;
 import com.intellij.openapi.roots.ui.configuration.artifacts.sourceItems.ModuleOutputSourceItem;
 import com.intellij.packaging.artifacts.Artifact;
@@ -16,9 +16,8 @@ import com.intellij.packaging.elements.PackagingElementOutputKind;
 import com.intellij.packaging.elements.PackagingElementResolvingContext;
 import com.intellij.packaging.impl.artifacts.ArtifactUtil;
 import com.intellij.packaging.ui.PackagingSourceItem;
-import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -52,18 +51,18 @@ public class AndroidApplicationArtifactType extends ArtifactType {
   @NotNull
   @Override
   public CompositePackagingElement<?> createRootElement(@NotNull String artifactName) {
-    return PackagingElementFactory.getInstance().createArchive(ArtifactUtil.suggestArtifactFileName(artifactName) + ".apk");
+    return PackagingElementFactory.getInstance().createZipArchive(ArtifactUtil.suggestArtifactFileName(artifactName) + ".apk");
   }
 
 
   @NotNull
   @Override
   public List<? extends ArtifactTemplate> getNewArtifactTemplates(@NotNull PackagingElementResolvingContext context) {
-    final List<AndroidFacet> facets = new ArrayList<AndroidFacet>();
+    final List<AndroidModuleExtension> facets = new ArrayList<AndroidModuleExtension>();
 
     for (Module module : context.getModulesProvider().getModules()) {
-      final FacetModel facetModel = context.getModulesProvider().getFacetModel(module);
-      final AndroidFacet facet = facetModel.getFacetByType(AndroidFacet.ID);
+      final ModuleRootModel facetModel = context.getModulesProvider().getRootModel(module);
+      final AndroidModuleExtension facet = facetModel.getExtension(AndroidModuleExtension.class);
 
       if (facet != null && !facet.isLibraryProject()) {
         facets.add(facet);
@@ -76,15 +75,16 @@ public class AndroidApplicationArtifactType extends ArtifactType {
     return Collections.singletonList(new MyTemplate(context.getProject(), facets));
   }
 
+  @NotNull
   public static ArtifactType getInstance() {
-    return ContainerUtil.findInstance(getAllTypes(), AndroidApplicationArtifactType.class);
+    return EP_NAME.findExtension(AndroidApplicationArtifactType.class);
   }
 
   private class MyTemplate extends ArtifactTemplate {
     private final Project myProject;
-    private final List<AndroidFacet> myFacets;
+    private final List<AndroidModuleExtension> myFacets;
 
-    private MyTemplate(@NotNull Project project, @NotNull List<AndroidFacet> facets) {
+    private MyTemplate(@NotNull Project project, @NotNull List<AndroidModuleExtension> facets) {
       assert facets.size() > 0;
       myProject = project;
       myFacets = facets;
@@ -99,7 +99,7 @@ public class AndroidApplicationArtifactType extends ArtifactType {
 
     @Override
     public NewArtifactConfiguration createArtifact() {
-      final AndroidFacet facet = myFacets.size() == 1
+      final AndroidModuleExtension facet = myFacets.size() == 1
                                  ? myFacets.get(0)
                                  : AndroidArtifactUtil.chooseAndroidApplicationModule(myProject, myFacets);
       if (facet == null) {
@@ -114,7 +114,7 @@ public class AndroidApplicationArtifactType extends ArtifactType {
 
     @Override
     public void setUpArtifact(@NotNull Artifact artifact, @NotNull NewArtifactConfiguration configuration) {
-      final AndroidFacet facet = AndroidArtifactUtil.getPackagedFacet(myProject, artifact);
+      final AndroidModuleExtension facet = AndroidArtifactUtil.getPackagedFacet(myProject, artifact);
 
       if (facet != null) {
         final ArtifactProperties<?> properties = artifact.getProperties(AndroidArtifactPropertiesProvider.getInstance());

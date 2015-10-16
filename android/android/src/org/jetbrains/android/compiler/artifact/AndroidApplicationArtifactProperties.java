@@ -14,12 +14,12 @@ import com.intellij.util.Base64;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.android.compiler.AndroidCompileUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidCompilerMessageKind;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -53,7 +53,7 @@ public class AndroidApplicationArtifactProperties extends ArtifactProperties<And
       return;
     }
 
-    final AndroidFacet facet = AndroidArtifactUtil.getPackagedFacet(context.getProject(), artifact);
+    final AndroidModuleExtension facet = AndroidArtifactUtil.getPackagedFacet(context.getProject(), artifact);
     if (facet == null) {
       return;
     }

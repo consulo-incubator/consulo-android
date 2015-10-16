@@ -11,6 +11,7 @@ import icons.AndroidIcons;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -32,21 +33,21 @@ public class AndroidFinalPackageElementType extends PackagingElementType<Android
   }
 
   @Override
-  public Icon getCreateElementIcon() {
+  public Icon getIcon() {
     return AndroidIcons.Android;
   }
 
   @Override
-  public boolean canCreate(@NotNull ArtifactEditorContext context, @NotNull Artifact artifact) {
+  public boolean isAvailableForAdd(@NotNull ArtifactEditorContext context, @NotNull Artifact artifact) {
     return getAndroidApplicationFacets(context, context.getModulesProvider().getModules()).size() > 0 &&
            !AndroidArtifactUtil.containsAndroidPackage(context, artifact);
   }
 
   @NotNull
-  private static List<AndroidFacet> getAndroidApplicationFacets(@NotNull ArtifactEditorContext context, @NotNull Module[] modules) {
-    final List<AndroidFacet> result = new ArrayList<AndroidFacet>();
+  private static List<AndroidModuleExtension> getAndroidApplicationFacets(@NotNull ArtifactEditorContext context, @NotNull Module[] modules) {
+    final List<AndroidModuleExtension> result = new ArrayList<AndroidModuleExtension>();
     for (Module module : modules) {
-      for (AndroidFacet facet : context.getFacetsProvider().getFacetsByType(module, AndroidFacet.ID)) {
+      for (AndroidModuleExtension facet : context.getFacetsProvider().getFacetsByType(module, AndroidFacet.ID)) {
         if (!facet.isLibraryProject()) {
           result.add(facet);
         }
@@ -60,9 +61,9 @@ public class AndroidFinalPackageElementType extends PackagingElementType<Android
   public List<? extends PackagingElement<?>> chooseAndCreate(@NotNull ArtifactEditorContext context,
                                                              @NotNull Artifact artifact,
                                                              @NotNull CompositePackagingElement<?> parent) {
-    final List<AndroidFacet> facets = getAndroidApplicationFacets(context, context.getModulesProvider().getModules());
+    final List<AndroidModuleExtension> facets = getAndroidApplicationFacets(context, context.getModulesProvider().getModules());
 
-    final AndroidFacet facet = AndroidArtifactUtil.chooseAndroidApplicationModule(context.getProject(), facets);
+    final AndroidModuleExtension facet = AndroidArtifactUtil.chooseAndroidApplicationModule(context.getProject(), facets);
     if (facet == null) {
       return Collections.emptyList();
     }

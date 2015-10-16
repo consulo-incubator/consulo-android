@@ -13,9 +13,9 @@ import com.intellij.packaging.impl.artifacts.ArtifactUtil;
 import com.intellij.packaging.ui.ArtifactEditorContext;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.HashMap;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,12 +42,12 @@ public class AndroidArtifactUtil {
     if (!(artifact.getArtifactType() instanceof AndroidApplicationArtifactType)) {
       return false;
     }
-    final AndroidFacet facet = getPackagedFacet(module.getProject(), artifact);
+    final AndroidModuleExtension facet = getPackagedFacet(module.getProject(), artifact);
     return facet != null && module.equals(facet.getModule());
   }
 
   @Nullable
-  public static AndroidFacet getPackagedFacet(Project project, Artifact artifact) {
+  public static AndroidModuleExtension getPackagedFacet(Project project, Artifact artifact) {
     final Ref<AndroidFinalPackageElement> elementRef = Ref.create(null);
     final PackagingElementResolvingContext resolvingContext = ArtifactManager.getInstance(project).getResolvingContext();
     ArtifactUtil
@@ -63,11 +63,11 @@ public class AndroidArtifactUtil {
   }
 
   @Nullable
-  public static AndroidFacet chooseAndroidApplicationModule(@NotNull Project project,
-                                                            @NotNull List<AndroidFacet> facets) {
-    final Map<Module, AndroidFacet> map = new HashMap<Module, AndroidFacet>();
+  public static AndroidModuleExtension chooseAndroidApplicationModule(@NotNull Project project,
+                                                            @NotNull List<AndroidModuleExtension> facets) {
+    final Map<Module, AndroidModuleExtension> map = new HashMap<Module, AndroidModuleExtension>();
 
-    for (AndroidFacet facet : facets) {
+    for (AndroidModuleExtension facet : facets) {
       map.put(facet.getModule(), facet);
     }
     String message = "Selected Android application module will be included in the created artifact with all dependencies";
@@ -83,7 +83,7 @@ public class AndroidArtifactUtil {
     final Module module = selected.get(0);
     final String moduleName = module.getName();
 
-    final AndroidFacet facet = map.get(module);
+    final AndroidModuleExtension facet = map.get(module);
     if (facet == null) {
       message = "Cannot find Android facet for module " + moduleName;
       Messages.showErrorDialog(project, message, CommonBundle.getErrorTitle());
