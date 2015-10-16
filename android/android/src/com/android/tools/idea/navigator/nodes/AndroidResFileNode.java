@@ -25,25 +25,21 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Queryable;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.SimpleTextAttributes;
-import com.siyeh.ig.internationalization.CharacterComparisonInspection;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Comparator;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 public class AndroidResFileNode extends PsiFileNode implements Comparable {
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
 
   public AndroidResFileNode(@NotNull Project project,
                             @NotNull PsiFile psiFile,
                             @NotNull ViewSettings settings,
-                            @NotNull AndroidFacet facet) {
+                            @NotNull AndroidModuleExtension facet) {
     super(project, psiFile, settings);
     myFacet = facet;
   }

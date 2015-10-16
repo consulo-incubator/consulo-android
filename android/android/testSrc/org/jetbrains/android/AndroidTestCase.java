@@ -28,6 +28,7 @@ import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.LanguageLevelProjectExtension;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.Disposer;
@@ -47,6 +48,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -219,7 +221,7 @@ public abstract class AndroidTestCase extends AndroidTestBase {
   }
 
   protected void deleteManifest(final Module module) throws IOException {
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
     assertNotNull(facet);
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override

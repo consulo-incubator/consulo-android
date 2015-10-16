@@ -2,6 +2,7 @@ package org.jetbrains.android;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -15,10 +16,10 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.android.dom.AndroidAttributeValue;
 import org.jetbrains.android.dom.AndroidDomUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +40,7 @@ public class AndroidComponentSafeDeleteProcessor extends SafeDeleteProcessorDele
   public boolean handlesElement(PsiElement element) {
     return getBaseHandler().handlesElement(element) &&
            element instanceof PsiClass &&
-           AndroidFacet.getInstance(element) != null &&
+           ModuleUtilCore.getExtension(element, AndroidModuleExtension.class) != null &&
            AndroidUtils.isAndroidComponent((PsiClass)element);
   }
 

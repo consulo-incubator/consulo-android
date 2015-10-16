@@ -24,15 +24,16 @@ import com.google.common.collect.Iterators;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -66,7 +67,7 @@ abstract public class CommonAssetSetStep extends TemplateWizardStep implements D
     super(state, project, module, sidePanelIcon, updateListener);
     myAssetGenerator = new AssetStudioAssetGenerator(state);
     if (invocationTarget != null && module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(myModule);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
       if (facet != null) {
         mySourceProvider = Iterators.getNext(IdeaSourceProvider.getSourceProvidersForFile(facet, invocationTarget, null).iterator(), null);
       }
@@ -151,7 +152,7 @@ abstract public class CommonAssetSetStep extends TemplateWizardStep implements D
     if (targetResDir == null) {
       if (myTemplateState.hasAttr(TemplateMetadata.ATTR_RES_DIR)) {
         assert module != null;
-        File moduleDir = new File(module.getModuleFilePath()).getParentFile();
+        File moduleDir = new File(module.getModuleDirPath());
         targetResDir = new File(moduleDir, myTemplateState.getString(TemplateMetadata.ATTR_RES_DIR));
       } else {
         return;

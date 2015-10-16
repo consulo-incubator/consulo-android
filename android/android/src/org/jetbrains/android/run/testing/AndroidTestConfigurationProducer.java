@@ -27,19 +27,21 @@ import com.intellij.execution.junit.JUnitUtil;
 import com.intellij.execution.junit.JavaRunConfigurationProducerBase;
 import com.intellij.execution.junit.JavaRuntimeConfigurationProducerBase;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiJavaPackage;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiPackage;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.android.facet.AndroidFacet;
+import org.consulo.psi.PsiPackage;
 import org.jetbrains.android.run.AndroidRunConfigurationType;
 import org.jetbrains.android.run.TargetSelectionMode;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -159,7 +161,7 @@ public class AndroidTestConfigurationProducer extends JavaRunConfigurationProduc
     }
     final PsiElement element = location.getPsiElement();
 
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       return false;
     }
@@ -180,7 +182,7 @@ public class AndroidTestConfigurationProducer extends JavaRunConfigurationProduc
     return setupClassConfiguration(configuration, element, context, sourceElement);
   }
 
-  private static void setupInstrumentationTestRunner(@NotNull AndroidTestRunConfiguration configuration, @NotNull AndroidFacet facet) {
+  private static void setupInstrumentationTestRunner(@NotNull AndroidTestRunConfiguration configuration, @NotNull AndroidModuleExtension facet) {
     configuration.INSTRUMENTATION_RUNNER_CLASS = StringUtil.notNullize(AndroidTestRunConfiguration.findInstrumentationRunner(facet));
   }
 
@@ -198,7 +200,7 @@ public class AndroidTestConfigurationProducer extends JavaRunConfigurationProduc
       return false;
     }
     final PsiElement element = location.getPsiElement();
-    final PsiPackage psiPackage = JavaRuntimeConfigurationProducerBase.checkPackage(element);
+    final PsiJavaPackage psiPackage = JavaRuntimeConfigurationProducerBase.checkPackage(element);
     final String packageName = psiPackage == null ? null : psiPackage.getQualifiedName();
 
     final PsiClass elementClass = PsiTreeUtil.getParentOfType(element, PsiClass.class, false);

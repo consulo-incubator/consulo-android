@@ -17,23 +17,25 @@ package com.android.tools.idea.navigator.nodes;
 
 import com.intellij.icons.AllIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.model.java.JavaResourceRootType;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
-import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
+import org.mustbe.consulo.roots.ContentFolderTypeProvider;
+import org.mustbe.consulo.roots.impl.ProductionContentFolderTypeProvider;
+import org.mustbe.consulo.roots.impl.ProductionResourceContentFolderTypeProvider;
+import org.mustbe.consulo.roots.impl.TestContentFolderTypeProvider;
+import org.mustbe.consulo.roots.impl.TestResourceContentFolderTypeProvider;
 
 import javax.swing.*;
 
 public enum NonAndroidSourceType {
-  JAVA(JavaSourceRootType.SOURCE, "java", AllIcons.Modules.SourceRoot),
-  TESTS(JavaSourceRootType.TEST_SOURCE, "tests", AllIcons.Modules.SourceRoot),
-  RESOURCES(JavaResourceRootType.RESOURCE, "resources", AllIcons.Modules.ResourcesRoot),
-  TEST_RESOURCES(JavaResourceRootType.TEST_RESOURCE, "test-resources", AllIcons.Modules.TestResourcesRoot);
+  JAVA(ProductionContentFolderTypeProvider.getInstance(), "java", AllIcons.Modules.SourceRoot),
+  TESTS(TestContentFolderTypeProvider.getInstance(), "tests", AllIcons.Modules.SourceRoot),
+  RESOURCES(ProductionResourceContentFolderTypeProvider.getInstance(), "resources", AllIcons.Modules.ResourcesRoot),
+  TEST_RESOURCES(TestResourceContentFolderTypeProvider.getInstance(), "test-resources", AllIcons.Modules.TestResourcesRoot);
 
-  @NotNull public final JpsModuleSourceRootType rootType;
+  @NotNull public final ContentFolderTypeProvider rootType;
   @NotNull public final String presentableName;
   @NotNull public final Icon icon;
 
-  NonAndroidSourceType(JpsModuleSourceRootType rootType, String name, Icon icon) {
+  NonAndroidSourceType(ContentFolderTypeProvider rootType, String name, Icon icon) {
     this.rootType = rootType;
     this.presentableName = name;
     this.icon = icon;

@@ -43,17 +43,21 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
+import org.consulo.psi.PsiPackage;
 import org.jetbrains.android.dom.manifest.Instrumentation;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
-import org.jetbrains.android.facet.AndroidFacetConfiguration;
 import org.jetbrains.android.run.*;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.IOException;
 
@@ -82,7 +86,7 @@ public class AndroidTestRunConfiguration extends AndroidRunConfigurationBase imp
   }
 
   @Override
-  protected Pair<Boolean, String> supportsRunningLibraryProjects(@NotNull AndroidFacet facet) {
+  protected Pair<Boolean, String> supportsRunningLibraryProjects(@NotNull AndroidModuleExtension facet) {
     if (!facet.isGradleProject()) {
       // Non Gradle projects always require an application
       return Pair.create(Boolean.FALSE, AndroidBundle.message("android.cannot.run.library.project.error"));
@@ -131,7 +135,7 @@ public class AndroidTestRunConfiguration extends AndroidRunConfigurationBase imp
   }
 
   @Override
-  public void checkConfiguration(@NotNull AndroidFacet facet) throws RuntimeConfigurationException {
+  public void checkConfiguration(@NotNull AndroidModuleExtension facet) throws RuntimeConfigurationException {
     if (getTargetSelectionMode() == TargetSelectionMode.CLOUD_MATRIX_TEST && !IS_VALID_CLOUD_MATRIX_SELECTION) {
       throw new RuntimeConfigurationError(INVALID_CLOUD_MATRIX_SELECTION_ERROR);
     }
@@ -174,10 +178,10 @@ public class AndroidTestRunConfiguration extends AndroidRunConfigurationBase imp
       return null;
     }
 
-    final AndroidFacet facet = state.getFacet();
-    final AndroidFacetConfiguration configuration = facet.getConfiguration();
+    final AndroidModuleExtension facet = state.getFacet();
+    final JpsAndroidModuleProperties configuration = facet.getProperties();
 
-    if (!facet.isGradleProject() && !configuration.getState().PACK_TEST_CODE) {
+    if (!facet.isGradleProject() && !configuration.PACK_TEST_CODE) {
       final Module module = facet.getModule();
       final int count = getTestSourceRootCount(module);
       
@@ -189,7 +193,7 @@ public class AndroidTestRunConfiguration extends AndroidRunConfigurationBase imp
           Messages.showYesNoCancelDialog(getProject(), message, "Test code not included into APK", Messages.getQuestionIcon());
         
         if (result == Messages.YES) {
-          configuration.getState().PACK_TEST_CODE = true;
+          configuration.PACK_TEST_CODE = true;
         }
         else if (result == Messages.CANCEL) {
           return null;
@@ -243,9 +247,9 @@ public class AndroidTestRunConfiguration extends AndroidRunConfigurationBase imp
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     Project project = getProject();
     AndroidRunConfigurationEditor<AndroidTestRunConfiguration> editor =
-      new AndroidRunConfigurationEditor<AndroidTestRunConfiguration>(project, new Predicate<AndroidFacet>() {
+      new AndroidRunConfigurationEditor<AndroidTestRunConfiguration>(project, new Predicate<AndroidModuleExtension>() {
         @Override
-        public boolean apply(@Nullable AndroidFacet facet) {
+        public boolean apply(@Nullable AndroidModuleExtension facet) {
           return facet != null && supportsRunningLibraryProjects(facet).getFirst();
         }
       });
@@ -268,13 +272,13 @@ public class AndroidTestRunConfiguration extends AndroidRunConfigurationBase imp
   }
 
   @Override
-  protected AndroidApplicationLauncher getApplicationLauncher(AndroidFacet facet) {
+  protected AndroidApplicationLauncher getApplicationLauncher(AndroidModuleExtension facet) {
     String runner = StringUtil.isEmpty(INSTRUMENTATION_RUNNER_CLASS) ? findInstrumentationRunner(facet) : INSTRUMENTATION_RUNNER_CLASS;
     return new MyApplicationLauncher(runner);
   }
 
   @Nullable
-  public static String findInstrumentationRunner(@NotNull AndroidFacet facet) {
+  public static String findInstrumentationRunner(@NotNull AndroidModuleExtension facet) {
     String runner = getRunnerFromManifest(facet);
 
     IdeaAndroidProject ideaAndroidProject = facet.getIdeaAndroidProject();
@@ -290,7 +294,7 @@ public class AndroidTestRunConfiguration extends AndroidRunConfigurationBase imp
   }
 
   @Nullable
-  private static String getRunnerFromManifest(@NotNull AndroidFacet facet) {
+  private static String getRunnerFromManifest(@NotNull AndroidModuleExtension facet) {
     Manifest manifest = facet.getManifest();
     if (manifest != null) {
       for (Instrumentation instrumentation : manifest.getInstrumentations()) {

@@ -16,6 +16,7 @@
 package org.jetbrains.android.newProject;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.ui.DocumentAdapter;
@@ -28,6 +29,7 @@ import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -161,7 +163,7 @@ public class AndroidAppPropertiesEditor {
 
     if (!library) {
       for (Module module : modulesProvider.getModules()) {
-        final AndroidFacet facet = AndroidFacet.getInstance(module);
+        final AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
         if (facet != null && !facet.isLibraryProject()) {
           final Manifest manifest = facet.getManifest();
           if (manifest != null) {

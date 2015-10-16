@@ -31,13 +31,13 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.ClickListener;
 import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.ListCellRendererWrapper;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.sdk.AndroidSdkUtils;
 import org.jetbrains.android.sdk.MessageBuildingSdkLog;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -157,7 +157,7 @@ public class CreateAvdDialog extends DialogWrapper {
   }
 
   public CreateAvdDialog(@NotNull Project project,
-                         @NotNull AndroidFacet facet,
+                         @NotNull AndroidModuleExtension facet,
                          @NotNull AvdManager manager,
                          boolean onlyCompatibleTargets,
                          boolean showAvdInfo) {
@@ -214,7 +214,7 @@ public class CreateAvdDialog extends DialogWrapper {
         }
       }
     });
-    IAndroidTarget target = facet.getConfiguration().getAndroidTarget();
+    IAndroidTarget target = facet.getAndroidTarget();
     if (target != null) {
       myTargetBox.setSelectedItem(target);
       if (onlyCompatibleTargets) {

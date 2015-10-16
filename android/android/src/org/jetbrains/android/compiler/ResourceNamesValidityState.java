@@ -4,6 +4,7 @@ import com.android.resources.ResourceType;
 import com.android.sdklib.IAndroidTarget;
 import com.intellij.openapi.compiler.ValidityState;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
@@ -21,6 +22,7 @@ import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.ResourceEntry;
 import org.jetbrains.android.util.ResourceFileData;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -40,7 +42,7 @@ public class ResourceNamesValidityState implements ValidityState {
   private final long myManifestTimestamp;
 
   public ResourceNamesValidityState(@NotNull Module module) {
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     assert facet != null;
 
     final AndroidPlatform platform = facet.getConfiguration().getAndroidPlatform();

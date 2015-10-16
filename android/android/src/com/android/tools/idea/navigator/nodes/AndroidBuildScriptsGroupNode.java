@@ -109,7 +109,7 @@ public class AndroidBuildScriptsGroupNode extends ProjectViewNode<List<PsiDirect
 
   @NotNull
   private static List<VirtualFile> findAllGradleScriptsInModule(@NotNull Module m) {
-    File moduleDir = new File(m.getModuleFilePath()).getParentFile();
+    File moduleDir = new File(m.getModuleDirPath());
     VirtualFile dir = VfsUtil.findFileByIoFile(moduleDir, false);
     if (dir == null || dir.getChildren() == null) {
       return Collections.emptyList();

@@ -42,7 +42,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.net.HttpConfigurable;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.sdk.AndroidSdkType;
@@ -696,7 +695,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
   public AbstractResourceRepository getProjectResources(com.android.tools.lint.detector.api.Project project, boolean includeDependencies) {
     final Module module = findModuleForLintProject(myProject, project);
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         return includeDependencies ? facet.getProjectResources(true) : facet.getModuleResources(true);
       }

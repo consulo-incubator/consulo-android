@@ -16,11 +16,13 @@
 package com.intellij.android.designer.designSurface;
 
 import com.intellij.designer.designSurface.DesignerEditorPanel;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiTreeChangeEvent;
 import org.jetbrains.android.facet.AndroidFacet;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Alexander Lobas
@@ -37,7 +39,7 @@ public class ExternalPSIChangeListener extends com.intellij.designer.designSurfa
     super.deactivate();
 
     if (!myDesigner.isProjectClosed()) {
-      AndroidFacet facet = AndroidFacet.getInstance(myDesigner.getModule());
+      AndroidFacet facet = ModuleUtilCore.getExtension(myDesigner.getModule(), AndroidModuleExtension.class);
       myResourceDepends = facet == null ? null : facet.getLocalResourceManager().getAllResourceDirs();
     }
   }

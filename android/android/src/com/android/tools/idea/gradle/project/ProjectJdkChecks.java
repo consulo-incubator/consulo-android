@@ -32,6 +32,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
@@ -44,6 +45,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.groovy.lang.lexer.GroovyLexer;
 import org.jetbrains.plugins.groovy.lang.lexer.GroovyTokenTypes;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -56,7 +58,7 @@ final class ProjectJdkChecks {
   }
 
   static boolean hasCorrectJdkVersion(@NotNull Module module) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet != null && facet.getIdeaAndroidProject() != null) {
       return hasCorrectJdkVersion(module, facet.getIdeaAndroidProject());
     }

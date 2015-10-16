@@ -18,6 +18,7 @@ package org.jetbrains.android.importDependencies;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -25,11 +26,11 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidSdkUtils;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
 * @author Eugene.Kudelevsky
@@ -57,7 +58,7 @@ class CreateNewModuleTask extends ModuleProvidingTask {
         return depModule;
       }
     });
-    if (AndroidFacet.getInstance(depModule) == null) {
+    if (ModuleUtilCore.getExtension(depModule, AndroidModuleExtension.class) == null) {
       AndroidUtils.addAndroidFacetInWriteAction(depModule, myContentRoot, true);
     }
     AndroidSdkUtils.setupAndroidPlatformIfNecessary(depModule, false);

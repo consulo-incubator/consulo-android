@@ -11,10 +11,10 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -43,7 +43,7 @@ public class AndroidSdkNotConfiguredNotificationProvider extends EditorNotificat
       return null;
     }
     final Module module = ModuleUtilCore.findModuleForFile(file, myProject);
-    final AndroidFacet facet = module != null ? AndroidFacet.getInstance(module) : null;
+    final AndroidModuleExtension facet = module != null ? ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) : null;
 
     if (facet == null) {
       return null;
@@ -58,7 +58,7 @@ public class AndroidSdkNotConfiguredNotificationProvider extends EditorNotificat
     return null;
   }
 
-  private static boolean isResourceFile(VirtualFile file, AndroidFacet facet) {
+  private static boolean isResourceFile(VirtualFile file, AndroidModuleExtension facet) {
     final VirtualFile parent = file.getParent();
     final VirtualFile resDir = parent != null ? parent.getParent() : null;
     return resDir != null && facet.getLocalResourceManager().isResourceDir(resDir);

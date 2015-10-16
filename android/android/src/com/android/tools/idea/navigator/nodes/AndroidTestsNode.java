@@ -16,21 +16,22 @@
 package com.android.tools.idea.navigator.nodes;
 
 import com.android.tools.idea.navigator.AndroidProjectViewPane;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Queryable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.ui.SimpleTextAttributes;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -41,12 +42,12 @@ import java.util.Collections;
  * issues in the UI when it comes to identifying the tree node from source. In the future, this will
  * be made an optional setting.
  */
-public class AndroidTestsNode extends ProjectViewNode<AndroidFacet> implements DirectoryGroupNode {
+public class AndroidTestsNode extends ProjectViewNode<AndroidModuleExtension> implements DirectoryGroupNode {
   private static final String ANDROID_TESTS = "androidTests";
   private final AndroidProjectViewPane myProjectViewPane;
 
   public AndroidTestsNode(@NotNull Project project,
-                          @NotNull AndroidFacet facet,
+                          @NotNull AndroidModuleExtension facet,
                           @NotNull ViewSettings viewSettings,
                           @NotNull AndroidProjectViewPane projectViewPane) {
     super(project, facet, viewSettings);
@@ -58,7 +59,7 @@ public class AndroidTestsNode extends ProjectViewNode<AndroidFacet> implements D
   @Override
   public Collection<AbstractTreeNode> getChildren() {
     Module module = getValue().getModule();
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null || facet.getIdeaAndroidProject() == null) {
       return Collections.emptyList();
     }
@@ -69,7 +70,7 @@ public class AndroidTestsNode extends ProjectViewNode<AndroidFacet> implements D
   @Override
   public boolean contains(@NotNull VirtualFile file) {
     Module module = getValue().getModule();
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null || facet.getIdeaAndroidProject() == null) {
       return false;
     }
@@ -87,7 +88,7 @@ public class AndroidTestsNode extends ProjectViewNode<AndroidFacet> implements D
   public void update(PresentationData presentation) {
     presentation.setPresentableText(ANDROID_TESTS);
     presentation.addText(ANDROID_TESTS, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-    presentation.setIcon(ModuleType.get(getValue().getModule()).getIcon());
+    presentation.setIcon(AllIcons.Nodes.Module);
   }
 
   @Nullable

@@ -56,6 +56,7 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
@@ -76,6 +77,7 @@ import org.jetbrains.android.sdk.AndroidSdkAdditionalData;
 import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.*;
@@ -517,7 +519,7 @@ public class PostProjectSetupTasksExecutor {
     ModuleManager moduleManager = ModuleManager.getInstance(myProject);
 
     for (Module module : moduleManager.getModules()) {
-      AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+      AndroidFacet androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (androidFacet != null && androidFacet.getIdeaAndroidProject() != null) {
         Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
         if (sdk != null && !invalidAndroidSdks.contains(sdk) && (isMissingAndroidLibrary(sdk) || shouldRemoveAnnotationsJar(sdk))) {

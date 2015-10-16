@@ -37,10 +37,7 @@ import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.compiler.options.ExcludeEntryDescription;
 import com.intellij.openapi.compiler.options.ExcludesConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModifiableModuleModel;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.*;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
@@ -131,7 +128,7 @@ public class AndroidCompileUtil {
   }
 
   @Nullable
-  public static Pair<VirtualFile, Boolean> getDefaultProguardConfigFile(@NotNull AndroidFacet facet) {
+  public static Pair<VirtualFile, Boolean> getDefaultProguardConfigFile(@NotNull AndroidModuleExtension facet) {
     VirtualFile root = AndroidRootUtil.getMainContentRoot(facet);
     if (root == null) {
       return null;
@@ -412,7 +409,7 @@ public class AndroidCompileUtil {
                 @Override
                 public void run() {
                   final Module module = model.getModule();
-                  final AndroidFacet facet = AndroidFacet.getInstance(module);
+                  final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
                   if (facet != null) {
                     configurable.select(facet, true);
@@ -444,7 +441,7 @@ public class AndroidCompileUtil {
   }
 
   public static void generate(final Module module, final AndroidAutogeneratorMode mode) {
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
     if (facet != null) {
       facet.scheduleSourceRegenerating(mode);
@@ -774,12 +771,12 @@ public class AndroidCompileUtil {
       return true;
     }
 
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null || !facet.isLibraryProject()) {
       return true;
     }
 
-    final AndroidPlatform platform = facet.getConfiguration().getAndroidPlatform();
+    final AndroidPlatform platform = facet.getAndroidPlatform();
     if (platform == null) {
       return true;
     }
@@ -789,7 +786,7 @@ public class AndroidCompileUtil {
   }
 
   @Nullable
-  public static ProguardRunningOptions getProguardConfigFilePathIfShouldRun(@NotNull AndroidFacet facet, CompileContext context) {
+  public static ProguardRunningOptions getProguardConfigFilePathIfShouldRun(@NotNull AndroidModuleExtension facet, CompileContext context) {
     // wizard
     String pathsStr = context.getCompileScope().getUserData(PROGUARD_CFG_PATHS_KEY);
     if (pathsStr != null) {
@@ -823,8 +820,7 @@ public class AndroidCompileUtil {
     }
 
     // facet
-    final AndroidFacetConfiguration configuration = facet.getConfiguration();
-    final JpsAndroidModuleProperties properties = configuration.getState();
+    final JpsAndroidModuleProperties properties = facet.getProperties();
     if (properties != null && properties.RUN_PROGUARD) {
       final List<String> urls = properties.myProGuardCfgFiles;
       final List<String> paths = AndroidUtils.urlsToOsPaths(urls, sdkHomePath);

@@ -34,7 +34,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.util.ArchiveVfsUtil;
 import com.intellij.psi.*;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -144,7 +143,7 @@ public class AndroidDocumentationProvider implements DocumentationProvider, Exte
     if (module == null) {
       Module[] modules = ModuleManager.getInstance(project).getModules();
       for (Module m : modules) {
-        if (AndroidFacet.getInstance(m) != null) {
+        if (ModuleUtilCore.getExtension(m, AndroidModuleExtension.class) != null) {
           module = m;
           break;
         }

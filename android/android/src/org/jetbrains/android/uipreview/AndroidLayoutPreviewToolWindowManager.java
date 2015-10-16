@@ -39,7 +39,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -58,21 +57,19 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidSdkType;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.util.Map;
 
-import static com.android.SdkConstants.ANDROID_PREFIX;
-import static com.android.SdkConstants.PREFIX_BINDING_EXPR;
-import static com.android.SdkConstants.PREFIX_RESOURCE_REF;
+import static com.android.SdkConstants.*;
 
 /**
  * @author Eugene.Kudelevsky
@@ -564,7 +561,7 @@ public class AndroidLayoutPreviewToolWindowManager implements ProjectComponent {
       return false;
     }
 
-    final AndroidFacet facet = AndroidFacet.getInstance(psiFile);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(psiFile, AndroidModuleExtension.class);
     if (facet == null) {
       return false;
     }
@@ -572,7 +569,7 @@ public class AndroidLayoutPreviewToolWindowManager implements ProjectComponent {
     return render(psiFile, facet, false);
   }
 
-  protected boolean render(final PsiFile psiFile, final AndroidFacet facet,
+  protected boolean render(final PsiFile psiFile, final AndroidModuleExtension facet,
                         @SuppressWarnings("unused") boolean forceFullRender) {
     getRenderingQueue().queue(new Update("render") {
       @Override
@@ -609,7 +606,7 @@ public class AndroidLayoutPreviewToolWindowManager implements ProjectComponent {
     getRenderingQueue().sendFlush();
   }
 
-  private void doRender(@NotNull final AndroidFacet facet, @NotNull final PsiFile psiFile) {
+  private void doRender(@NotNull final AndroidModuleExtension facet, @NotNull final PsiFile psiFile) {
     if (myProject.isDisposed()) {
       return;
     }
@@ -698,7 +695,7 @@ public class AndroidLayoutPreviewToolWindowManager implements ProjectComponent {
   }
 
   private static boolean isInResourceFolder(@Nullable PsiFile psiFile) {
-    if (psiFile instanceof XmlFile && AndroidFacet.getInstance(psiFile) != null) {
+    if (psiFile instanceof XmlFile && ModuleUtilCore.getExtension(psiFile, AndroidModuleExtension.class) != null) {
       return RenderService.canRender(psiFile);
     }
     return false;
@@ -751,7 +748,7 @@ public class AndroidLayoutPreviewToolWindowManager implements ProjectComponent {
         final Module module = ModuleUtilCore.findModuleForPsiElement(file);
         if (module != null) {
           final Sdk prevSdk = myModule2Sdk.get(module);
-          final Sdk newSdk = ModuleRootManager.getInstance(module).getSdk();
+          final Sdk newSdk = ModuleUtilCore.getSdk(module, AndroidModuleExtension.class);
           if (newSdk != null &&
               (newSdk.getSdkType() instanceof AndroidSdkType || (prevSdk != null && prevSdk.getSdkType() instanceof AndroidSdkType)) &&
               !newSdk.equals(prevSdk)) {
@@ -766,7 +763,7 @@ public class AndroidLayoutPreviewToolWindowManager implements ProjectComponent {
     private void updateMap() {
       myModule2Sdk.clear();
       for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-        myModule2Sdk.put(module, ModuleRootManager.getInstance(module).getSdk());
+        myModule2Sdk.put(module, ModuleUtilCore.getSdk(module, AndroidModuleExtension.class));
       }
     }
   }

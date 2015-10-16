@@ -102,7 +102,6 @@ import com.intellij.util.xml.GenericAttributeValue;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import org.jetbrains.android.compiler.artifact.AndroidArtifactUtil;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.facet.AvdsNotSupportedException;
 import org.jetbrains.android.logcat.AndroidLogcatView;
@@ -261,7 +260,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
       }
 
       if (myTargetDevices.length == 0) {
-        AndroidPlatform platform = myFacet.getConfiguration().getAndroidPlatform();
+        AndroidPlatform platform = myFacet.getAndroidPlatform();
         if (platform == null) {
           LOG.error("Android platform not set for module: " + myFacet.getModule().getName());
           return null;
@@ -620,7 +619,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
   }
 
   private void chooseAvd() {
-    IAndroidTarget buildTarget = myFacet.getConfiguration().getAndroidTarget();
+    IAndroidTarget buildTarget = myFacet.getAndroidTarget();
     assert buildTarget != null;
     AvdInfo[] avds = myFacet.getValidCompatibleAvds();
     if (avds.length > 0) {
@@ -684,7 +683,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
     myTestPackageName = computeTestPackageName(myFacet, myPackageName);
 
     setTargetPackageName(myPackageName);
-    final HashMap<AndroidFacet, String> depFacet2PackageName = new HashMap<AndroidFacet, String>();
+    final HashMap<AndroidModuleExtension, String> depFacet2PackageName = new HashMap<AndroidModuleExtension, String>();
 
     if (!fillRuntimeAndTestDependencies(getModule(), depFacet2PackageName)) {
       getProcessHandler().destroyProcess();
@@ -763,7 +762,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
     final Project project = myFacet.getModule().getProject();
     String value = PropertiesComponent.getInstance(project).getValue(ANDROID_TARGET_DEVICES_PROPERTY);
     String[] selectedSerials = value != null ? fromString(value) : null;
-    AndroidPlatform platform = myFacet.getConfiguration().getAndroidPlatform();
+    AndroidPlatform platform = myFacet.getAndroidPlatform();
     if (platform == null) {
       LOG.error("Android platform not set for module: " + myFacet.getModule().getName());
       return DeviceChooser.EMPTY_DEVICE_ARRAY;
@@ -849,7 +848,7 @@ public class AndroidRunningState implements RunProfileState, AndroidDebugBridge.
           return myAvdName.equals(avdName);
         }
 
-        AndroidPlatform androidPlatform = myFacet.getConfiguration().getAndroidPlatform();
+        AndroidPlatform androidPlatform = myFacet.getAndroidPlatform();
         if (androidPlatform == null) {
           LOG.error("Target Android platform not set for module: " + myFacet.getModule().getName());
           return false;

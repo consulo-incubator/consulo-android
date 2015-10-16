@@ -18,6 +18,7 @@ package com.android.tools.idea.rendering;
 import com.android.sdklib.devices.Device;
 import com.android.tools.idea.configurations.Configuration;
 import com.android.tools.idea.configurations.ConfigurationManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -25,6 +26,7 @@ import org.jetbrains.android.AndroidTestCase;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -64,7 +66,7 @@ public abstract class RenderTestBase extends AndroidTestCase {
   }
 
   protected Configuration getConfiguration(VirtualFile file, String deviceId) {
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     ConfigurationManager configurationManager = facet.getConfigurationManager();
     assertNotNull(configurationManager);
@@ -81,7 +83,7 @@ public abstract class RenderTestBase extends AndroidTestCase {
   }
 
   protected RenderTask createRenderTask(VirtualFile file, Configuration configuration) throws IOException {
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(file);
     assertNotNull(psiFile);
     assertNotNull(facet);

@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleConfigurationEditor;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
@@ -32,6 +33,7 @@ import com.intellij.ui.navigation.Place;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -77,7 +79,7 @@ public class AndroidModuleEditor implements Place.Navigator, Disposable {
 
     if (myGenericSettingsPanel == null) {
       myEditors.clear();
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null && facet.isGradleProject()) {
         myEditors.add(new GenericEditor<SingleObjectPanel>("Properties", new Callable<SingleObjectPanel>() {
           @Override

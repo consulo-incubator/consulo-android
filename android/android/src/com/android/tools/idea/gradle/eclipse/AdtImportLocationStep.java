@@ -73,8 +73,8 @@ class AdtImportLocationStep extends ProjectImportWizardStep {
     descriptor.setDescription("Pick a directory to import the given Eclipse Android project into");
     myDestDirText.addBrowseFolderListener(new TextBrowseFolderListener(descriptor) {
       @Override
-      protected void onFileChosen(@NotNull VirtualFile chosenFile) {
-        super.onFileChosen(chosenFile);
+      protected void onFileChoosen(@NotNull VirtualFile chosenFile) {
+        super.onFileChoosen(chosenFile);
         myIsPathChangedByUser = true;
       }
 

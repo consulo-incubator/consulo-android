@@ -29,7 +29,6 @@ import com.intellij.util.Processor;
 import com.intellij.util.xml.*;
 import org.consulo.psi.PsiPackage;
 import org.jetbrains.android.AndroidApplicationPackageRenameProcessor;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

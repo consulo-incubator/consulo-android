@@ -41,6 +41,7 @@ import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.options.ex.IdeConfigurablesGroup;
 import com.intellij.openapi.options.ex.ProjectConfigurablesGroup;
@@ -72,6 +73,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -176,7 +178,7 @@ public class IdeFrameFixture extends ComponentFixture<IdeFrameFixture, IdeFrameI
   @NotNull
   public IdeaAndroidProject getAndroidProjectForModule(@NotNull String name) {
     Module module = getModule(name);
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
     if (facet != null && facet.isGradleProject()) {
       IdeaAndroidProject androidProject = facet.getIdeaAndroidProject();
       if (androidProject != null) {
@@ -275,7 +277,7 @@ public class IdeFrameFixture extends ComponentFixture<IdeFrameFixture, IdeFrameI
   public IdeaAndroidProject getGradleProject(@NotNull String moduleName) {
     Module module = getModule(moduleName);
     assertNotNull("Could not find module " + moduleName, module);
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
     assertNotNull("Module " + moduleName + " is not an Android module", facet);
     assertTrue("Module " + moduleName + " is not a Gradle project", facet.isGradleProject());
     IdeaAndroidProject project = facet.getIdeaAndroidProject();

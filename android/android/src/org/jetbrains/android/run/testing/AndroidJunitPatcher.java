@@ -19,34 +19,36 @@ import com.android.builder.model.AndroidProject;
 import com.android.sdklib.IAndroidTarget;
 import com.android.tools.idea.gradle.IdeaAndroidProject;
 import com.intellij.execution.JUnitPatcher;
+import com.intellij.execution.JavaTestPatcher;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.PathsList;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.sdk.AndroidSdkAdditionalData;
 import org.jetbrains.android.sdk.AndroidSdkType;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 
 /**
- * Implementation of {@link com.intellij.execution.JUnitPatcher} that removes android.jar from the class path. It's only applicable to
+ * Implementation of {@link JavaTestPatcher} that removes android.jar from the class path. It's only applicable to
  * JUnit run configurations if the selected test artifact is "unit tests". In this case, the mockable android.jar is already in the
  * dependencies (taken from the model).
  */
-public class AndroidJunitPatcher extends JUnitPatcher {
+public class AndroidJunitPatcher implements JavaTestPatcher {
   @Override
   public void patchJavaParameters(@Nullable Module module, JavaParameters javaParameters) {
     if (module == null) {
       return;
     }
 
-    AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (androidFacet == null) {
       return;
     }

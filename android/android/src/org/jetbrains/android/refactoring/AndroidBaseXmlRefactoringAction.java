@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -21,10 +22,10 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.refactoring.actions.BaseRefactoringAction;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -34,7 +35,7 @@ abstract class AndroidBaseXmlRefactoringAction extends BaseRefactoringAction {
   protected boolean isAvailableOnElementInEditorAndFile(@NotNull PsiElement element, @NotNull Editor editor, @NotNull PsiFile file, @NotNull DataContext context) {
     final XmlTag[] tags = getXmlTagsFromExternalContext(context);
     if (tags.length > 0) {
-      return AndroidFacet.getInstance(tags[0]) != null && isEnabledForTags(tags);
+      return ModuleUtilCore.getExtension(tags[0], AndroidModuleExtension.class) != null && isEnabledForTags(tags);
     }
 
     final TextRange range = getNonEmptySelectionRange(editor);
@@ -45,7 +46,7 @@ abstract class AndroidBaseXmlRefactoringAction extends BaseRefactoringAction {
     }
 
     if (element == null ||
-        AndroidFacet.getInstance(element) == null ||
+        ModuleUtilCore.getExtension(element, AndroidModuleExtension.class) == null ||
         PsiTreeUtil.getParentOfType(element, XmlText.class) != null) {
       return false;
     }
@@ -131,7 +132,7 @@ abstract class AndroidBaseXmlRefactoringAction extends BaseRefactoringAction {
     }
     final PsiElement element = elements[0];
 
-    if (AndroidFacet.getInstance(element) == null) {
+    if (ModuleUtilCore.getExtension(element, AndroidModuleExtension.class) == null) {
       return false;
     }
     final XmlTag[] tags = new XmlTag[elements.length];
@@ -159,7 +160,7 @@ abstract class AndroidBaseXmlRefactoringAction extends BaseRefactoringAction {
   @Override
   protected boolean isAvailableForFile(PsiFile file) {
     return file instanceof XmlFile &&
-           AndroidFacet.getInstance(file) != null &&
+           ModuleUtilCore.getExtension(file, AndroidModuleExtension.class) != null &&
            isMyFile(file);
   }
 

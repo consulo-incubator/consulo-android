@@ -22,9 +22,11 @@ import com.android.tools.idea.tests.gui.framework.IdeGuiTestSetup;
 import com.android.tools.idea.tests.gui.framework.fixture.BuildVariantsToolWindowFixture;
 import com.android.tools.idea.tests.gui.framework.fixture.IdeFrameFixture;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
 import org.junit.Test;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -61,7 +63,7 @@ public class BuildVariantsTest extends GuiTestCase {
                                        MODULE_NAME + "/src/flavor1Release/rs");
 
     Module appModule = projectFrame.getModule(MODULE_NAME);
-    AndroidFacet androidFacet = AndroidFacet.getInstance(appModule);
+    AndroidFacet androidFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(appModule, AndroidModuleExtension.class);
     assertNotNull(androidFacet);
 
     JpsAndroidModuleProperties androidFacetProperties = androidFacet.getProperties();

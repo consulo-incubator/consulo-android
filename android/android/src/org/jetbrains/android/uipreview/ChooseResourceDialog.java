@@ -32,6 +32,7 @@ import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
@@ -40,12 +41,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.ui.ColorPickerListener;
-import com.intellij.ui.DoubleClickListener;
-import com.intellij.ui.JBColor;
-import com.intellij.ui.JBSplitter;
-import com.intellij.ui.ScrollPaneFactory;
-import com.intellij.ui.TreeSpeedSearch;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.ui.treeStructure.Tree;
@@ -55,7 +51,6 @@ import org.intellij.images.fileTypes.ImageFileTypeManager;
 import org.jetbrains.android.actions.CreateResourceFileAction;
 import org.jetbrains.android.actions.CreateXmlResourceDialog;
 import org.jetbrains.android.dom.resources.ResourceElement;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.refactoring.AndroidBaseLayoutRefactoringAction;
 import org.jetbrains.android.refactoring.AndroidExtractStyleAction;
 import org.jetbrains.android.resourceManagers.FileResourceProcessor;
@@ -64,49 +59,20 @@ import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.ToolTipManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
+import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 /**
  * Resource Chooser, with previews. Based on ResourceDialog in the android-designer.
@@ -130,7 +96,7 @@ public class ChooseResourceDialog extends DialogWrapper implements TreeSelection
   private static final String IMAGE = "Image";
   private static final String NONE = "None";
 
-  private static final Icon RESOURCE_ITEM_ICON = AllIcons.Css.Property;
+  private static final Icon RESOURCE_ITEM_ICON = AllIcons.Nodes.Property;
 
   private final Module myModule;
   @Nullable private final XmlTag myTag;
@@ -202,7 +168,7 @@ public class ChooseResourceDialog extends DialogWrapper implements TreeSelection
 
     setTitle("Resources");
 
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     myProjectPanel = new ResourcePanel(facet, types, false);
     mySystemPanel = new ResourcePanel(facet, types, true);
 
@@ -432,7 +398,7 @@ public class ChooseResourceDialog extends DialogWrapper implements TreeSelection
   }
 
   private void createNewResourceFile(ResourceType resourceType) {
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     XmlFile newFile = CreateResourceFileAction.createFileResource(facet, resourceType, null, null, null, true, null);
 
     if (newFile != null) {
@@ -559,7 +525,7 @@ public class ChooseResourceDialog extends DialogWrapper implements TreeSelection
     private final ResourceGroup[] myGroups;
     private final ResourceManager myManager;
 
-    public ResourcePanel(AndroidFacet facet, ResourceType[] types, boolean system) {
+    public ResourcePanel(AndroidModuleExtension facet, ResourceType[] types, boolean system) {
       myTree = new Tree();
       myTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode()));
       myTree.setScrollsOnExpand(true);

@@ -23,9 +23,11 @@ import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.devices.Device;
 import com.android.sdklib.devices.State;
 import com.android.tools.idea.rendering.Locale;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.android.AndroidTestCase;
 import org.jetbrains.android.facet.AndroidFacet;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 public class VaryingConfigurationTest extends AndroidTestCase {
   // The specific file doesn't matter; we're only using the destination folder
@@ -33,7 +35,7 @@ public class VaryingConfigurationTest extends AndroidTestCase {
 
   public void test() throws Exception {
     VirtualFile file = myFixture.copyFileToProject(TEST_FILE, "res/layout/layout1.xml");
-    final AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    final AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     ConfigurationManager manager = facet.getConfigurationManager();
     assertNotNull(manager);

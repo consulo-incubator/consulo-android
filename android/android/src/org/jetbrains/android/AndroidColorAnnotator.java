@@ -57,11 +57,11 @@ import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.android.dom.resources.ResourceElement;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.uipreview.ColorPicker;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -163,7 +163,7 @@ public class AndroidColorAnnotator implements Annotator {
    * file found in the resources (if any).
    * */
   @Nullable
-  public static VirtualFile pickLayoutFile(@NotNull Module module, @NotNull AndroidFacet facet) {
+  public static VirtualFile pickLayoutFile(@NotNull Module module, @NotNull AndroidModuleExtension<?> facet) {
     VirtualFile layout = null;
     VirtualFile[] openFiles = FileEditorManager.getInstance(module.getProject()).getOpenFiles();
     for (VirtualFile file : openFiles) {
@@ -202,7 +202,7 @@ public class AndroidColorAnnotator implements Annotator {
     if (module == null) {
       return;
     }
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       return;
     }
@@ -229,7 +229,7 @@ public class AndroidColorAnnotator implements Annotator {
 
   /** Picks a suitable configuration to use for resource resolution */
   @Nullable
-  private static Configuration pickConfiguration(AndroidFacet facet, Module module, PsiFile file) {
+  private static Configuration pickConfiguration(AndroidModuleExtension facet, Module module, PsiFile file) {
     VirtualFile virtualFile = file.getVirtualFile();
     if (virtualFile == null) {
       return null;

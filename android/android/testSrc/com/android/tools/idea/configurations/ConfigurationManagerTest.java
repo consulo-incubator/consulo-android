@@ -16,10 +16,12 @@
 package com.android.tools.idea.configurations;
 
 import com.android.tools.idea.rendering.Locale;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PlatformTestUtil;
 import org.jetbrains.android.AndroidTestCase;
 import org.jetbrains.android.facet.AndroidFacet;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +33,7 @@ public class ConfigurationManagerTest extends AndroidTestCase {
     myFixture.copyFileToProject("xmlpull/layout.xml", "res/layout-no/layout1.xml");
     myFixture.copyFileToProject("xmlpull/layout.xml", "res/layout-se/layout2.xml");
 
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     ConfigurationManager manager = facet.getConfigurationManager();
     assertNotNull(manager);
@@ -46,7 +48,7 @@ public class ConfigurationManagerTest extends AndroidTestCase {
     VirtualFile file1 = myFixture.copyFileToProject("xmlpull/layout.xml", "res/layout/layout1.xml");
     VirtualFile file2 = myFixture.copyFileToProject("xmlpull/layout.xml", "res/layout-no-rNO/layout1.xml");
 
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     ConfigurationManager manager = facet.getConfigurationManager();
     assertNotNull(manager);

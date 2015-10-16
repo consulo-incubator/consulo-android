@@ -27,6 +27,7 @@ import com.google.common.collect.Sets;
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -36,9 +37,9 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.refactoring.psi.SearchUtils;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 import java.util.Set;
@@ -60,7 +61,7 @@ class MigrateDrawableToMipmapFix implements AndroidLintQuickFix {
   @Override
   public void apply(@NotNull PsiElement startElement, @NotNull PsiElement endElement, @NotNull AndroidQuickfixContexts.Context context) {
     Project project = startElement.getProject();
-    AndroidFacet facet = AndroidFacet.getInstance(startElement);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(startElement, AndroidModuleExtension.class);
     if (facet == null) {
       return;
     }

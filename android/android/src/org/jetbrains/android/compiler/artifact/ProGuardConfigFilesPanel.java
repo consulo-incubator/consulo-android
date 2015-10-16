@@ -19,6 +19,7 @@ import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -68,7 +69,7 @@ public abstract class ProGuardConfigFilesPanel extends JPanel {
   }
 
   private String chooseFile() {
-    final AndroidFacet facet = getFacet();
+    final AndroidModuleExtension facet = getFacet();
 
     if (facet == null) {
       return null;
@@ -116,7 +117,7 @@ public abstract class ProGuardConfigFilesPanel extends JPanel {
 
   @Nullable
   private String getCanonicalSdkHome() {
-    final AndroidFacet facet = getFacet();
+    final AndroidModuleExtension facet = getFacet();
 
     if (facet == null) {
       return null;
@@ -131,5 +132,5 @@ public abstract class ProGuardConfigFilesPanel extends JPanel {
   }
 
   @Nullable
-  protected abstract AndroidFacet getFacet();
+  protected abstract AndroidModuleExtension getFacet();
 }

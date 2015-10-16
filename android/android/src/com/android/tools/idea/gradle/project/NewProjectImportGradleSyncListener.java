@@ -22,6 +22,7 @@ import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -30,6 +31,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 
@@ -98,7 +100,7 @@ public abstract class NewProjectImportGradleSyncListener extends GradleSyncListe
         gradleFacet.getConfiguration().GRADLE_PROJECT_PATH = GRADLE_PATH_SEPARATOR;
 
         // Add "android" facet to avoid the balloon "Android Framework detected".
-        AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+        AndroidFacet androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
         if (androidFacet == null) {
           androidFacet = facetManager.createFacet(AndroidFacet.getFacetType(), AndroidFacet.NAME, null);
           facetModel.addFacet(androidFacet);

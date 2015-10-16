@@ -28,15 +28,16 @@ import com.google.common.io.Files;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -307,7 +308,7 @@ public class DeclaredPermissionsLookup implements ProjectComponent {
   }
 
   private class ModulePermissions implements PermissionHolder {
-    private final AndroidFacet myFacet;
+    private final AndroidModuleExtension myFacet;
     private List<ManifestPermissions> myManifests;
     private List<LibraryPermissions> myLibraries;
     private List<ModulePermissions> myDependencies;
@@ -315,7 +316,7 @@ public class DeclaredPermissionsLookup implements ProjectComponent {
     private Map<String,Boolean> myRevocableCache = Maps.newHashMap();
 
     public ModulePermissions(Module module) {
-      myFacet = AndroidFacet.getInstance(module);
+      myFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (myFacet != null) {
         myManifests = Lists.newArrayListWithExpectedSize(4);
         for (IdeaSourceProvider provider : IdeaSourceProvider.getAllIdeaSourceProviders(myFacet)) {

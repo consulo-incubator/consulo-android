@@ -21,6 +21,7 @@ import com.android.tools.idea.startup.ExternalAnnotationsSupport;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -31,10 +32,10 @@ import com.siyeh.ig.LightInspectionTestCase;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.android.AndroidTestBase;
 import org.jetbrains.android.AndroidTestCase;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class ResourceTypeInspectionTest extends LightInspectionTestCase {
     }
 
     // Module must have Android facet or resource type inspection will become a no-op
-    if (AndroidFacet.getInstance(myModule) == null) {
+    if (ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class) == null) {
       String sdkPath = AndroidTestBase.getDefaultTestSdkPath();
       String platform = AndroidTestBase.getDefaultPlatformDir();
       AndroidTestCase.addAndroidFacet(myModule, sdkPath, platform, true);

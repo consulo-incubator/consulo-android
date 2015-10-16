@@ -4,16 +4,17 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.run.AndroidRunConfiguration;
 import org.jetbrains.android.run.AndroidRunConfigurationType;
 import org.jetbrains.android.run.TargetSelectionMode;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -65,7 +66,7 @@ class AndroidTestModifiedSettingsStep extends AndroidModifiedSettingsStep {
     if (module == null) {
       throw new ConfigurationException(AndroidBundle.message("android.wizard.specify.tested.module.error"));
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       throw new ConfigurationException(AndroidBundle.message("android.wizard.tested.module.without.facet.error"));
     }

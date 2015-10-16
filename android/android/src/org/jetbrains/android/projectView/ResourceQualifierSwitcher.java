@@ -7,7 +7,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -19,9 +18,9 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.containers.BidirectionalMap;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,7 +63,7 @@ public class ResourceQualifierSwitcher extends EditorNotifications.Provider<Reso
       return null;
     }
     Module module = ModuleUtilCore.findModuleForFile(file, myProject);
-    AndroidFacet facet = module == null ? null : AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = module == null ? null : ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }

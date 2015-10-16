@@ -28,19 +28,20 @@ import com.android.tools.idea.templates.TemplateUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.awt.*;
 import java.io.File;
@@ -137,7 +138,7 @@ public class NewTemplateObjectWizard extends TemplateWizard implements TemplateP
 
   @Override
   protected void init() {
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assert facet != null;
     AndroidPlatform platform = AndroidPlatform.getInstance(myModule);
     assert platform != null;
@@ -201,7 +202,7 @@ public class NewTemplateObjectWizard extends TemplateWizard implements TemplateP
     myWizardState.put(NewModuleWizardState.ATTR_PROJECT_LOCATION, myProject.getBasePath());
     // We're really interested in the directory name on disk, not the module name. These will be different if you give a module the same
     // name as its containing project.
-    String moduleName = new File(myModule.getModuleFilePath()).getParentFile().getName();
+    String moduleName = myModule.getModuleDir().getName();
     myWizardState.put(FormFactorUtils.ATTR_MODULE_NAME, moduleName);
 
 

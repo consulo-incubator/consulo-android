@@ -17,6 +17,7 @@ package org.jetbrains.android.spellchecker;
 
 import com.android.tools.idea.gradle.IdeaAndroidProject;
 import com.android.tools.lint.detector.api.LintUtils;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -43,10 +44,10 @@ import org.jetbrains.android.dom.converters.AndroidResourceReferenceBase;
 import org.jetbrains.android.dom.converters.ConstantFieldConverter;
 import org.jetbrains.android.dom.converters.ResourceReferenceConverter;
 import org.jetbrains.android.dom.resources.ResourceNameConverter;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import static com.android.SdkConstants.*;
 
@@ -170,7 +171,7 @@ public class AndroidXmlSpellcheckingStrategy extends XmlSpellcheckingStrategy {
         // If this a generated file like this:
         //   ${project}/${module}/build/generated/res/generated/{test?}/${flavors}/${build-type}/values/generated.xml
         // ? If so, skip it.
-        AndroidFacet facet = AndroidFacet.getInstance(file);
+        AndroidModuleExtension facet = ModuleUtilCore.getExtension(file, AndroidModuleExtension.class);
         VirtualFile virtualFile = file.getVirtualFile();
         if (facet != null && facet.isGradleProject() && virtualFile != null) {
           IdeaAndroidProject project = facet.getIdeaAndroidProject();

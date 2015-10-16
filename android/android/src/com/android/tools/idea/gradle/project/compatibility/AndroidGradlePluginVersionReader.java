@@ -20,9 +20,10 @@ import com.android.tools.idea.gradle.IdeaAndroidProject;
 import com.android.tools.idea.gradle.service.notification.hyperlink.FixGradleModelVersionHyperlink;
 import com.android.tools.idea.gradle.service.notification.hyperlink.NotificationHyperlink;
 import com.intellij.openapi.module.Module;
-import org.jetbrains.android.facet.AndroidFacet;
+import com.intellij.openapi.module.ModuleUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -35,13 +36,13 @@ import static java.util.Collections.singletonList;
 class AndroidGradlePluginVersionReader implements ComponentVersionReader {
   @Override
   public boolean appliesTo(@NotNull Module module) {
-    return AndroidFacet.getInstance(module) != null;
+    return ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) != null;
   }
 
   @Override
   @Nullable
   public String getComponentVersion(@NotNull Module module) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet != null) {
       IdeaAndroidProject androidProject = facet.getIdeaAndroidProject();
       if (androidProject != null) {

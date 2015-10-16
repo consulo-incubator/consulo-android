@@ -24,14 +24,15 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.ProjectViewModuleNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Queryable;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidSourceType;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collection;
 import java.util.List;
@@ -57,7 +58,7 @@ public class AndroidModuleNode extends ProjectViewModuleNode {
   @Override
   public Collection<AbstractTreeNode> getChildren() {
     Module module = getValue();
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null || facet.getIdeaAndroidProject() == null) {
       return super.getChildren();
     }
@@ -65,7 +66,7 @@ public class AndroidModuleNode extends ProjectViewModuleNode {
     return getChildren(facet, getSettings(), myProjectViewPane, AndroidProjectViewPane.getSourceProviders(facet));
   }
 
-  public static Collection<AbstractTreeNode> getChildren(AndroidFacet facet,
+  public static Collection<AbstractTreeNode> getChildren(AndroidModuleExtension facet,
                                                          ViewSettings settings,
                                                          AndroidProjectViewPane pane,
                                                          List<IdeaSourceProvider> providers) {

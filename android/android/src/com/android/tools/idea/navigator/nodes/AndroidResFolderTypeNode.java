@@ -32,20 +32,20 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.PlatformIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collection;
 import java.util.List;
 
 public class AndroidResFolderTypeNode extends ProjectViewNode<List<PsiDirectory>> implements DirectoryGroupNode {
-  @NotNull private final AndroidFacet myFacet;
+  @NotNull private final AndroidModuleExtension myFacet;
   @NotNull private final ResourceFolderType myFolderType;
   @NotNull private final AndroidProjectViewPane myProjectViewPane;
 
   public AndroidResFolderTypeNode(@NotNull Project project,
-                                  @NotNull AndroidFacet facet,
+                                  @NotNull AndroidModuleExtension facet,
                                   @NotNull List<PsiDirectory> folders,
                                   @NotNull ViewSettings settings,
                                   @NotNull ResourceFolderType folderType,

@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper;
+import com.intellij.ide.projectView.impl.nodes.BaseProjectViewDirectoryHelper;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -33,11 +33,11 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.SimpleTextAttributes;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidSourceType;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -48,13 +48,13 @@ import java.util.Set;
  * {@link AndroidSourceTypeNode} is a virtual node in the package view of an Android module under which all sources
  * corresponding to a particular {@link org.jetbrains.android.facet.AndroidSourceType} are grouped together.
  */
-public class AndroidSourceTypeNode extends ProjectViewNode<AndroidFacet> implements DirectoryGroupNode {
+public class AndroidSourceTypeNode extends ProjectViewNode<AndroidModuleExtension> implements DirectoryGroupNode {
   @NotNull private final AndroidSourceType mySourceType;
   @NotNull private final Set<VirtualFile> mySourceRoots;
   @NotNull protected final AndroidProjectViewPane myProjectViewPane;
 
   public AndroidSourceTypeNode(@NotNull Project project,
-                               @NotNull AndroidFacet facet,
+                               @NotNull AndroidModuleExtension facet,
                                @NotNull ViewSettings viewSettings,
                                @NotNull AndroidSourceType sourceType,
                                @NotNull Set<VirtualFile> sources,
@@ -69,11 +69,10 @@ public class AndroidSourceTypeNode extends ProjectViewNode<AndroidFacet> impleme
   @Override
   public Collection<? extends AbstractTreeNode> getChildren() {
     List<AbstractTreeNode> children = Lists.newArrayList();
-    ProjectViewDirectoryHelper projectViewDirectoryHelper = ProjectViewDirectoryHelper.getInstance(myProject);
     AndroidProjectTreeBuilder treeBuilder = (AndroidProjectTreeBuilder)myProjectViewPane.getTreeBuilder();
 
     for (PsiDirectory directory : getSourceDirectories()) {
-      Collection<AbstractTreeNode> directoryChildren = projectViewDirectoryHelper.getDirectoryChildren(directory, getSettings(), true);
+      Collection<AbstractTreeNode> directoryChildren = BaseProjectViewDirectoryHelper.getDirectoryChildren(directory, getSettings(), true);
 
       children.addAll(annotateWithSourceProvider(directoryChildren));
 

@@ -22,7 +22,6 @@ import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
 import com.android.tools.idea.rendering.ResourceHelper;
 import com.intellij.CommonBundle;
-import com.intellij.application.options.ModulesComboBox;
 import com.intellij.ide.highlighter.XmlFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -32,6 +31,7 @@ import com.intellij.openapi.fileChooser.actions.VirtualFileDeleteProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -48,7 +48,6 @@ import com.intellij.util.containers.HashSet;
 import com.intellij.util.containers.hash.HashMap;
 import org.jetbrains.android.dom.resources.ResourceElement;
 import org.jetbrains.android.dom.resources.Resources;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
@@ -68,7 +67,7 @@ import java.util.*;
 public class CreateXmlResourceDialog extends DialogWrapper {
   private JPanel myPanel;
   private JTextField myNameField;
-  private ModulesComboBox myModuleCombo;
+  private ComboBox myModuleCombo;
   private JBLabel myModuleLabel;
   private JPanel myDirectoriesPanel;
   private JBLabel myDirectoriesLabel;
@@ -137,8 +136,8 @@ public class CreateXmlResourceDialog extends DialogWrapper {
     }
     else {
       myModule = null;
-      myModuleCombo.setModules(modulesSet);
-      myModuleCombo.setSelectedModule(module);
+      myModuleCombo.setModel(new CollectionComboBoxModel(new ArrayList(modulesSet)));
+      myModuleCombo.setSelectedItem(module);
     }
 
     ApplicationManager.getApplication().assertReadAccessAllowed();
@@ -223,11 +222,11 @@ public class CreateXmlResourceDialog extends DialogWrapper {
     }
 
     if (myModule == null) {
-      final Module prev = myModuleCombo.getSelectedModule();
+      final Module prev = (Module)myModuleCombo.getSelectedItem();
       myModuleCombo.setSelectedItem(moduleForFile);
 
       if (!moduleForFile.equals(myModuleCombo.getSelectedItem())) {
-        myModuleCombo.setSelectedModule(prev);
+        myModuleCombo.setSelectedItem(prev);
         return;
       }
     }
@@ -431,7 +430,7 @@ public class CreateXmlResourceDialog extends DialogWrapper {
       return null;
     }
 
-    final AndroidFacet facet = AndroidFacet.getInstance(selectedModule);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(selectedModule, AndroidModuleExtension.class);
     final VirtualFile resourceDir = facet != null ? facet.getPrimaryResourceDir() : null;
     if (resourceDir == null) {
       return null;
@@ -556,7 +555,7 @@ public class CreateXmlResourceDialog extends DialogWrapper {
 
   @Nullable
   public Module getModule() {
-    return myModule != null ? myModule : myModuleCombo.getSelectedModule();
+    return myModule != null ? myModule : (Module)myModuleCombo.getSelectedItem();
   }
 
   @Override

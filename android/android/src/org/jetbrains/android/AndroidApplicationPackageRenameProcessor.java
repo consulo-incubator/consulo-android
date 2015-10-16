@@ -2,6 +2,7 @@ package org.jetbrains.android;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.*;
@@ -22,7 +23,6 @@ import com.intellij.util.xml.GenericAttributeValue;
 import org.consulo.psi.PsiPackage;
 import org.jetbrains.android.dom.converters.PackageClassConverter;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +55,7 @@ public class AndroidApplicationPackageRenameProcessor extends RenamePsiElementPr
       final String newPackageQName = PsiUtilCore.getQualifiedNameAfterRename(oldPackageQName, newName);
 
       for (Module module : ModuleManager.getInstance(project).getModules()) {
-        final AndroidFacet facet = AndroidFacet.getInstance(module);
+        final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
         final Manifest manifest = facet != null ? facet.getManifest() : null;
 
         if (manifest != null) {

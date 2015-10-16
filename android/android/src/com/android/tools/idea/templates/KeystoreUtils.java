@@ -25,8 +25,6 @@ import com.android.utils.ILogger;
 import com.android.utils.StdLogger;
 import com.google.common.base.Strings;
 import com.google.common.io.BaseEncoding;
-import com.intellij.openapi.module.ModuleUtilCore;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
@@ -125,7 +123,7 @@ public class KeystoreUtils {
         continue;
       }
       // NOTE: debugKey.getParent() is the current working directory.
-      return new File(ModuleUtilCore.getModuleDirPath(facet.getModule()), debugKey.getPath());
+      return new File(facet.getModule().getModuleDirPath(), debugKey.getPath());
     }
     return null;
   }

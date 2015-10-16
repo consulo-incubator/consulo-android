@@ -18,16 +18,17 @@ package com.intellij.android.designer.propertyTable;
 import com.android.SdkConstants;
 import com.intellij.android.designer.model.RadViewComponent;
 import com.intellij.designer.model.Property;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.android.dom.attrs.AttributeDefinition;
 import org.jetbrains.android.dom.attrs.StyleableDefinition;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.inspections.lint.SuppressLintIntentionAction;
 import org.jetbrains.android.resourceManagers.LocalResourceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 public abstract class PropertyWithNamespace extends Property<RadViewComponent> {
   public PropertyWithNamespace(@Nullable Property parent, @NotNull String name) {
@@ -50,7 +51,7 @@ public abstract class PropertyWithNamespace extends Property<RadViewComponent> {
       }
       if (tagName != null && tagName.indexOf('.') != -1) {
         // Custom view; see if this attribute should be in the app namespace or in the android namespace
-        AndroidFacet facet = AndroidFacet.getInstance(tag);
+        AndroidModuleExtension facet = ModuleUtilCore.getExtension(tag, AndroidModuleExtension.class);
         if (facet != null) {
           LocalResourceManager resourceManager = facet.getLocalResourceManager();
           String styleableName = tagName.substring(tagName.lastIndexOf('.') + 1);

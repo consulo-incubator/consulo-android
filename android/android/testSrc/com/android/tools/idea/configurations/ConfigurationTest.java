@@ -24,9 +24,11 @@ import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.devices.Device;
 import com.android.sdklib.devices.State;
 import com.android.tools.idea.rendering.Locale;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.android.AndroidTestCase;
 import org.jetbrains.android.facet.AndroidFacet;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import static com.android.tools.idea.configurations.ConfigurationListener.CFG_ACTIVITY;
 import static com.android.tools.idea.configurations.ConfigurationListener.CFG_NIGHT_MODE;
@@ -41,7 +43,7 @@ public class ConfigurationTest extends AndroidTestCase {
   private int myFlags;
 
   public void test() throws Exception {
-    final AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    final AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     ConfigurationManager manager = facet.getConfigurationManager();
     assertNotNull(manager);
@@ -106,7 +108,7 @@ public class ConfigurationTest extends AndroidTestCase {
   }
 
   public void testListener() throws Exception {
-    final AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    final AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     ConfigurationManager manager = facet.getConfigurationManager();
     assertNotNull(manager);
@@ -168,7 +170,7 @@ public class ConfigurationTest extends AndroidTestCase {
     VirtualFile file4 = myFixture.copyFileToProject(TEST_FILE, "res/layout-xlarge-land/layout1.xml");
     myFixture.copyFileToProject(TEST_FILE, "res/layout-se/layout2.xml");
 
-    final AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    final AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     ConfigurationManager manager = facet.getConfigurationManager();
     assertNotNull(manager);
@@ -200,7 +202,7 @@ public class ConfigurationTest extends AndroidTestCase {
     VirtualFile file3 = myFixture.copyFileToProject(TEST_FILE, "res/layout-xlarge-land/layout1.xml");
     myFixture.copyFileToProject(TEST_FILE, "res/layout-en/layout2.xml");
 
-    final AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    final AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     ConfigurationManager manager = facet.getConfigurationManager();
     assertNotNull(manager);
@@ -240,7 +242,7 @@ public class ConfigurationTest extends AndroidTestCase {
   }
 
   public void testTargetSpecificFolder() throws Exception {
-    final AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    final AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     ConfigurationManager manager = facet.getConfigurationManager();
     assertNotNull(manager);

@@ -28,6 +28,7 @@ import com.google.common.collect.Sets;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -48,6 +49,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.model.MavenArtifactInfo;
 import org.jetbrains.idea.maven.utils.MavenLog;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -195,7 +197,7 @@ public class MavenDependencyLookupDialog extends DialogWrapper {
 
   public MavenDependencyLookupDialog(@NotNull Project project, @Nullable Module module) {
     super(project, true);
-    myAndroidModule = module != null && AndroidFacet.getInstance(module) != null;
+    myAndroidModule = module != null && ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) != null;
     myProgressIcon.suspend();
 
     mySearchField.setButtonIcon(AllIcons.Actions.Menu_find);
@@ -224,7 +226,7 @@ public class MavenDependencyLookupDialog extends DialogWrapper {
 
     boolean preview = false;
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         IdeaAndroidProject androidProject = facet.getIdeaAndroidProject();
         if (androidProject != null) {

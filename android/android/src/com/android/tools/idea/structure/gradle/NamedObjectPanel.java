@@ -27,6 +27,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.pom.java.LanguageLevel;
@@ -38,6 +39,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.groovy.lang.psi.api.util.GrStatementOwner;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -426,7 +428,7 @@ public class NamedObjectPanel extends BuildFilePanel implements DocumentListener
     if (myModule == null) {
       return results;
     }
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     if (facet == null) {
       return results;
     }

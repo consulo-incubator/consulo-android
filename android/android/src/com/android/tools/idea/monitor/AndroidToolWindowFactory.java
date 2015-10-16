@@ -20,7 +20,10 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.ClientData;
 import com.android.ddmlib.Log;
 import com.android.tools.idea.ddms.*;
-import com.android.tools.idea.ddms.actions.*;
+import com.android.tools.idea.ddms.actions.DumpSysActions;
+import com.android.tools.idea.ddms.actions.ScreenRecorderAction;
+import com.android.tools.idea.ddms.actions.ScreenshotAction;
+import com.android.tools.idea.ddms.actions.TerminateVMAction;
 import com.android.tools.idea.ddms.adb.AdbService;
 import com.android.tools.idea.monitor.cpu.CpuMonitorView;
 import com.android.tools.idea.monitor.memory.MemoryMonitorView;
@@ -35,11 +38,10 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.AnSeparator;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.diagnostic.Logger;
@@ -61,9 +63,9 @@ import com.intellij.ui.SideBorder;
 import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.logcat.AdbErrors;
 import org.jetbrains.android.logcat.AndroidLogcatConstants;
 import org.jetbrains.android.logcat.AndroidLogcatView;
@@ -75,11 +77,13 @@ import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author Eugene.Kudelevsky
@@ -221,7 +225,7 @@ public class AndroidToolWindowFactory implements ToolWindowFactory, DumbAware {
     group.add(new ScreenRecorderAction(project, deviceContext));
     group.add(DumpSysActions.create(project, deviceContext));
     //group.add(new MyFileExplorerAction());
-    group.add(new Separator());
+    group.add(new AnSeparator());
 
     group.add(new TerminateVMAction(deviceContext));
     //group.add(new MyAllocationTrackerAction());
@@ -341,7 +345,7 @@ public class AndroidToolWindowFactory implements ToolWindowFactory, DumbAware {
   }
 
   private static void checkFacetAndSdk(Project project, @NotNull final ConsoleView console) {
-    final List<AndroidFacet> facets = ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID);
+    final Collection<AndroidModuleExtension> facets = ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class);
 
     if (facets.size() == 0) {
       console.clear();
@@ -349,8 +353,8 @@ public class AndroidToolWindowFactory implements ToolWindowFactory, DumbAware {
       return;
     }
 
-    final AndroidFacet facet = facets.get(0);
-    AndroidPlatform platform = facet.getConfiguration().getAndroidPlatform();
+    final AndroidModuleExtension facet = ContainerUtil.getFirstItem(facets);
+    AndroidPlatform platform = facet.getAndroidPlatform();
     if (platform == null) {
       console.clear();
       final Module module = facet.getModule();
@@ -413,10 +417,10 @@ public class AndroidToolWindowFactory implements ToolWindowFactory, DumbAware {
     @Nullable
     private AndroidPlatform getPlatform() {
       AndroidPlatform newPlatform = null;
-      final List<AndroidFacet> facets = ProjectFacetManager.getInstance(myProject).getFacets(AndroidFacet.ID);
+      final Collection<AndroidModuleExtension> facets = ModuleExtensionHelper.getInstance(myProject).getModuleExtensions(AndroidModuleExtension.class);
       if (facets.size() > 0) {
-        final AndroidFacet facet = facets.get(0);
-        newPlatform = facet.getConfiguration().getAndroidPlatform();
+        final AndroidModuleExtension facet = ContainerUtil.getFirstItem(facets);
+        newPlatform = facet.getAndroidPlatform();
       }
       return newPlatform;
     }

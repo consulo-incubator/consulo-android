@@ -27,6 +27,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -35,11 +36,11 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.templates.github.ZipUtil;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.sdk.AndroidSdkUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 import org.w3c.dom.Document;
 
 import java.io.File;
@@ -410,7 +411,7 @@ public class TemplateManager {
         public void update(AnActionEvent e) {
           IdeView view = LangDataKeys.IDE_VIEW.getData(e.getDataContext());
           final Module module = LangDataKeys.MODULE.getData(e.getDataContext());
-          final AndroidFacet facet = module != null ? AndroidFacet.getInstance(module) : null;
+          final AndroidModuleExtension facet = module != null ? ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) : null;
           Presentation presentation = e.getPresentation();
           boolean isProjectReady = facet != null && facet.getIdeaAndroidProject() != null;
           presentation.setText(category + (isProjectReady ? "" : " (Project not ready)"));

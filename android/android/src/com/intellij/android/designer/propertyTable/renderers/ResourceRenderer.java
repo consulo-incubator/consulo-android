@@ -23,16 +23,17 @@ import com.intellij.designer.model.RadComponent;
 import com.intellij.designer.propertyTable.renderers.AbstractResourceRenderer;
 import com.intellij.designer.propertyTable.renderers.BooleanRenderer;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.android.dom.attrs.AttributeFormat;
 import org.jetbrains.android.dom.resources.ResourceElement;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -141,7 +142,7 @@ public class ResourceRenderer extends AbstractResourceRenderer<String> {
 
         Module module = RadModelBuilder.getModule(component);
         if (module != null) {
-          AndroidFacet facet = AndroidFacet.getInstance(module);
+          AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
           if (facet != null) {
             ResourceManager manager = facet.getResourceManager(system ? AndroidUtils.SYSTEM_RESOURCE_PACKAGE : null);
             if (manager != null) {

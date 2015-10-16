@@ -26,7 +26,6 @@ import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.GenericDomValue;
 import org.jetbrains.android.dom.resources.ResourceNameConverter;
 import org.jetbrains.android.dom.resources.ResourceValue;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.must.android.module.extension.AndroidModuleExtension;

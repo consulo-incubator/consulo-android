@@ -30,13 +30,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.android.compiler.AndroidCompileUtil;
 import org.jetbrains.android.compiler.artifact.ProGuardConfigFilesPanel;
-import org.jetbrains.android.facet.AndroidFacet;
-import org.jetbrains.android.facet.AndroidFacetConfiguration;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.SaveFileListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -100,7 +100,7 @@ class ApkStep extends ExportSignedPackageWizardStep {
   @Override
   public void _init() {
     if (myInited) return;
-    final AndroidFacet facet = myWizard.getFacet();
+    final AndroidModuleExtension facet = myWizard.getFacet();
     Module module = facet.getModule();
 
     PropertiesComponent properties = PropertiesComponent.getInstance(module.getProject());
@@ -137,8 +137,8 @@ class ApkStep extends ExportSignedPackageWizardStep {
       myProGuardConfigFilesPanel.setOsPaths(Arrays.asList(proguardCfgPaths));
     }
     else {
-      final AndroidFacetConfiguration configuration = facet.getConfiguration();
-      if (configuration.getState().RUN_PROGUARD) {
+      final JpsAndroidModuleProperties configuration = facet.getProperties();
+      if (configuration.RUN_PROGUARD) {
         myProGuardConfigFilesPanel.setUrls(facet.getProperties().myProGuardCfgFiles);
       }
       else {
@@ -214,7 +214,7 @@ class ApkStep extends ExportSignedPackageWizardStep {
       throw new CommitStepException(AndroidBundle.message("android.extract.package.specify.apk.path.error"));
     }
 
-    AndroidFacet facet = myWizard.getFacet();
+    AndroidModuleExtension facet = myWizard.getFacet();
     PropertiesComponent properties = PropertiesComponent.getInstance(myWizard.getProject());
     properties.setValue(ChooseModuleStep.MODULE_PROPERTY, facet != null ? facet.getModule().getName() : "");
     properties.setValue(getApkPathPropertyName(), apkPath);
@@ -266,7 +266,7 @@ class ApkStep extends ExportSignedPackageWizardStep {
     myProGuardConfigFilesPanel = new ProGuardConfigFilesPanel() {
       @Nullable
       @Override
-      protected AndroidFacet getFacet() {
+      protected AndroidModuleExtension getFacet() {
         return myWizard.getFacet();
       }
     };

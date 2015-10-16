@@ -35,6 +35,7 @@ import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -42,6 +43,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collection;
 import java.util.List;
@@ -133,7 +135,7 @@ public class JavaProjectDataService extends AbstractProjectDataService<IdeaJavaP
   private static void cleanUpAndroidModuleWithoutVariants(@NotNull Module module) {
     // Remove Android facet, otherwise the IDE will try to build the module, and fail. The facet may have been added in a previous
     // successful commit.
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet != null) {
       ModifiableFacetModel facetModel = FacetManager.getInstance(module).createModifiableModel();
       facetModel.removeFacet(facet);

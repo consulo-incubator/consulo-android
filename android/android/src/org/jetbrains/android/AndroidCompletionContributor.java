@@ -21,6 +21,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementDecorator;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -52,10 +53,10 @@ import org.jetbrains.android.dom.transition.TransitionDomUtil;
 import org.jetbrains.android.dom.xml.AndroidXmlResourcesUtil;
 import org.jetbrains.android.dom.xml.PreferenceElement;
 import org.jetbrains.android.dom.xml.XmlResourceDomFileDescription;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.SimpleClassMapConstructor;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.*;
@@ -71,7 +72,7 @@ public class AndroidCompletionContributor extends CompletionContributor {
     }
   }
 
-  private static boolean completeTagNames(@NotNull AndroidFacet facet, @NotNull XmlFile xmlFile, @NotNull CompletionResultSet resultSet) {
+  private static boolean completeTagNames(@NotNull AndroidModuleExtension facet, @NotNull XmlFile xmlFile, @NotNull CompletionResultSet resultSet) {
     if (ManifestDomFileDescription.isManifestFile(xmlFile, facet)) {
       resultSet.addElement(LookupElementBuilder.create("manifest"));
       return false;
@@ -125,7 +126,7 @@ public class AndroidCompletionContributor extends CompletionContributor {
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet resultSet) {
     PsiElement position = parameters.getPosition();
     PsiElement originalPosition = parameters.getOriginalPosition();
-    AndroidFacet facet = AndroidFacet.getInstance(position);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(position, AndroidModuleExtension.class);
 
     if (facet == null) {
       return;

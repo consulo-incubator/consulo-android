@@ -31,11 +31,11 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.externalSystem.model.DataNode;
-import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
@@ -48,6 +48,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.io.File;
@@ -210,7 +211,7 @@ public final class Projects {
    */
   public static boolean isGradleProjectWithoutModel(@NotNull Project project) {
     for (Module module : ModuleManager.getInstance(project).getModules()) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null && facet.isGradleProject() && facet.getIdeaAndroidProject() == null) {
         return true;
       }
@@ -250,7 +251,7 @@ public final class Projects {
   public static boolean isGradleProject(@NotNull Project project) {
     ModuleManager moduleManager = ModuleManager.getInstance(project);
     for (Module module : moduleManager.getModules()) {
-      AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (androidFacet != null && androidFacet.isGradleProject()) {
         return true;
       }
@@ -267,7 +268,7 @@ public final class Projects {
   public static boolean isIdeaAndroidProject(@NotNull Project project) {
     ModuleManager moduleManager = ModuleManager.getInstance(project);
     for (Module module : moduleManager.getModules()) {
-      if (AndroidFacet.getInstance(module) != null && !isBuildWithGradle(module)) {
+      if (ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) != null && !isBuildWithGradle(module)) {
         return true;
       }
     }
@@ -332,8 +333,7 @@ public final class Projects {
     // if we got here is because we are dealing with a Gradle project, but if there is only one module selected and this module is the
     // module that corresponds to the project itself, it won't have an android-gradle facet. In this case we treat it as if we were going
     // to build the whole project.
-    File moduleFilePath = new File(toSystemDependentName(module.getModuleFilePath()));
-    File moduleRootDirPath = moduleFilePath.getParentFile();
+    File moduleRootDirPath = new File(module.getModuleDirPath());
     if (moduleRootDirPath == null) {
       return false;
     }
@@ -401,7 +401,7 @@ public final class Projects {
    * @return {@code true} if the given module is the one that represents the project, {@code false} otherwise.
    */
   public static boolean isGradleProjectModule(@NotNull Module module) {
-    AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (androidFacet != null && androidFacet.isGradleProject()) {
       // If the module is an Android project, check that the module's path is the same as the project's.
       File moduleRootDirPath = new File(toSystemDependentName(module.getModuleFilePath())).getParentFile();
@@ -416,7 +416,7 @@ public final class Projects {
     if (module.isDisposed() || !isGradleProject(module.getProject())) {
       return null;
     }
-    AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (androidFacet != null && androidFacet.getIdeaAndroidProject() != null) {
       return androidFacet.getIdeaAndroidProject().getDelegate().getBuildFolder();
     }

@@ -24,6 +24,7 @@ import com.android.tools.idea.templates.TemplateMetadata;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -33,6 +34,7 @@ import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.Iterator;
@@ -74,8 +76,8 @@ public class NewTemplateObjectWizardTest extends AndroidGradleTestCase {
     assertNotNull(myLibModule);
     assertNotNull(myAppModule);
 
-    myAppFacet = AndroidFacet.getInstance(myAppModule);
-    myLibFacet = AndroidFacet.getInstance(myLibModule);
+    myAppFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(myAppModule, AndroidModuleExtension.class);
+    myLibFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(myLibModule, AndroidModuleExtension.class);
 
     assertNotNull(myAppFacet);
     assertNotNull(myLibFacet);

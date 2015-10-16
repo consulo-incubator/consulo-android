@@ -293,7 +293,7 @@ public class StringResourceViewPanel implements HyperlinkListener {
     sb.append("?asVer=");
     ApplicationInfo ideInfo = ApplicationInfo.getInstance();
     sb.append(ideInfo.getMajorVersion()).append('.')
-      .append(ideInfo.getMinorVersion()).append('.')
+      .append(ideInfo.getMinorVersion()).append('.');
 
 
     // Package name

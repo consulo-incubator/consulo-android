@@ -23,12 +23,14 @@ import com.google.common.base.Strings;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidFacetType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.Collection;
@@ -55,7 +57,7 @@ public class AndroidFacetModuleCustomizer implements ModuleCustomizer<IdeaAndroi
       removeAllFacetsOfType(AndroidFacet.ID, modelsProvider.getModifiableFacetModel(module));
     }
     else {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         configureFacet(facet, androidProject);
       }

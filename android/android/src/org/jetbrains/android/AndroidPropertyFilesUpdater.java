@@ -121,7 +121,7 @@ public class AndroidPropertyFilesUpdater extends AbstractProjectComponent {
     PsiDocumentManager.getInstance(myProject).commitAllDocuments();
 
     final List<VirtualFile> toAskFiles = new ArrayList<VirtualFile>();
-    final List<AndroidModuleExtension<?>> toAskFacets = new ArrayList<AndroidModuleExtension<?>>();
+    final List<AndroidModuleExtension> toAskFacets = new ArrayList<AndroidModuleExtension>();
     final List<Runnable> toAskChanges = new ArrayList<Runnable>();
 
     final List<VirtualFile> files = new ArrayList<VirtualFile>();
@@ -168,13 +168,13 @@ public class AndroidPropertyFilesUpdater extends AbstractProjectComponent {
           @Override
           public boolean process(MyResult result) {
             if (result == MyResult.NEVER) {
-              for (AndroidFacet facet : toAskFacets) {
+              for (AndroidModuleExtension facet : toAskFacets) {
                 facet.getProperties().UPDATE_PROPERTY_FILES = Boolean.FALSE.toString();
               }
               return true;
             }
             else if (result == MyResult.ALWAYS) {
-              for (AndroidFacet facet : toAskFacets) {
+              for (AndroidModuleExtension facet : toAskFacets) {
                 facet.getProperties().UPDATE_PROPERTY_FILES = Boolean.TRUE.toString();
               }
             }
@@ -313,7 +313,7 @@ public class AndroidPropertyFilesUpdater extends AbstractProjectComponent {
   private static VirtualFile[] collectDependencies(@NotNull Module module) {
     final List<VirtualFile> dependenciesList = new ArrayList<VirtualFile>();
 
-    for (AndroidFacet depFacet : AndroidUtils.getAndroidLibraryDependencies(module)) {
+    for (AndroidModuleExtension depFacet : AndroidUtils.getAndroidLibraryDependencies(module)) {
       final Module depModule = depFacet.getModule();
       final VirtualFile libDir = getBaseAndroidContentRoot(depModule);
       if (libDir != null) {
@@ -323,11 +323,11 @@ public class AndroidPropertyFilesUpdater extends AbstractProjectComponent {
     return dependenciesList.toArray(new VirtualFile[dependenciesList.size()]);
   }
 
-  private static void updateTargetProperty(@NotNull AndroidFacet facet,
+  private static void updateTargetProperty(@NotNull AndroidModuleExtension facet,
                                            @NotNull final PropertiesFile propertiesFile,
                                            @NotNull List<Runnable> changes) {
     final Project project = facet.getModule().getProject();
-    final IAndroidTarget androidTarget = facet.getConfiguration().getAndroidTarget();
+    final IAndroidTarget androidTarget = facet.getAndroidTarget();
 
     if (androidTarget != null) {
       final String targetPropertyValue = androidTarget.hashString();
@@ -358,7 +358,7 @@ public class AndroidPropertyFilesUpdater extends AbstractProjectComponent {
     }
   }
 
-  public static void updateLibraryProperty(@NotNull AndroidFacet facet,
+  public static void updateLibraryProperty(@NotNull AndroidModuleExtension facet,
                                            @NotNull final PropertiesFile propertiesFile,
                                            @NotNull List<Runnable> changes) {
     final IProperty property = propertiesFile.findPropertyByKey(AndroidUtils.ANDROID_LIBRARY_PROPERTY);
@@ -385,7 +385,7 @@ public class AndroidPropertyFilesUpdater extends AbstractProjectComponent {
     }
   }
 
-  public static void updateManifestMergerProperty(@NotNull AndroidFacet facet,
+  public static void updateManifestMergerProperty(@NotNull AndroidModuleExtension facet,
                                                   @NotNull final PropertiesFile propertiesFile,
                                                   @NotNull List<Runnable> changes) {
     final IProperty property = propertiesFile.findPropertyByKey(AndroidUtils.ANDROID_MANIFEST_MERGER_PROPERTY);
@@ -422,7 +422,7 @@ public class AndroidPropertyFilesUpdater extends AbstractProjectComponent {
 
   @Nullable
   private static VirtualFile getBaseAndroidContentRoot(@NotNull Module module) {
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     final VirtualFile manifestFile = facet != null ? AndroidRootUtil.getManifestFile(facet) : null;
     final VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
     if (manifestFile != null) {
@@ -455,11 +455,11 @@ public class AndroidPropertyFilesUpdater extends AbstractProjectComponent {
   }
 
   private void askUserIfUpdatePropertyFile(@NotNull Project project,
-                                           @NotNull Collection<AndroidFacet> facets,
+                                           @NotNull Collection<AndroidModuleExtension> facets,
                                            @NotNull final Processor<MyResult> callback) {
     final StringBuilder moduleList = new StringBuilder();
 
-    for (AndroidFacet facet : facets) {
+    for (AndroidModuleExtension facet : facets) {
       moduleList.append(facet.getModule().getName()).append("<br>");
     }
     myNotification = PROPERTY_FILES_UPDATING_NOTIFICATION.createNotification(

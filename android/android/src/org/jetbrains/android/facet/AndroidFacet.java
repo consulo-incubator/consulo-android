@@ -52,6 +52,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -89,6 +90,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.*;
@@ -107,7 +109,6 @@ import static org.jetbrains.android.sdk.AndroidSdkUtils.isAndroidSdk;
 import static org.jetbrains.android.util.AndroidCommonUtils.ANNOTATIONS_JAR_RELATIVE_PATH;
 import static org.jetbrains.android.util.AndroidCommonUtils.toolPath;
 import static org.jetbrains.android.util.AndroidUtils.SYSTEM_RESOURCE_PACKAGE;
-import static org.jetbrains.android.util.AndroidUtils.loadDomElement;
 
 /**
  * @author yole
@@ -537,7 +538,7 @@ public class AndroidFacet extends Facet<AndroidFacetConfiguration> {
       MessageBuildingSdkLog log = new MessageBuildingSdkLog();
       manager.reloadAvds(log);
       if (!log.getErrorMessage().isEmpty()) {
-        Messages
+        Messages                                    getAvdManager
           .showErrorDialog(getModule().getProject(), AndroidBundle.message("cant.load.avds.error.prefix") + ' ' + log.getErrorMessage(),
                            CommonBundle.getErrorTitle());
       }
@@ -798,28 +799,6 @@ public class AndroidFacet extends Facet<AndroidFacetConfiguration> {
     }
   }
 
-  @Nullable
-  public static AndroidFacet getInstance(@NotNull Module module) {
-    return FacetManager.getInstance(module).getFacetByType(ID);
-  }
-
-  @Nullable
-  public static AndroidFacet getInstance(@NotNull ConvertContext context) {
-    Module module = context.getModule();
-    return module != null ? getInstance(module) : null;
-  }
-
-  @Nullable
-  public static AndroidFacet getInstance(@NotNull PsiElement element) {
-    Module module = getModuleSafely(element);
-    return module != null ? getInstance(module) : null;
-  }
-
-  @Nullable
-  public static AndroidFacet getInstance(@NotNull DomElement element) {
-    Module module = element.getModule();
-    return module != null ? getInstance(module) : null;
-  }
 
   @Nullable
   public ResourceManager getResourceManager(@Nullable String resourcePackage) {

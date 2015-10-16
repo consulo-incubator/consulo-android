@@ -2,6 +2,7 @@ package org.jetbrains.android.refactoring;
 
 import com.android.resources.ResourceType;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -14,7 +15,6 @@ import com.intellij.util.xml.DomManager;
 import com.intellij.util.xml.GenericAttributeValue;
 import org.jetbrains.android.dom.resources.ResourcesDomFileDescription;
 import org.jetbrains.android.dom.resources.Style;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.resourceManagers.ValueResourceInfoImpl;
 import org.jetbrains.android.util.AndroidBundle;
@@ -22,6 +22,7 @@ import org.jetbrains.android.util.ErrorReporter;
 import org.jetbrains.android.util.ProjectBasedErrorReporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 import java.util.Map;
@@ -104,7 +105,7 @@ public class AndroidFindStyleApplicationsAction extends AndroidBaseXmlRefactorin
     if (attrMap == null || attrMap.size() == 0) {
       return null;
     }
-    final AndroidFacet facet = styleData.getFacet();
+    final AndroidModuleExtension facet = styleData.getFacet();
     final StyleRefData parentStyleRef = AndroidRefactoringUtil.getParentStyle(style);
     PsiElement parentStyleAttrName = null;
 
@@ -121,7 +122,7 @@ public class AndroidFindStyleApplicationsAction extends AndroidBaseXmlRefactorin
                                                      styleData.getNameAttrValue(), parentStyleAttrName, context);
   }
 
-  private static PsiElement resolveStyleRef(StyleRefData styleRef, AndroidFacet facet) {
+  private static PsiElement resolveStyleRef(StyleRefData styleRef, AndroidModuleExtension facet) {
     final ResourceManager resourceManager = facet.getResourceManager(styleRef.getStylePackage());
     
     if (resourceManager == null) {
@@ -149,7 +150,7 @@ public class AndroidFindStyleApplicationsAction extends AndroidBaseXmlRefactorin
         styleNameAttrValue == null) {
       return null;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(tag);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(tag, AndroidModuleExtension.class);
 
     if (facet == null) {
       return null;
@@ -161,11 +162,11 @@ public class AndroidFindStyleApplicationsAction extends AndroidBaseXmlRefactorin
     private final Style myStyle;
     private final String myName;
     private final XmlAttributeValue myNameAttrValue;
-    private final AndroidFacet myFacet;
+    private final AndroidModuleExtension myFacet;
 
     private MyStyleData(@NotNull Style style,
                         @NotNull String name,
-                        @NotNull AndroidFacet facet,
+                        @NotNull AndroidModuleExtension facet,
                         @NotNull XmlAttributeValue nameAttrValue) {
       myStyle = style;
       myName = name;
@@ -184,7 +185,7 @@ public class AndroidFindStyleApplicationsAction extends AndroidBaseXmlRefactorin
     }
 
     @NotNull
-    public AndroidFacet getFacet() {
+    public AndroidModuleExtension getFacet() {
       return myFacet;
     }
 

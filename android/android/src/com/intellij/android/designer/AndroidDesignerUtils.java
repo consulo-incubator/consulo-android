@@ -31,12 +31,13 @@ import com.intellij.designer.model.RadComponent;
 import com.intellij.designer.model.RadVisualComponent;
 import com.intellij.designer.palette.PaletteItem;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 import org.w3c.dom.Document;
 
 import java.awt.*;
@@ -51,13 +52,13 @@ public class AndroidDesignerUtils {
   }
 
   @Nullable
-  public static AndroidFacet getFacet(@NotNull EditableArea area) {
+  public static AndroidModuleExtension getFacet(@NotNull EditableArea area) {
     AndroidDesignerEditorPanel panel = getPanel(area);
     if (panel != null) {
       Configuration configuration = panel.getConfiguration();
       assert configuration != null;
       Module module = panel.getModule();
-      return AndroidFacet.getInstance(module);
+      return ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     }
 
     return null;
@@ -71,7 +72,7 @@ public class AndroidDesignerUtils {
       assert configuration != null;
       XmlFile xmlFile = panel.getXmlFile();
       Module module = panel.getModule();
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       assert facet != null;
       @SuppressWarnings("UnnecessaryLocalVariable")
       RenderContext renderContext = panel;

@@ -21,6 +21,7 @@ import com.android.tools.idea.rendering.AppResourceRepository;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -40,7 +41,6 @@ import org.jetbrains.android.dom.resources.Attr;
 import org.jetbrains.android.dom.resources.DeclareStyleable;
 import org.jetbrains.android.dom.resources.ResourceElement;
 import org.jetbrains.android.dom.resources.Resources;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.facet.ResourceFolderManager;
 import org.jetbrains.android.util.AndroidResourceUtil;
@@ -141,20 +141,20 @@ public class LocalResourceManager extends ResourceManager {
       }
     }
 
-    for (AndroidFacet depFacet : AndroidUtils.getAllAndroidDependencies(facet.getModule(), false)) {
+    for (AndroidModuleExtension depFacet : AndroidUtils.getAllAndroidDependencies(facet.getModule(), false)) {
       collectResourceDirs(depFacet, result, visited);
     }
   }
 
   @Nullable
   public static LocalResourceManager getInstance(@NotNull Module module) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     return facet != null ? facet.getLocalResourceManager() : null;
   }
 
   @Nullable
   public static LocalResourceManager getInstance(@NotNull PsiElement element) {
-    AndroidFacet facet = AndroidFacet.getInstance(element);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(element, AndroidModuleExtension.class);
     return facet != null ? facet.getLocalResourceManager() : null;
   }
 

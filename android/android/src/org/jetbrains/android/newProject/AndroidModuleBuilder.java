@@ -38,6 +38,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.DumbAwareRunnable;
@@ -71,7 +72,7 @@ import org.jetbrains.android.AndroidFileTemplateProvider;
 import org.jetbrains.android.dom.manifest.Manifest;
 import org.jetbrains.android.dom.resources.ResourceElement;
 import org.jetbrains.android.dom.resources.ResourceValue;
-import org.jetbrains.android.facet.AndroidFacet;
+import org.jetbrains.android.facet.AndroidModuleExtension;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.importDependencies.ImportDependenciesUtil;
 import org.jetbrains.android.resourceManagers.LocalResourceManager;
@@ -83,6 +84,7 @@ import org.jetbrains.android.sdk.AndroidSdkType;
 import org.jetbrains.android.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.io.File;
@@ -164,7 +166,7 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
     }
   }
 
-  private static void configureManifest(@NotNull AndroidFacet facet, @NotNull IAndroidTarget target) {
+  private static void configureManifest(@NotNull AndroidModuleExtension facet, @NotNull IAndroidTarget target) {
     final Manifest manifest = facet.getManifest();
     if (manifest == null) {
       return;
@@ -222,7 +224,7 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
     }
   }
 
-  private static void addTestRunConfiguration(final AndroidFacet facet, @NotNull TargetSelectionMode mode, @Nullable String preferredAvd) {
+  private static void addTestRunConfiguration(final AndroidModuleExtension facet, @NotNull TargetSelectionMode mode, @Nullable String preferredAvd) {
     Project project = facet.getModule().getProject();
     RunManager runManager = RunManager.getInstance(project);
     Module module = facet.getModule();
@@ -325,7 +327,7 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
     VirtualFile[] files = rootModel.getContentRoots();
     if (files.length > 0) {
       final VirtualFile contentRoot = files[0];
-      final AndroidFacet facet = AndroidUtils.addAndroidFacet(rootModel.getModule(), contentRoot, myProjectType == AndroidProjectType.LIBRARY);
+      final AndroidModuleExtension facet = AndroidUtils.addAndroidModuleExtension(rootModel.getModule(), contentRoot, myProjectType == AndroidProjectType.LIBRARY);
 
       if (myProjectType == null) {
         ImportDependenciesUtil.importDependencies(rootModel.getModule(), true);
@@ -363,7 +365,7 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
     }
   }
 
-  private void createProject(VirtualFile contentRoot, VirtualFile sourceRoot, AndroidFacet facet) {
+  private void createProject(VirtualFile contentRoot, VirtualFile sourceRoot, AndroidModuleExtension facet) {
     if (sourceRoot == null) {
       try {
         // user've chosen "do not create source root"
@@ -382,7 +384,7 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
     }
   }
 
-  private void createDirectoryStructure(VirtualFile contentRoot, VirtualFile sourceRoot, AndroidFacet facet) {
+  private void createDirectoryStructure(VirtualFile contentRoot, VirtualFile sourceRoot, AndroidModuleExtension facet) {
     if (isHelloAndroid()) {
       if (createProjectByAndroidTool(contentRoot, sourceRoot, facet)) {
         return;
@@ -400,7 +402,7 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
 
   private boolean createProjectByAndroidTool(final VirtualFile contentRoot,
                                              final VirtualFile sourceRoot,
-                                             final AndroidFacet facet) {
+                                             final AndroidModuleExtension facet) {
     final Module module = facet.getModule();
 
     Sdk sdk = getAndroidSdkForModule(module);
@@ -471,7 +473,7 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
       commandLine.addParameter(myActivityName);
     }
     else if (myProjectType == AndroidProjectType.TEST) {
-      final AndroidFacet testedFacet = AndroidFacet.getInstance(myTestedModule);
+      final AndroidModuleExtension testedFacet = ModuleUtilCore.getExtension(myTestedModule, AndroidModuleExtension.class);
       final VirtualFile moduleDir = testedFacet != null
                                     ? AndroidRootUtil.getMainContentRoot(testedFacet)
                                     : null;
@@ -612,7 +614,7 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
     return true;
   }
 
-  private void assignApplicationName(AndroidFacet facet) {
+  private void assignApplicationName(AndroidModuleExtension facet) {
     if (myApplicationName == null || myApplicationName.length() == 0) {
       return;
     }
@@ -646,7 +648,7 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
       }
     }
 
-  private void addRunConfiguration(@NotNull AndroidFacet facet,
+  private void addRunConfiguration(@NotNull AndroidModuleExtension facet,
                                    @NotNull TargetSelectionMode targetSelectionMode,
                                    @Nullable String targetAvd) {
     String activityClass;
@@ -663,7 +665,7 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
     return StringUtil.isNotEmpty(myActivityName);
   }
 
-  private void createActivityAndSetupManifest(final AndroidFacet facet, final PsiDirectory sourceDir) {
+  private void createActivityAndSetupManifest(final AndroidModuleExtension facet, final PsiDirectory sourceDir) {
     if (myPackageName != null) {
       CommandProcessor.getInstance().executeCommand(facet.getModule().getProject(), new ExternalChangeAction() {
         @Override
@@ -736,16 +738,6 @@ public class AndroidModuleBuilder extends JavaModuleBuilder {
 
   public void setPackageName(String packageName) {
     myPackageName = packageName;
-  }
-
-  @Override
-  public ModuleType getModuleType() {
-    return StdModuleTypes.JAVA;
-  }
-
-  @Override
-  protected ProjectType getProjectType() {
-    return ANDROID_PROJECT_TYPE;
   }
 
   @Nullable

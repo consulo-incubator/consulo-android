@@ -58,8 +58,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
-import org.jetbrains.android.facet.AndroidFacet;
-import org.jetbrains.android.facet.AndroidFacetConfiguration;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.sdk.AndroidSdkUtils;
@@ -130,7 +128,7 @@ public abstract class AndroidRunConfigurationBase extends ModuleBasedConfigurati
       throw new RuntimeConfigurationException(GRADLE_SYNC_FAILED_ERR_MSG);
     }
 
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       throw new RuntimeConfigurationError(AndroidBundle.message("android.no.facet.error"));
     }
@@ -140,7 +138,7 @@ public abstract class AndroidRunConfigurationBase extends ModuleBasedConfigurati
         throw new RuntimeConfigurationError(result.getSecond());
       }
     }
-    if (facet.getConfiguration().getAndroidPlatform() == null) {
+    if (facet.getAndroidPlatform() == null) {
       throw new RuntimeConfigurationError(AndroidBundle.message("select.platform.error"));
     }
     if (facet.getManifest() == null) {
@@ -166,15 +164,16 @@ public abstract class AndroidRunConfigurationBase extends ModuleBasedConfigurati
   }
 
   /** Returns whether the configuration supports running library projects, and if it doesn't, then an explanation as to why it doesn't. */
-  protected abstract Pair<Boolean,String> supportsRunningLibraryProjects(@NotNull AndroidFacet facet);
-  protected abstract void checkConfiguration(@NotNull AndroidFacet facet) throws RuntimeConfigurationException;
+  protected abstract Pair<Boolean,String> supportsRunningLibraryProjects(@NotNull AndroidModuleExtension facet);
+
+  protected abstract void checkConfiguration(@NotNull AndroidModuleExtension facet) throws RuntimeConfigurationException;
 
   @Override
   public Collection<Module> getValidModules() {
     final List<Module> result = new ArrayList<Module>();
     Module[] modules = ModuleManager.getInstance(getProject()).getModules();
     for (Module module : modules) {
-      if (AndroidFacet.getInstance(module) != null) {
+      if (ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) != null) {
         result.add(module);
       }
     }
@@ -248,8 +247,7 @@ public abstract class AndroidRunConfigurationBase extends ModuleBasedConfigurati
       }
     }
 
-    AndroidFacetConfiguration configuration = facet.getConfiguration();
-    AndroidPlatform platform = configuration.getAndroidPlatform();
+    AndroidPlatform platform = facet.getAndroidPlatform();
     if (platform == null) {
       Messages.showErrorDialog(project, AndroidBundle.message("specify.platform.error"), CommonBundle.getErrorTitle());
       ModulesConfigurator.showDialog(project, module.getName(), ClasspathEditor.NAME);

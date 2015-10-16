@@ -20,6 +20,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditorState;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -28,9 +29,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import org.jdom.Element;
 import org.jetbrains.android.dom.layout.LayoutDomFileDescription;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.uipreview.AndroidEditorSettings;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Alexander Lobas
@@ -42,7 +43,7 @@ public final class AndroidDesignerEditorProvider implements FileEditorProvider, 
   public static boolean acceptLayout(final @NotNull Project project, final @NotNull VirtualFile file) {
     PsiFile psiFile = AndroidPsiUtils.getPsiFileSafely(project, file);
     return psiFile instanceof XmlFile &&
-           AndroidFacet.getInstance(psiFile) != null &&
+           ModuleUtilCore.getExtension(psiFile, AndroidModuleExtension.class) != null &&
            LayoutDomFileDescription.isLayoutFile((XmlFile)psiFile);
   }
 

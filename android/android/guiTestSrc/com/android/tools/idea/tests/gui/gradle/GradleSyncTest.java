@@ -46,6 +46,7 @@ import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.projectRoots.JavaSdkVersion;
@@ -76,6 +77,7 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -869,7 +871,7 @@ public class GradleSyncTest extends GuiTestCase {
     Module localAarModule = projectFrame.getModule("library-debug");
 
     // When AAR files are exposed as artifacts, they don't have an AndroidProject model.
-    AndroidFacet androidFacet = AndroidFacet.getInstance(localAarModule);
+    AndroidFacet androidFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(localAarModule, AndroidModuleExtension.class);
     assertNull(androidFacet);
     assertNull(getAndroidProject(localAarModule));
 
@@ -1234,7 +1236,7 @@ public class GradleSyncTest extends GuiTestCase {
   public void testWithAndroidProjectWithoutVariants() throws IOException {
     IdeFrameFixture projectFrame = importSimpleApplication();
     Module appModule = projectFrame.getModule("app");
-    assertNotNull(AndroidFacet.getInstance(appModule));
+    assertNotNull(ModuleUtilCore.getExtension(appModule, AndroidModuleExtension.class));
 
     File appBuildFile = new File(projectFrame.getProjectPath(), join("app", FN_BUILD_GRADLE));
     assertThat(appBuildFile).isFile();
@@ -1250,7 +1252,7 @@ public class GradleSyncTest extends GuiTestCase {
 
     // Verify AndroidFacet was removed.
     appModule = projectFrame.getModule("app");
-    assertNull(AndroidFacet.getInstance(appModule));
+    assertNull(ModuleUtilCore.getExtension(appModule, AndroidModuleExtension.class));
   }
 
   @Test @IdeGuiTest

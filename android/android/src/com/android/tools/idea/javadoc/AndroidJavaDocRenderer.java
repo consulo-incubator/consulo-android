@@ -41,16 +41,17 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ColorUtil;
 import org.jetbrains.android.AndroidColorAnnotator;
 import org.jetbrains.android.dom.attrs.AttributeDefinition;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidTargetData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -271,7 +272,7 @@ public class AndroidJavaDocRenderer {
      */
     @Nullable
     private static FrameworkResources getLatestPublicFrameworkResources(Module module) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet == null) {
         return null;
       }
@@ -318,7 +319,7 @@ public class AndroidJavaDocRenderer {
         return results;
       }
 
-      AndroidFacet facet = AndroidFacet.getInstance(myModule);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
       if (facet == null) {
         return null;
       }
@@ -396,7 +397,7 @@ public class AndroidJavaDocRenderer {
                                               @NotNull ResourceType type,
                                               @NotNull String name,
                                               @NotNull List<ItemInfo> results,
-                                              @NotNull AndroidFacet facet) {
+                                              @NotNull AndroidModuleExtension facet) {
       Collection<File> resDirectories = sourceProvider.getResDirectories();
       LocalFileSystem fileSystem = LocalFileSystem.getInstance();
       for (File dir : resDirectories) {
@@ -627,7 +628,7 @@ public class AndroidJavaDocRenderer {
           }
         }
 
-        AndroidFacet facet = AndroidFacet.getInstance(myModule);
+        AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
         if (facet != null) {
           VirtualFile layout = AndroidColorAnnotator.pickLayoutFile(myModule, facet);
           if (layout != null) {

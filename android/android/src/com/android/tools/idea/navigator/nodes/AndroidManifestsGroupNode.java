@@ -30,23 +30,23 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.SimpleTextAttributes;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidSourceType;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-public class AndroidManifestsGroupNode extends ProjectViewNode<AndroidFacet> implements DirectoryGroupNode {
+public class AndroidManifestsGroupNode extends ProjectViewNode<AndroidModuleExtension> implements DirectoryGroupNode {
   private static final String MANIFESTS_NODE = "manifests";
   @NotNull private final Set<VirtualFile> mySources;
 
   protected AndroidManifestsGroupNode(@NotNull Project project,
-                                      @NotNull AndroidFacet facet,
+                                      @NotNull AndroidModuleExtension facet,
                                       @NotNull ViewSettings viewSettings,
                                       @NotNull Set<VirtualFile> sources) {
     super(project, facet, viewSettings);

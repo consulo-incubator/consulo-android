@@ -10,7 +10,6 @@
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/gen">
               <property key="is-generated-root" value="true" />
             </content-folder>
-            <content-folder type="TEST" url="file://$MODULE_DIR$/guiTestSrc" />
             <content-folder type="PRODUCTION_RESOURCE" url="file://$MODULE_DIR$/resources" />
             <content-folder type="PRODUCTION" url="file://$MODULE_DIR$/src" />
           </content>

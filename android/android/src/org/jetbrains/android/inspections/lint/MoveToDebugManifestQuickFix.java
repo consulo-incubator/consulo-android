@@ -24,6 +24,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -36,9 +37,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.IOException;
 
@@ -62,7 +63,7 @@ class MoveToDebugManifestQuickFix implements AndroidLintQuickFix {
         parent.delete();
 
         if (module != null) {
-          AndroidFacet facet = AndroidFacet.getInstance(module);
+          AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
           if (facet != null) {
             VirtualFile mainManifest = facet.getMainIdeaSourceProvider().getManifestFile();
             IdeaAndroidProject project = facet.getIdeaAndroidProject();

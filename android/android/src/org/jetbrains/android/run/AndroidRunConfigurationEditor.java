@@ -23,7 +23,6 @@ import com.android.tools.idea.model.AndroidModuleInfo;
 import com.android.tools.idea.run.*;
 import com.android.tools.idea.run.CloudConfiguration.Kind;
 import com.google.common.base.Predicate;
-import com.intellij.application.options.ModulesComboBox;
 import com.intellij.execution.ui.ConfigurationModuleSelector;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -33,9 +32,11 @@ import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.actionSystem.impl.PresentationFactory;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.*;
@@ -43,12 +44,12 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.util.ThreeState;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.run.testing.AndroidTestRunConfiguration;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -68,7 +69,7 @@ public class AndroidRunConfigurationEditor<T extends AndroidRunConfigurationBase
 
   private JPanel myPanel;
   protected JBTabbedPane myTabbedPane;
-  private ModulesComboBox myModulesComboBox;
+  private ComboBox myModulesComboBox;
   private JPanel myConfigurationSpecificPanel;
   private JCheckBox myWipeUserDataCheckBox;
   private JComboBox myNetworkSpeedCombo;
@@ -119,7 +120,7 @@ public class AndroidRunConfigurationEditor<T extends AndroidRunConfigurationBase
     myFilterLogcatCheckBox.setVisible(configurationSpecificEditor instanceof ApplicationRunParameters);
   }
 
-  public AndroidRunConfigurationEditor(final Project project, final Predicate<AndroidFacet> libraryProjectValidator) {
+  public AndroidRunConfigurationEditor(final Project project, final Predicate<AndroidModuleExtension> libraryProjectValidator) {
     myProject = project;
     $$$setupUI$$$(); // Create UI components after myProject is available. Also see https://youtrack.jetbrains.com/issue/IDEA-67765
 
@@ -134,7 +135,7 @@ public class AndroidRunConfigurationEditor<T extends AndroidRunConfigurationBase
           return false;
         }
 
-        final AndroidFacet facet = AndroidFacet.getInstance(module);
+        final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
         if (facet == null) {
           return false;
         }
@@ -165,7 +166,7 @@ public class AndroidRunConfigurationEditor<T extends AndroidRunConfigurationBase
       @Override
       public void actionPerformed(ActionEvent e) {
         Module module = getModuleSelector().getModule();
-        AndroidFacet facet = module != null ? AndroidFacet.getInstance(module) : null;
+        AndroidModuleExtension facet = module != null ? ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) : null;
         if (facet == null) {
           updateCloudMatrixTestEnabled(false);
           updateCloudDeviceLaunchEnabled(false);
@@ -345,7 +346,7 @@ public class AndroidRunConfigurationEditor<T extends AndroidRunConfigurationBase
         return null;
       }
 
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet == null) {
         return null;
       }
@@ -360,7 +361,7 @@ public class AndroidRunConfigurationEditor<T extends AndroidRunConfigurationBase
         return null;
       }
 
-      AndroidPlatform platform = facet.getConfiguration().getAndroidPlatform();
+      AndroidPlatform platform = facet.getAndroidPlatform();
       if (platform == null) {
         return null;
       }

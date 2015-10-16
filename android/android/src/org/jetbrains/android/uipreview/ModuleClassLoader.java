@@ -20,8 +20,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -34,12 +34,14 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.containers.WeakHashMap;
-import org.jetbrains.android.facet.AndroidFacet;
+import org.consulo.compiler.ModuleCompilerPathsManager;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.sdk.AndroidTargetData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.roots.impl.ProductionContentFolderTypeProvider;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -171,14 +173,11 @@ public final class ModuleClassLoader extends RenderClassLoader {
 
   @Nullable
   private Class<?> loadClassFromModule(Module module, String name) {
-    final CompilerModuleExtension extension = CompilerModuleExtension.getInstance(module);
-    if (extension == null) {
-      return null;
-    }
+    final ModuleCompilerPathsManager extension = ModuleCompilerPathsManager.getInstance(module);
 
-    VirtualFile vOutFolder = extension.getCompilerOutputPath();
+    VirtualFile vOutFolder = extension.getCompilerOutput(ProductionContentFolderTypeProvider.getInstance());
     if (vOutFolder == null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null && facet.isGradleProject()) {
         // Try a bit harder; we don't have a compiler module extension or mechanism
         // to query this yet, so just hardcode it (ugh!)
@@ -269,7 +268,7 @@ public final class ModuleClassLoader extends RenderClassLoader {
               File sourceFile = VfsUtilCore.virtualToIoFile(virtualFile);
               long sourceFileModified = sourceFile.lastModified();
 
-              AndroidFacet facet = AndroidFacet.getInstance(myModule);
+              AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
               // User modifications on the source file might not always result on a new .class file.
               // If it's a gradle project, we use the project modification time instead to display the warning
               // more reliably.

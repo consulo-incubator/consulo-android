@@ -45,6 +45,7 @@ import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -178,7 +179,7 @@ public class AndroidResourceFilesListener extends BulkFileListener.Adapter imple
         if (module == null || module.isDisposed()) {
           continue;
         }
-        final AndroidFacet facet = AndroidFacet.getInstance(module);
+        final AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
         if (facet == null) {
           continue;
@@ -243,7 +244,7 @@ public class AndroidResourceFilesListener extends BulkFileListener.Adapter imple
 
     private void invalidateAttributeDefinitions(@NotNull Collection<Module> modules) {
       for (Module module : AndroidUtils.getSetWithBackwardDependencies(modules)) {
-        final AndroidFacet facet = AndroidFacet.getInstance(module);
+        final AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
         if (facet != null) {
           facet.getLocalResourceManager().invalidateAttributeDefinitions();

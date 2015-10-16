@@ -30,14 +30,15 @@ import com.android.tools.idea.rendering.multi.CompatibilityRenderTarget;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.SystemInfo;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.uipreview.RenderingException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -102,7 +103,7 @@ public class GraphicsLayoutRenderer {
   }
 
   @NotNull
-  protected static GraphicsLayoutRenderer create(@NotNull AndroidFacet facet,
+  protected static GraphicsLayoutRenderer create(@NotNull AndroidModuleExtension facet,
                                                  @NotNull AndroidPlatform platform,
                                                  @NotNull IAndroidTarget target,
                                                  @NotNull Project project,
@@ -178,7 +179,7 @@ public class GraphicsLayoutRenderer {
                                               @NotNull ILayoutPullParser parser,
                                               boolean hasHorizontalScroll,
                                               boolean hasVerticalScroll) throws InitializationException {
-    AndroidFacet facet = AndroidFacet.getInstance(configuration.getModule());
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(configuration.getModule(), AndroidModuleExtension.class);
     if (facet == null) {
       throw new InitializationException("Unable to get AndroidFacet");
     }

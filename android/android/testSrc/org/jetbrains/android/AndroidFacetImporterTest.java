@@ -19,6 +19,7 @@ import com.android.sdklib.IAndroidTarget;
 import com.intellij.facet.FacetTypeId;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
@@ -38,6 +39,7 @@ import org.jetbrains.idea.maven.importing.FacetImporterTestCase;
 import org.jetbrains.idea.maven.server.MavenServerManager;
 import org.jetbrains.jps.android.model.impl.AndroidImportableProperty;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.Arrays;
@@ -269,7 +271,7 @@ public class AndroidFacetImporterTest extends FacetImporterTestCase<AndroidFacet
       assertModules("module");
       final Module module = getModule("module");
       checkSdk(ModuleRootManager.getInstance(module).getSdk());
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
       assertNotNull(facet);
       final JpsAndroidModuleProperties properties = facet.getProperties();
       assertEquals(false, properties.LIBRARY_PROJECT);
@@ -305,7 +307,7 @@ public class AndroidFacetImporterTest extends FacetImporterTestCase<AndroidFacet
       assertModules("module");
       final Module module = getModule("module");
       checkSdk(ModuleRootManager.getInstance(module).getSdk());
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
       assertNotNull(facet);
       final JpsAndroidModuleProperties properties = facet.getProperties();
       assertEquals(true, properties.LIBRARY_PROJECT);
@@ -387,7 +389,7 @@ public class AndroidFacetImporterTest extends FacetImporterTestCase<AndroidFacet
       assertModules("module");
       final Module module = getModule("module");
       checkSdk(ModuleRootManager.getInstance(module).getSdk());
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
       assertNotNull(facet);
       final JpsAndroidModuleProperties properties = facet.getProperties();
       assertEquals("/res", properties.RES_FOLDER_RELATIVE_PATH);
@@ -485,7 +487,7 @@ public class AndroidFacetImporterTest extends FacetImporterTestCase<AndroidFacet
 
       assertModules("module");
       final Module module = getModule("module");
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
       assertNotNull(facet);
       assertFalse(facet.isLibraryProject());
 
@@ -554,12 +556,12 @@ public class AndroidFacetImporterTest extends FacetImporterTestCase<AndroidFacet
 
       assertModules("module", "~apklib-com_myapklib_1.0");
       final Module module = getModule("module");
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
       assertNotNull(facet);
       assertFalse(facet.isLibraryProject());
 
       final Module apklibModule = getModule("~apklib-com_myapklib_1.0");
-      final AndroidFacet apklibFacet = AndroidFacet.getInstance(apklibModule);
+      final AndroidFacet apklibFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(apklibModule, AndroidModuleExtension.class);
       assertNotNull(apklibFacet);
       assertTrue(apklibFacet.isLibraryProject());
       checkSdk(ModuleRootManager.getInstance(apklibModule).getSdk(), "Maven Android API 2 Platform", "android-2");
@@ -634,17 +636,17 @@ public class AndroidFacetImporterTest extends FacetImporterTestCase<AndroidFacet
       assertModules("module1", "module2", "~apklib-com_myapklib_1.0");
 
       final Module module1 = getModule("module1");
-      final AndroidFacet facet1 = AndroidFacet.getInstance(module1);
+      final AndroidFacet facet1 = ModuleUtilCore.<AndroidModuleExtension>getExtension(module1, AndroidModuleExtension.class);
       assertNotNull(facet1);
       assertFalse(facet1.isLibraryProject());
 
       final Module module2 = getModule("module1");
-      final AndroidFacet facet2 = AndroidFacet.getInstance(module2);
+      final AndroidFacet facet2 = ModuleUtilCore.<AndroidModuleExtension>getExtension(module2, AndroidModuleExtension.class);
       assertNotNull(facet2);
       assertFalse(facet2.isLibraryProject());
 
       final Module apklibModule = getModule("~apklib-com_myapklib_1.0");
-      final AndroidFacet apklibFacet = AndroidFacet.getInstance(apklibModule);
+      final AndroidFacet apklibFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(apklibModule, AndroidModuleExtension.class);
       assertNotNull(apklibFacet);
       assertTrue(apklibFacet.isLibraryProject());
 
@@ -941,7 +943,7 @@ public class AndroidFacetImporterTest extends FacetImporterTestCase<AndroidFacet
         "target/generated-sources/extracted-dependencies")
       ), new HashSet<String>(Arrays.asList(excludedRootUrls)));
 
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
       assertNotNull(facet);
       facet.getProperties().GEN_FOLDER_RELATIVE_PATH_APT = "";
       facet.getProperties().GEN_FOLDER_RELATIVE_PATH_AIDL = "";

@@ -15,13 +15,14 @@
  */
 package org.jetbrains.android.newProject;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ListCellRendererWrapper;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class AndroidModulesComboBox extends JComboBox {
         if (value instanceof Module) {
           final Module module = (Module)value;
           setText(module.getName());
-          setIcon(ModuleType.get(module).getIcon());
+          setIcon(AllIcons.Nodes.Module);
         }
         else {
           setText("<html><font color='red'>[none]</font></html>");
@@ -61,7 +62,7 @@ public class AndroidModulesComboBox extends JComboBox {
     final Module[] modules = moduleManager.getModules();
     List<Module> result = new ArrayList<Module>();
     for (Module module : modules) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null && !facet.isLibraryProject()) {
         result.add(module);
       }

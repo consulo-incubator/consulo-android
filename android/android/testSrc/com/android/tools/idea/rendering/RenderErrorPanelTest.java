@@ -23,6 +23,7 @@ import com.android.tools.idea.configurations.Configuration;
 import com.android.tools.idea.configurations.ConfigurationManager;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -35,6 +36,7 @@ import org.jetbrains.android.sdk.AndroidSdkUtils;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -80,7 +82,7 @@ public class RenderErrorPanelTest extends AndroidTestCase {
 
   private String getRenderOutput(@NotNull VirtualFile file, @Nullable LogOperation logOperation) {
     assertNotNull(file);
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(file);
     assertNotNull(psiFile);
     assertNotNull(facet);

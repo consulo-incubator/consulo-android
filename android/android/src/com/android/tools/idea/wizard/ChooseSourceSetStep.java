@@ -18,15 +18,16 @@ package com.android.tools.idea.wizard;
 import com.android.builder.model.SourceProvider;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ArrayUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -67,7 +68,7 @@ public class ChooseSourceSetStep extends TemplateWizardStep {
     growLabelIfNecessary(myInstructions);
 
     myFilteredSourceProviders = sourceProviders;
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     assert facet != null;
     myAllSourceProviders = IdeaSourceProvider.getAllSourceProviders(facet);
     if (myFilteredSourceProviders.isEmpty()) {

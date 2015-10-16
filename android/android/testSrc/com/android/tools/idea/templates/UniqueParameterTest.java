@@ -20,10 +20,12 @@ import com.android.builder.model.SourceProvider;
 import com.android.tools.idea.gradle.IdeaAndroidProject;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.Nullable;
 import org.mockito.Mockito;
+import org.must.android.module.extension.AndroidModuleExtension;
 import org.w3c.dom.Element;
 
 import javax.imageio.metadata.IIOMetadataNode;
@@ -63,7 +65,7 @@ public class UniqueParameterTest extends AndroidGradleTestCase {
 
     assertNotNull(myAppModule);
 
-    myAppFacet = AndroidFacet.getInstance(myAppModule);
+    myAppFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(myAppModule, AndroidModuleExtension.class);
 
     assertNotNull(myAppFacet);
 

@@ -19,15 +19,16 @@ import com.android.builder.model.SourceProvider;
 import com.android.tools.idea.gradle.IdeaAndroidProject;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.treeStructure.Tree;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeModel;
@@ -82,7 +83,7 @@ public class ChooseOutputResDirStep extends TemplateWizardStep {
 
   public void init() {
     if (myTargetFile != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(myModule);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
       if (facet != null) {
         Iterator<SourceProvider> sourceProvidersIter = IdeaSourceProvider.getSourceProvidersForFile(facet, myTargetFile, null).iterator();
         if (sourceProvidersIter.hasNext()) {
@@ -168,7 +169,7 @@ public class ChooseOutputResDirStep extends TemplateWizardStep {
   public void deriveValues() {
     if (myIdsWithNewValues.contains(ATTR_TARGET_MODULE)) {
       // Populate the Build Flavor and Build Type lists
-      AndroidFacet facet = AndroidFacet.getInstance(mySelectedModule);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(mySelectedModule, AndroidModuleExtension.class);
       if (facet == null) {
         // Clear variant list
         myVariantComboBox.setModel(new DefaultComboBoxModel());
@@ -268,7 +269,7 @@ public class ChooseOutputResDirStep extends TemplateWizardStep {
       return false;
     }
 
-    AndroidFacet facet = AndroidFacet.getInstance(mySelectedModule);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(mySelectedModule, AndroidModuleExtension.class);
     if (facet == null) {
       setErrorHtml("The selected module does not have an Android Facet. Please choose an Android module");
       return false;

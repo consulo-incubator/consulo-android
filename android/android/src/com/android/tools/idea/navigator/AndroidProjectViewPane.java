@@ -42,11 +42,11 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import icons.AndroidIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -86,7 +86,7 @@ public class AndroidProjectViewPane extends AbstractProjectViewPSIPane {
   }
 
   @NotNull
-  public static List<IdeaSourceProvider> getSourceProviders(@NotNull AndroidFacet facet) {
+  public static List<IdeaSourceProvider> getSourceProviders(@NotNull AndroidModuleExtension facet) {
     List<IdeaSourceProvider> sourceProviders = IdeaSourceProvider.getCurrentSourceProviders(facet);
     sourceProviders.addAll(IdeaSourceProvider.getCurrentTestSourceProviders(facet));
     return sourceProviders;
@@ -146,7 +146,7 @@ public class AndroidProjectViewPane extends AbstractProjectViewPSIPane {
       List<PsiDirectory> dirs = Lists.newArrayListWithExpectedSize(selectedDirectories.length);
       for (PsiDirectory dir : selectedDirectories) {
         VirtualFile file = dir.getVirtualFile();
-        if (!GeneratedSourcesFilter.isGeneratedSourceByAnyFilter(file, myProject)) {
+        if (!GeneratedSourcesFilter.isGenerated(myProject, file)) {
           if (file.getParent() != null && file.getPath().contains("/generated/")) {
             // Workaround for https://code.google.com/p/android/issues/detail?id=79843:
             // The generated resource folders (e.g. for RenderScript) cannot be marked as generated, e.g.
@@ -183,8 +183,8 @@ public class AndroidProjectViewPane extends AbstractProjectViewPSIPane {
       if (o instanceof PackageElement) {
         PackageElement packageElement = (PackageElement)o;
         return packageElement.getModule();
-      } else if (o instanceof AndroidFacet) {
-        return ((AndroidFacet)o).getModule();
+      } else if (o instanceof AndroidModuleExtension) {
+        return ((AndroidModuleExtension)o).getModule();
       }
     }
 

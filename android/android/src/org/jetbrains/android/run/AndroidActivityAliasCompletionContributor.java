@@ -4,18 +4,22 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.util.text.StringUtilRt;
-import com.intellij.psi.*;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiModifierList;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.android.dom.manifest.ActivityAlias;
 import org.jetbrains.android.dom.manifest.Application;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Set;
 
@@ -44,7 +48,7 @@ public class AndroidActivityAliasCompletionContributor extends CompletionContrib
     if (module == null) {
       return;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
     if (facet == null) {
       return;
@@ -92,18 +96,18 @@ public class AndroidActivityAliasCompletionContributor extends CompletionContrib
   }
 
   @NotNull
-  private static Set<String> collectActivityAliases(@NotNull AndroidFacet facet) {
+  private static Set<String> collectActivityAliases(@NotNull AndroidModuleExtension facet) {
     final Set<String> result = new HashSet<String>();
 
     doCollectActivityAliases(facet, result);
 
-    for (AndroidFacet depFacet : AndroidUtils.getAllAndroidDependencies(facet.getModule(), true)) {
+    for (AndroidModuleExtension depFacet : AndroidUtils.getAllAndroidDependencies(facet.getModule(), true)) {
       doCollectActivityAliases(depFacet, result);
     }
     return result;
   }
 
-  private static void doCollectActivityAliases(@NotNull AndroidFacet facet, @NotNull Set<String> result) {
+  private static void doCollectActivityAliases(@NotNull AndroidModuleExtension facet, @NotNull Set<String> result) {
     final Manifest manifest = facet.getManifest();
 
     if (manifest == null) {

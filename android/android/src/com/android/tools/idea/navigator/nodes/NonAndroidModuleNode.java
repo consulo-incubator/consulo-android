@@ -23,11 +23,12 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ContentFolder;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.ui.Queryable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.roots.ContentFolderScopes;
 
 import java.util.Collection;
 import java.util.List;
@@ -58,7 +59,7 @@ public class NonAndroidModuleNode extends ProjectViewModuleNode {
     ContentEntry[] contentEntries = rootManager.getContentEntries();
     for (ContentEntry entry : contentEntries) {
       for (NonAndroidSourceType type : NonAndroidSourceType.values()) {
-        for (SourceFolder sourceFolder : entry.getSourceFolders(type.rootType)) {
+        for (ContentFolder sourceFolder : entry.getFolders(ContentFolderScopes.of(type.rootType))) {
           if (sourceFolder.getFile() != null) {
             sourceTypes.add(type);
             break;

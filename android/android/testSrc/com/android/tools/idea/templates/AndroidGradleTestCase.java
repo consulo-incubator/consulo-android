@@ -43,6 +43,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -63,6 +64,7 @@ import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -242,7 +244,7 @@ public abstract class AndroidGradleTestCase extends AndroidTestBase {
 
     ModuleManager moduleManager = ModuleManager.getInstance(project);
     for (Module module : moduleManager.getModules()) {
-      myAndroidFacet = AndroidFacet.getInstance(module);
+      myAndroidFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
       if (myAndroidFacet != null) {
         break;
       }

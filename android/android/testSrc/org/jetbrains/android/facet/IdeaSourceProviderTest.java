@@ -23,12 +23,14 @@ import com.android.tools.idea.templates.AndroidGradleTestCase;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.Collection;
@@ -67,8 +69,8 @@ public class IdeaSourceProviderTest extends AndroidGradleTestCase {
     assertNotNull(myLibModule);
     assertNotNull(myAppModule);
 
-    myAppFacet = AndroidFacet.getInstance(myAppModule);
-    myLibFacet = AndroidFacet.getInstance(myLibModule);
+    myAppFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(myAppModule, AndroidModuleExtension.class);
+    myLibFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(myLibModule, AndroidModuleExtension.class);
 
     assertNotNull(myAppFacet);
     assertNotNull(myLibFacet);

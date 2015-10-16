@@ -17,13 +17,14 @@ package com.android.tools.idea.gradle.service.notification.errors;
 
 import com.android.tools.idea.gradle.service.notification.hyperlink.NotificationHyperlink;
 import com.android.tools.idea.gradle.service.notification.hyperlink.OpenAndroidSdkManagerHyperlink;
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import com.intellij.openapi.externalSystem.service.notification.NotificationData;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
+import org.mustbe.consulo.module.extension.ModuleExtensionHelper;
 
+import java.util.Collection;
 import java.util.List;
 
 import static com.android.tools.idea.gradle.project.ProjectImportErrorHandler.INSTALL_ANDROID_SUPPORT_REPO;
@@ -37,7 +38,7 @@ public class MissingAndroidSupportRepoErrorHandler extends AbstractSyncErrorHand
     String lastLine = message.get(message.size() - 1);
 
     if (lastLine.contains(INSTALL_ANDROID_SUPPORT_REPO)) {
-      List<AndroidFacet> facets = ProjectFacetManager.getInstance(project).getFacets(AndroidFacet.ID);
+      Collection<AndroidModuleExtension> facets = ModuleExtensionHelper.getInstance(project).getModuleExtensions(AndroidModuleExtension.class);
       NotificationHyperlink[] hyperlinks = EMPTY;
       if (!facets.isEmpty()) {
         // We can only open SDK manager if the project has an Android facet. Android facet has a reference to the Android SDK manager.

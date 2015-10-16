@@ -34,6 +34,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -49,6 +50,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.*;
@@ -238,10 +240,10 @@ public class ProjectResourceRepositoryTest extends AndroidTestCase {
     renameModule(sharedLib, "sharedLib");
     renameModule(app, "app");
 
-    AndroidFacet lib1Facet = AndroidFacet.getInstance(lib1);
-    AndroidFacet lib2Facet = AndroidFacet.getInstance(lib2);
-    AndroidFacet sharedLibFacet = AndroidFacet.getInstance(sharedLib);
-    AndroidFacet appFacet = AndroidFacet.getInstance(app);
+    AndroidFacet lib1Facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(lib1, AndroidModuleExtension.class);
+    AndroidFacet lib2Facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(lib2, AndroidModuleExtension.class);
+    AndroidFacet sharedLibFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(sharedLib, AndroidModuleExtension.class);
+    AndroidFacet appFacet = ModuleUtilCore.<AndroidModuleExtension>getExtension(app, AndroidModuleExtension.class);
 
     assertNotNull(lib1Facet);
     assertNotNull(lib2Facet);

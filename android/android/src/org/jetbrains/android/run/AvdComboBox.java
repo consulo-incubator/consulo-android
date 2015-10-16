@@ -7,20 +7,21 @@ import com.android.sdklib.repository.descriptors.IdDisplay;
 import com.android.tools.idea.avdmanager.AvdManagerConnection;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkTable;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.android.actions.RunAndroidAvdManagerAction;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.sdk.AndroidSdkUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -100,7 +101,7 @@ public abstract class AvdComboBox extends ComboboxWithBrowseButton {
       return;
     }
 
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     final IdDisplay[] newAvds;
 
     if (facet != null) {
@@ -153,7 +154,7 @@ public abstract class AvdComboBox extends ComboboxWithBrowseButton {
        return platform;
     }
 
-    for (Sdk sdk : ProjectJdkTable.getInstance().getAllJdks()) {
+    for (Sdk sdk : SdkTable.getInstance().getAllSdks()) {
       platform = AndroidPlatform.getInstance(sdk);
       if (platform != null) {
         return platform;

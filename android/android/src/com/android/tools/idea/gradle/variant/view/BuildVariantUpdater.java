@@ -30,6 +30,7 @@ import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
@@ -37,6 +38,7 @@ import com.intellij.util.ExceptionUtil;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -59,10 +61,10 @@ class BuildVariantUpdater {
    * @return the facets affected by the build variant selection, if the module update was successful; an empty list otherwise.
    */
   @NotNull
-  List<AndroidFacet> updateSelectedVariant(@NotNull final Project project,
+  List<AndroidModuleExtension> updateSelectedVariant(@NotNull final Project project,
                                            @NotNull final String moduleName,
                                            @NotNull final String buildVariantName) {
-    final List<AndroidFacet> affectedFacets = Lists.newArrayList();
+    final List<AndroidModuleExtension> affectedFacets = Lists.newArrayList();
     executeProjectChanges(project, new Runnable() {
       @Override
       public void run() {
@@ -86,15 +88,15 @@ class BuildVariantUpdater {
    * @return modules that were affected by the change.
    */
   @NotNull
-  List<AndroidFacet> updateTestArtifactsNames(@NotNull Project project,
+  List<AndroidModuleExtension> updateTestArtifactsNames(@NotNull Project project,
                                               @NotNull final Iterable<Module> modules,
                                               @NotNull final String testArtifactName) {
-    final List<AndroidFacet> affectedFacets = Lists.newArrayList();
+    final List<AndroidModuleExtension> affectedFacets = Lists.newArrayList();
     executeProjectChanges(project, new Runnable() {
       @Override
       public void run() {
         for (Module module : modules) {
-          AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+          AndroidModuleExtension androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
           assert androidFacet != null;
           final IdeaAndroidProject ideaAndroidProject = androidFacet.getIdeaAndroidProject();
           assert ideaAndroidProject != null;
@@ -117,13 +119,13 @@ class BuildVariantUpdater {
   private Module doUpdate(@NotNull Project project,
                           @NotNull String moduleName,
                           @NotNull String variant,
-                          @NotNull List<AndroidFacet> affectedFacets) {
+                          @NotNull List<AndroidModuleExtension> affectedFacets) {
     Module moduleToUpdate = findModule(project, moduleName);
     if (moduleToUpdate == null) {
       logAndShowUpdateFailure(variant, String.format("Cannot find module '%1$s'.", moduleName));
       return null;
     }
-    AndroidFacet facet = getAndroidFacet(moduleToUpdate, variant);
+    AndroidModuleExtension facet = getAndroidFacet(moduleToUpdate, variant);
     if (facet == null) {
       return null;
     }
@@ -145,10 +147,10 @@ class BuildVariantUpdater {
     return moduleManager.findModuleByName(moduleName);
   }
 
-  private boolean updateSelectedVariant(@NotNull AndroidFacet androidFacet,
+  private boolean updateSelectedVariant(@NotNull AndroidModuleExtension androidFacet,
                                         @NotNull IdeaAndroidProject androidProject,
                                         @NotNull String variantToSelect,
-                                        @NotNull List<AndroidFacet> affectedFacets) {
+                                        @NotNull List<AndroidModuleExtension> affectedFacets) {
     Variant selectedVariant = androidProject.getSelectedVariant();
     if (variantToSelect.equals(selectedVariant.getName())) {
       return false;
@@ -171,7 +173,7 @@ class BuildVariantUpdater {
     return true;
   }
 
-  private static void generateSourcesIfNeeded(@NotNull List<AndroidFacet> affectedFacets) {
+  private static void generateSourcesIfNeeded(@NotNull List<AndroidModuleExtension> affectedFacets) {
     if (!affectedFacets.isEmpty()) {
       // We build only the selected variant. If user changes variant, we need to re-generate sources since the generated sources may not
       // be there.
@@ -225,13 +227,13 @@ class BuildVariantUpdater {
   private void ensureVariantIsSelected(@NotNull Project project,
                                        @NotNull String moduleGradlePath,
                                        @NotNull String variant,
-                                       @NotNull List<AndroidFacet> affectedFacets) {
+                                       @NotNull List<AndroidModuleExtension> affectedFacets) {
     Module module = findModuleByGradlePath(project, moduleGradlePath);
     if (module == null) {
       logAndShowUpdateFailure(variant, String.format("Cannot find module with Gradle path '%1$s'.", moduleGradlePath));
       return;
     }
-    AndroidFacet facet = getAndroidFacet(module, variant);
+    AndroidModuleExtension facet = getAndroidFacet(module, variant);
     if (facet == null) {
       return;
     }
@@ -248,8 +250,8 @@ class BuildVariantUpdater {
 
 
   @Nullable
-  private static AndroidFacet getAndroidFacet(@NotNull Module module, @NotNull String variantToSelect) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+  private static AndroidModuleExtension getAndroidFacet(@NotNull Module module, @NotNull String variantToSelect) {
+    AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet == null) {
       logAndShowUpdateFailure(variantToSelect, String.format("Cannot find 'Android' facet in module '%1$s'.", module.getName()));
     }
@@ -257,7 +259,7 @@ class BuildVariantUpdater {
   }
 
   @Nullable
-  private static IdeaAndroidProject getAndroidProject(@NotNull AndroidFacet facet, @NotNull String variantToSelect) {
+  private static IdeaAndroidProject getAndroidProject(@NotNull AndroidModuleExtension facet, @NotNull String variantToSelect) {
     IdeaAndroidProject androidProject = facet.getIdeaAndroidProject();
     if (androidProject == null) {
       logAndShowUpdateFailure(variantToSelect, String.format("Cannot find AndroidProject for module '%1$s'.", facet.getModule().getName()));

@@ -48,7 +48,6 @@ import com.intellij.psi.search.ProjectScope;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import org.jetbrains.android.dom.AndroidDomUtil;
 import org.jetbrains.android.dom.manifest.*;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NonNls;
@@ -81,12 +80,12 @@ public class AndroidRunConfiguration extends AndroidRunConfigurationBase impleme
   }
 
   @Override
-  protected Pair<Boolean, String> supportsRunningLibraryProjects(@NotNull AndroidFacet facet) {
+  protected Pair<Boolean, String> supportsRunningLibraryProjects(@NotNull AndroidModuleExtension facet) {
     return Pair.create(Boolean.FALSE, AndroidBundle.message("android.cannot.run.library.project.error"));
   }
 
   @Override
-  protected void checkConfiguration(@NotNull AndroidFacet facet) throws RuntimeConfigurationException {
+  protected void checkConfiguration(@NotNull AndroidModuleExtension facet) throws RuntimeConfigurationException {
     if (getTargetSelectionMode() == TargetSelectionMode.CLOUD_DEVICE_LAUNCH && !IS_VALID_CLOUD_DEVICE_SELECTION) {
       throw new RuntimeConfigurationError(INVALID_CLOUD_DEVICE_SELECTION_ERROR);
     }
@@ -123,7 +122,7 @@ public class AndroidRunConfiguration extends AndroidRunConfigurationBase impleme
         Activity activity = AndroidDomUtil.getActivityDomElementByClass(activities, c);
         Module libModule = null;
         if (activity == null) {
-          for (AndroidFacet depFacet : AndroidUtils.getAllAndroidDependencies(module, true)) {
+          for (AndroidModuleExtension depFacet : AndroidUtils.getAllAndroidDependencies(module, true)) {
             final Module depModule = depFacet.getModule();
             activities = ManifestInfo.get(depModule, true).getActivities();
             activity = AndroidDomUtil.getActivityDomElementByClass(activities, c);
@@ -161,13 +160,13 @@ public class AndroidRunConfiguration extends AndroidRunConfigurationBase impleme
 
 
   @Nullable
-  private static ActivityAlias findActivityAlias(@NotNull AndroidFacet facet, @NotNull String name) {
+  private static ActivityAlias findActivityAlias(@NotNull AndroidModuleExtension facet, @NotNull String name) {
     ActivityAlias alias = doFindActivityAlias(facet, name);
 
     if (alias != null) {
       return alias;
     }
-    for (AndroidFacet depFacet : AndroidUtils.getAllAndroidDependencies(facet.getModule(), true)) {
+    for (AndroidModuleExtension depFacet : AndroidUtils.getAllAndroidDependencies(facet.getModule(), true)) {
       alias = doFindActivityAlias(depFacet, name);
 
       if (alias != null) {
@@ -178,7 +177,7 @@ public class AndroidRunConfiguration extends AndroidRunConfigurationBase impleme
   }
 
   @Nullable
-  private static ActivityAlias doFindActivityAlias(@NotNull AndroidFacet facet, @NotNull String name) {
+  private static ActivityAlias doFindActivityAlias(@NotNull AndroidModuleExtension facet, @NotNull String name) {
     final Manifest manifest = facet.getManifest();
 
     if (manifest == null) {
@@ -209,7 +208,7 @@ public class AndroidRunConfiguration extends AndroidRunConfigurationBase impleme
     return null;
   }
 
-  private static boolean doesPackageContainMavenProperty(@NotNull AndroidFacet facet) {
+  private static boolean doesPackageContainMavenProperty(@NotNull AndroidModuleExtension facet) {
     final Manifest manifest = facet.getManifest();
 
     if (manifest == null) {
@@ -236,7 +235,7 @@ public class AndroidRunConfiguration extends AndroidRunConfigurationBase impleme
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     Project project = getProject();
     AndroidRunConfigurationEditor<AndroidRunConfiguration> editor =
-      new AndroidRunConfigurationEditor<AndroidRunConfiguration>(project, Predicates.<AndroidFacet>alwaysFalse());
+      new AndroidRunConfigurationEditor<AndroidRunConfiguration>(project, Predicates.<AndroidModuleExtension>alwaysFalse());
     editor.setConfigurationSpecificEditor(new ApplicationRunParameters(project, editor.getModuleSelector()));
     return editor;
   }
@@ -280,7 +279,7 @@ public class AndroidRunConfiguration extends AndroidRunConfigurationBase impleme
 
   @Nullable
   @Override
-  protected AndroidApplicationLauncher getApplicationLauncher(final AndroidFacet facet) {
+  protected AndroidApplicationLauncher getApplicationLauncher(final AndroidModuleExtension facet) {
     return new MyApplicationLauncher() {
       @Nullable
       @Override
@@ -291,7 +290,7 @@ public class AndroidRunConfiguration extends AndroidRunConfigurationBase impleme
   }
 
   @Nullable
-  protected String getActivityToLaunch(@NotNull final AndroidFacet facet, @Nullable ProcessHandler processHandler) {
+  protected String getActivityToLaunch(@NotNull final AndroidModuleExtension facet, @Nullable ProcessHandler processHandler) {
     String activityToLaunch = null;
 
     if (MODE.equals(LAUNCH_DEFAULT_ACTIVITY)) {

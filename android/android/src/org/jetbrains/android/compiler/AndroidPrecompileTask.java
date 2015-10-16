@@ -28,6 +28,7 @@ import com.intellij.openapi.compiler.options.ExcludesConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -58,6 +59,7 @@ import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.*;
@@ -98,7 +100,7 @@ public class AndroidPrecompileTask implements CompileTask {
     Set<ExcludeEntryDescription> addedEntries = new HashSet<ExcludeEntryDescription>();
 
     for (Module module : ModuleManager.getInstance(project).getModules()) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
       if (facet == null) {
         continue;
@@ -137,7 +139,7 @@ public class AndroidPrecompileTask implements CompileTask {
     final List<AndroidFacet> facets = new ArrayList<AndroidFacet>();
 
     for (Module module : ModuleManager.getInstance(project).getModules()) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
 
       if (facet != null) {
         facets.add(facet);
@@ -267,7 +269,7 @@ public class AndroidPrecompileTask implements CompileTask {
 
   private static void checkAndroidDependencies(@NotNull CompileContext context) {
     for (Module module : context.getCompileScope().getAffectedModules()) {
-      final AndroidFacet facet = AndroidFacet.getInstance(module);
+      final AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet == null) {
         continue;
       }
@@ -290,7 +292,7 @@ public class AndroidPrecompileTask implements CompileTask {
               final Module depModule = moduleOrderEntry.getModule();
 
               if (depModule != null) {
-                final AndroidFacet depFacet = AndroidFacet.getInstance(depModule);
+                final AndroidFacet depFacet = ModuleUtilCore.getExtension(depModule, AndroidModuleExtension.class);
 
                 if (depFacet != null && !depFacet.isLibraryProject()) {
                   String message = "Suspicious module dependency " +

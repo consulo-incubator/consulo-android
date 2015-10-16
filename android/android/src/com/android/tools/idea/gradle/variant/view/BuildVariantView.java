@@ -36,6 +36,7 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.MessageType;
@@ -52,6 +53,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -153,7 +155,7 @@ public class BuildVariantView {
 
     List<Module> modules = Lists.newArrayList();
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-      AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+      AndroidFacet androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (androidFacet != null && androidFacet.isGradleProject()) {
         IdeaAndroidProject ideaAndroidProject = androidFacet.getIdeaAndroidProject();
         if (ideaAndroidProject != null) {
@@ -238,7 +240,7 @@ public class BuildVariantView {
     final List<BuildVariantItem[]> variantNamesPerRow = Lists.newArrayList();
 
     for (Module module : getGradleModulesWithAndroidProjects()) {
-      AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+      AndroidFacet androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       assert androidFacet != null; // getGradleModules() returns only relevant modules.
 
       JpsAndroidModuleProperties facetProperties = androidFacet.getProperties();
@@ -278,7 +280,7 @@ public class BuildVariantView {
   private List<Module> getGradleModulesWithAndroidProjects() {
     List<Module> gradleModules = Lists.newArrayList();
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-      AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+      AndroidFacet androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (androidFacet != null && androidFacet.isGradleProject() && androidFacet.getIdeaAndroidProject() != null) {
         gradleModules.add(module);
       }
@@ -314,7 +316,7 @@ public class BuildVariantView {
 
   @Nullable
   private static IdeaAndroidProject getAndroidProject(@NotNull Module module) {
-    AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+    AndroidFacet androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     return androidFacet != null ? androidFacet.getIdeaAndroidProject() : null;
   }
 

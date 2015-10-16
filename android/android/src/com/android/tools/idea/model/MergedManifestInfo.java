@@ -23,16 +23,17 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.android.dom.manifest.Manifest;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +44,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MergedManifestInfo extends ManifestInfo {
   @NotNull private final Module myModule;
-  @NotNull private final AndroidFacet myFacet;
+  @NotNull private final AndroidModuleExtension myFacet;
 
   private Set<VirtualFile> myManifestFiles = Sets.newHashSet();
   private final AtomicLong myLastChecked = new AtomicLong(0);
@@ -54,7 +55,7 @@ public class MergedManifestInfo extends ManifestInfo {
     + "isn't available. Consider querying the Gradle model or obtain the information from the primary manifest.";
 
   MergedManifestInfo(@NotNull Module module) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     assert facet != null;
 
     myModule = module;
@@ -62,11 +63,11 @@ public class MergedManifestInfo extends ManifestInfo {
   }
 
   @NotNull
-  private static Set<VirtualFile> getAllManifests(@NotNull AndroidFacet facet) {
+  private static Set<VirtualFile> getAllManifests(@NotNull AndroidModuleExtension facet) {
     Set<VirtualFile> allManifests = Sets.newHashSet();
     allManifests.addAll(IdeaSourceProvider.getManifestFiles(facet));
 
-    for (AndroidFacet dependency : AndroidUtils.getAllAndroidDependencies(facet.getModule(), true)) {
+    for (AndroidModuleExtension dependency : AndroidUtils.getAllAndroidDependencies(facet.getModule(), true)) {
       allManifests.addAll(IdeaSourceProvider.getManifestFiles(dependency));
     }
 

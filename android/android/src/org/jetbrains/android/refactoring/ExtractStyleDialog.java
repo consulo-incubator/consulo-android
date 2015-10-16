@@ -21,7 +21,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
-import com.intellij.application.options.ModulesComboBox;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.psi.xml.XmlAttribute;
@@ -33,11 +33,11 @@ import com.intellij.util.containers.Convertor;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.android.actions.CreateXmlResourceDialog;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
@@ -56,7 +56,7 @@ class ExtractStyleDialog extends DialogWrapper {
   private JPanel myAttributeListWrapper;
   private JBLabel myAttributesLabel;
   private JBLabel myModuleLabel;
-  private ModulesComboBox myModuleCombo;
+  private ComboBox myModuleCombo;
   private JBCheckBox mySearchForStyleApplicationsAfter;
 
   private final Module myModule;
@@ -90,7 +90,7 @@ class ExtractStyleDialog extends DialogWrapper {
     final Set<Module> modulesSet = new HashSet<Module>();
     modulesSet.add(module);
 
-    for (AndroidFacet depFacet : AndroidUtils.getAllAndroidDependencies(module, true)) {
+    for (AndroidModuleExtension depFacet : AndroidUtils.getAllAndroidDependencies(module, true)) {
       modulesSet.add(depFacet.getModule());
     }
 
@@ -103,8 +103,8 @@ class ExtractStyleDialog extends DialogWrapper {
     }
     else {
       myModule = null;
-      myModuleCombo.setModules(modulesSet);
-      myModuleCombo.setSelectedModule(module);
+      myModuleCombo.setModel(new CollectionComboBoxModel(new ArrayList(modulesSet)));
+      myModuleCombo.setSelectedItem(module);
     }
 
     myRootNode = new CheckedTreeNode(null);
@@ -243,7 +243,7 @@ class ExtractStyleDialog extends DialogWrapper {
 
   @Nullable
   public Module getChosenModule() {
-    return myModule != null ? myModule : myModuleCombo.getSelectedModule();
+    return myModule != null ? myModule : (Module)myModuleCombo.getSelectedItem();
   }
 
   public boolean isToSearchStyleApplications() {

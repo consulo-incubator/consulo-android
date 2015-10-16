@@ -20,10 +20,12 @@ import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.testFramework.IdeaTestCase;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import static org.easymock.classextension.EasyMock.*;
 
@@ -113,7 +115,7 @@ public class PostProjectBuildTasksExecutorTest extends IdeaTestCase {
   @NotNull
   private static IdeaAndroidProject addMockAndroidProject(@NotNull Module module) {
     IdeaAndroidProject androidProject = createMock(IdeaAndroidProject.class);
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
     assert facet != null;
     facet.setIdeaAndroidProject(androidProject);
     return androidProject;

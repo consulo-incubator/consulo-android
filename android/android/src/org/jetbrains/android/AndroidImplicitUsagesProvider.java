@@ -1,15 +1,16 @@
 package org.jetbrains.android;
 
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
 import com.intellij.psi.util.InheritanceUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.android.dom.converters.OnClickConverter;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import static com.android.SdkConstants.*;
 
@@ -33,7 +34,7 @@ public class AndroidImplicitUsagesProvider implements ImplicitUsageProvider {
   }
 
   private static boolean isImplicitParameterUsage(@NotNull PsiParameter parameter) {
-    if (AndroidFacet.getInstance(parameter) == null) {
+    if (ModuleUtilCore.getExtension(parameter, AndroidModuleExtension.class) == null) {
       return false;
     }
     final PsiMethod method = PsiTreeUtil.getParentOfType(parameter, PsiMethod.class);
@@ -80,7 +81,7 @@ public class AndroidImplicitUsagesProvider implements ImplicitUsageProvider {
     if (!(element instanceof PsiField)) {
       return false;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(element);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(element, AndroidModuleExtension.class);
 
     if (facet == null) {
       return false;

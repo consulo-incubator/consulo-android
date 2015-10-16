@@ -16,10 +16,12 @@
 package com.android.tools.idea.gradle.variant.conflict;
 
 import com.android.tools.idea.gradle.IdeaAndroidProject;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collection;
 
@@ -70,7 +72,7 @@ public final class ConflictResolution {
   }
 
   private static boolean solveSelectionConflict(@NotNull Conflict conflict, boolean showConflictResolutionDialog) {
-    AndroidFacet facet = AndroidFacet.getInstance(conflict.getSource());
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(conflict.getSource(), AndroidModuleExtension.class);
     if (facet == null || !facet.isGradleProject()) {
       // project structure may have changed and the conflict is not longer applicable.
       return true;

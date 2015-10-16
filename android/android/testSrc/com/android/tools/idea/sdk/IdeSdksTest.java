@@ -22,12 +22,14 @@ import com.google.common.collect.Lists;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.testFramework.IdeaTestCase;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +59,7 @@ public class IdeSdksTest extends IdeaTestCase {
         }
       }
     });
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     facet.getProperties().ALLOW_USER_CONFIGURATION = false;
   }

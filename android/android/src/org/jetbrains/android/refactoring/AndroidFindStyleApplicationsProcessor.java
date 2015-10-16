@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.undo.UndoUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -41,13 +42,13 @@ import org.jetbrains.android.dom.AndroidDomUtil;
 import org.jetbrains.android.dom.converters.AndroidResourceReferenceBase;
 import org.jetbrains.android.dom.layout.LayoutDomFileDescription;
 import org.jetbrains.android.dom.layout.LayoutViewElement;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.ValueResourceInfoImpl;
 import org.jetbrains.android.uipreview.AndroidLayoutPreviewToolWindowManager;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.*;
 
@@ -225,7 +226,7 @@ public class AndroidFindStyleApplicationsProcessor extends BaseRefactoringProces
         psiFilesToProcess.add(psiFile);
       }
     }
-    final CacheManager cacheManager = CacheManager.SERVICE.getInstance(project);
+    final CacheManager cacheManager = CacheManager.getInstance(project);
     final GlobalSearchScope projectScope = GlobalSearchScope.projectScope(project);
 
     for (Map.Entry<AndroidAttributeInfo, String> entry : myAttrMap.entrySet()) {
@@ -269,7 +270,7 @@ public class AndroidFindStyleApplicationsProcessor extends BaseRefactoringProces
   }
 
   private static void collectResDir(Module module, XmlAttributeValue styleNameAttrValue, String styleName, List<VirtualFile> resDirs) {
-    final AndroidFacet f = AndroidFacet.getInstance(module);
+    final AndroidModuleExtension f = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (f == null) {
       return;
     }

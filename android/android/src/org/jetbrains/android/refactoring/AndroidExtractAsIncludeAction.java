@@ -11,6 +11,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
@@ -25,12 +26,12 @@ import com.intellij.util.xml.DomManager;
 import org.jetbrains.android.actions.CreateResourceFileAction;
 import org.jetbrains.android.dom.layout.Include;
 import org.jetbrains.android.dom.layout.LayoutViewElement;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,7 +131,7 @@ public class AndroidExtractAsIncludeAction extends AndroidBaseLayoutRefactoringA
     if (dir == null) {
       return;
     }
-    final AndroidFacet facet = AndroidFacet.getInstance(from);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(from, AndroidModuleExtension.class);
     assert facet != null;
 
     final XmlTag parentTag = PsiTreeUtil.getParentOfType(from, XmlTag.class);
@@ -163,7 +164,7 @@ public class AndroidExtractAsIncludeAction extends AndroidBaseLayoutRefactoringA
     }, title, null, UndoConfirmationPolicy.REQUEST_CONFIRMATION);
   }
 
-  private static void doRefactor(AndroidFacet facet,
+  private static void doRefactor(AndroidModuleExtension facet,
                                  PsiFile file,
                                  XmlFile newFile,
                                  PsiElement from,

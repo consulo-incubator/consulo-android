@@ -20,6 +20,7 @@ import com.android.resources.ResourceFolderType;
 import com.google.common.collect.ObjectArrays;
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesHandlerFactory;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiFile;
@@ -31,10 +32,10 @@ import org.jetbrains.android.dom.resources.ResourceElement;
 import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper;
 import org.jetbrains.android.dom.wrappers.ResourceElementWrapper;
 import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class AndroidFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
       return AndroidResourceUtil.isResourceField((PsiField)element1);
     }
     else if (element1 instanceof PsiFile || element1 instanceof XmlTag) {
-      final AndroidFacet facet = AndroidFacet.getInstance(element1);
+      final AndroidModuleExtension facet = ModuleUtilCore.getExtension(element1, AndroidModuleExtension.class);
 
       if (facet != null) {
         if (element1 instanceof PsiFile) {
@@ -126,7 +127,7 @@ public class AndroidFindUsagesHandlerFactory extends FindUsagesHandlerFactory {
       return null;
     }
 
-    AndroidFacet facet = AndroidFacet.getInstance(e);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(e, AndroidModuleExtension.class);
     if (facet == null) {
       return null;
     }

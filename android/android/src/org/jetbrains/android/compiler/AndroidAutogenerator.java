@@ -13,6 +13,7 @@ import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
@@ -722,7 +723,7 @@ public class AndroidAutogenerator {
                                       @NotNull Set<VirtualFile> result,
                                       boolean includingTests) {
     visited.add(module);
-    final AndroidFacet facet = AndroidFacet.getInstance(module);
+    final AndroidFacet facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     VirtualFile resDir = facet != null ? AndroidRootUtil.getResourceDir(facet) : null;
     ModuleRootManager manager = ModuleRootManager.getInstance(module);
     for (VirtualFile sourceRoot : manager.getSourceRoots(includingTests)) {

@@ -27,8 +27,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -670,7 +670,7 @@ public class GuidelineHandler {
   }
 
   private boolean supportsStartEnd() {
-    AndroidFacet facet = AndroidDesignerUtils.getFacet(myContext.getArea());
+    AndroidModuleExtension facet = AndroidDesignerUtils.getFacet(myContext.getArea());
     if (facet != null) {
       Module module = facet.getModule();
       return getBuildSdkApiLevel(module) >= RTL_TARGET_SDK_START && getTargetSdkVersion(module).getApiLevel() >= RTL_TARGET_SDK_START;
@@ -680,7 +680,7 @@ public class GuidelineHandler {
   }
 
   private boolean requiresRightLeft() {
-    AndroidFacet facet = AndroidDesignerUtils.getFacet(myContext.getArea());
+    AndroidModuleExtension facet = AndroidDesignerUtils.getFacet(myContext.getArea());
     if (facet != null) {
       Module module = facet.getModule();
       return getMinSdkVersion(module).getApiLevel() < RTL_TARGET_SDK_START;

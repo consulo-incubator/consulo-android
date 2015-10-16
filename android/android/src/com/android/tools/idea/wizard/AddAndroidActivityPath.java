@@ -31,6 +31,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
@@ -39,15 +40,13 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.RecentsManager;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ui.UIUtil;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.Collection;
@@ -125,8 +124,8 @@ public final class AddAndroidActivityPath extends DynamicWizardPath {
 
   @Nullable
   private static File findTestDirectory(@NotNull Module module) {
-    List<VirtualFile> testsRoot = ModuleRootManager.getInstance(module).getSourceRoots(JavaModuleSourceRootTypes.TESTS);
-    return testsRoot.size() == 0 ? null : VfsUtilCore.virtualToIoFile(testsRoot.get(0));
+    VirtualFile[] testsRoot = ModuleRootManager.getInstance(module).getSourceRoots(true);
+    return testsRoot.length == 0 ? null : VfsUtilCore.virtualToIoFile(testsRoot[0]);
   }
 
 
@@ -298,7 +297,7 @@ public final class AddAndroidActivityPath extends DynamicWizardPath {
   protected void init() {
     Module module = getModule();
     assert module != null;
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     assert facet != null;
     AndroidPlatform platform = AndroidPlatform.getInstance(module);
 
@@ -334,7 +333,7 @@ public final class AddAndroidActivityPath extends DynamicWizardPath {
   @NotNull
   public static SourceProvider[] getSourceProviders(@Nullable Module module, @Nullable VirtualFile targetDirectory) {
     if (module != null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         List<SourceProvider> providers;
         if (targetDirectory != null) {
@@ -353,7 +352,7 @@ public final class AddAndroidActivityPath extends DynamicWizardPath {
   /**
    * Initial package name is either a package user selected when invoking the wizard or default package for the module.
    */
-  private String getInitialPackageName(Module module, AndroidFacet facet) {
+  private String getInitialPackageName(Module module, AndroidModuleExtension facet) {
     if (myTargetFolder != null) {
       List<SourceProvider> sourceProviders =
         IdeaSourceProvider.getSourceProvidersForFile(facet, myTargetFolder, facet.getMainSourceProvider());
@@ -433,7 +432,7 @@ public final class AddAndroidActivityPath extends DynamicWizardPath {
 
   private String getApplicationPackageName() {
     //noinspection ConstantConditions
-    IdeaAndroidProject gradleProject = AndroidFacet.getInstance(getModule()).getIdeaAndroidProject();
+    IdeaAndroidProject gradleProject = ModuleUtilCore.getExtension(getModule(), AndroidModuleExtension.class).getIdeaAndroidProject();
     assert gradleProject != null;
     return gradleProject.computePackageName();
   }
@@ -443,7 +442,7 @@ public final class AddAndroidActivityPath extends DynamicWizardPath {
 
     Module module = getModule();
     assert module != null;
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     assert facet != null;
     AndroidPlatform platform = AndroidPlatform.getInstance(module);
 
@@ -483,7 +482,7 @@ public final class AddAndroidActivityPath extends DynamicWizardPath {
     templateParameters.put(NewModuleWizardState.ATTR_PROJECT_LOCATION, project.getBasePath());
     // We're really interested in the directory name on disk, not the module name. These will be different if you give a module the same
     // name as its containing project.
-    String moduleName = new File(module.getModuleFilePath()).getParentFile().getName();
+    String moduleName = module.getModuleDir().getName();
     templateParameters.put(FormFactorUtils.ATTR_MODULE_NAME, moduleName);
 
     return templateParameters;

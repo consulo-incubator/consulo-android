@@ -5,10 +5,10 @@ import com.android.sdklib.IAndroidTarget;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 
@@ -18,7 +18,7 @@ import javax.swing.*;
 public class DeviceChooserDialog extends DialogWrapper {
   private final DeviceChooser myDeviceChooser;
 
-  public DeviceChooserDialog(@NotNull AndroidFacet facet,
+  public DeviceChooserDialog(@NotNull AndroidModuleExtension facet,
                              @NotNull IAndroidTarget projectTarget,
                              boolean multipleSelection,
                              @Nullable String[] selectedSerials,

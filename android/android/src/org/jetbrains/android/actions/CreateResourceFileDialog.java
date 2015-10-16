@@ -23,23 +23,23 @@ import com.android.resources.ResourceFolderType;
 import com.android.tools.idea.rendering.ResourceHelper;
 import com.android.tools.idea.rendering.ResourceNameValidator;
 import com.intellij.CommonBundle;
-import com.intellij.application.options.ModulesComboBox;
 import com.intellij.ide.actions.TemplateKindCombo;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.TextFieldWithAutoCompletion;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.containers.HashSet;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.uipreview.DeviceConfiguratorPanel;
 import org.jetbrains.android.uipreview.InvalidOptionValueException;
 import org.jetbrains.android.util.AndroidBundle;
@@ -76,7 +76,7 @@ public class CreateResourceFileDialog extends DialogWrapper {
   private JPanel myRootElementFieldWrapper;
   private JBLabel myRootElementLabel;
   private JLabel myFileNameLabel;
-  private ModulesComboBox myModuleCombo;
+  private ComboBox myModuleCombo;
   private JBLabel myModuleLabel;
   private JComboBox mySourceSetCombo;
   private JBLabel mySourceSetLabel;
@@ -204,13 +204,13 @@ public class CreateResourceFileDialog extends DialogWrapper {
       modulesSet.add(depFacet.getModule());
     }
 
-    myModuleCombo.setModules(modulesSet);
+    myModuleCombo.setModel(new CollectionComboBoxModel(new ArrayList<Module>(modulesSet)));
 
     if (!chooseModule || modulesSet.size() == 1) {
       myModuleLabel.setVisible(false);
       myModuleCombo.setVisible(false);
     }
-    myModuleCombo.setSelectedModule(module);
+    myModuleCombo.setSelectedItem(module);
 
    CreateResourceActionBase.updateSourceSetCombo(mySourceSetLabel, mySourceSetCombo,
                                                  modulesSet.size() == 1 ? ModuleUtilCore.getExtension(modulesSet.iterator().next(), AndroidModuleExtension.class) : null,
@@ -359,7 +359,7 @@ public class CreateResourceFileDialog extends DialogWrapper {
 
   @NotNull
   public Module getSelectedModule() {
-    return myModuleCombo.getSelectedModule();
+    return (Module)myModuleCombo.getSelectedItem();
   }
 
   @NotNull

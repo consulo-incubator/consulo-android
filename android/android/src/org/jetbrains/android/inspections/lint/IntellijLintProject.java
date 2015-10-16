@@ -31,6 +31,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
@@ -41,13 +42,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.graph.Graph;
 import org.jetbrains.android.compiler.AndroidDexCompiler;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.util.AndroidCommonUtils;
 import org.jetbrains.android.util.AndroidUtils;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.util.*;
@@ -160,13 +161,13 @@ class IntellijLintProject extends Project {
       }
     });
 
-    Set<AndroidFacet> facets = Sets.newHashSet();
+    Set<AndroidModuleExtension> facets = Sets.newHashSet();
     HashSet<Module> seen = Sets.newHashSet();
     seen.add(module);
     addAndroidModules(facets, seen, graph, module);
 
     // Prefer Android app modules
-    for (AndroidFacet facet : facets) {
+    for (AndroidModuleExtension facet : facets) {
       if (!facet.isLibraryProject()) {
         return facet.getModule();
       }
@@ -180,11 +181,11 @@ class IntellijLintProject extends Project {
     return null;
   }
 
-  private static void addAndroidModules(Set<AndroidFacet> androidFacets, Set<Module> seen, Graph<Module> graph, Module module) {
+  private static void addAndroidModules(Set<AndroidModuleExtension> androidFacets, Set<Module> seen, Graph<Module> graph, Module module) {
     Iterator<Module> iterator = graph.getOut(module);
     while (iterator.hasNext()) {
       Module dep = iterator.next();
-      AndroidFacet facet = AndroidFacet.getInstance(dep);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(dep, AndroidModuleExtension.class);
       if (facet != null) {
         androidFacets.add(facet);
       }
@@ -217,8 +218,8 @@ class IntellijLintProject extends Project {
     if (project == null) {
       // It's possible for the module to *depend* on Android code, e.g. in a Gradle
       // project there will be a top-level non-Android module
-      List<AndroidFacet> dependentFacets = AndroidUtils.getAllAndroidDependencies(module, false);
-      for (AndroidFacet dependentFacet : dependentFacets) {
+      List<AndroidModuleExtension> dependentFacets = AndroidUtils.getAllAndroidDependencies(module, false);
+      for (AndroidModuleExtension dependentFacet : dependentFacets) {
         addProjects(client, dependentFacet.getModule(), files, moduleMap, libraryMap, projectMap, projects);
       }
       return;
@@ -234,8 +235,8 @@ class IntellijLintProject extends Project {
     }
 
     List<Project> dependencies = Lists.newArrayList();
-    List<AndroidFacet> dependentFacets = AndroidUtils.getAllAndroidDependencies(module, true);
-    for (AndroidFacet dependentFacet : dependentFacets) {
+    List<AndroidModuleExtension> dependentFacets = AndroidUtils.getAllAndroidDependencies(module, true);
+    for (AndroidModuleExtension dependentFacet : dependentFacets) {
       Project p = moduleMap.get(dependentFacet.getModule());
       if (p != null) {
         dependencies.add(p);
@@ -244,7 +245,7 @@ class IntellijLintProject extends Project {
       }
     }
 
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     if (facet != null && facet.isGradleProject()) {
       addGradleLibraryProjects(client, files, libraryMap, projects, facet, project, projectMap, dependencies);
     }
@@ -279,7 +280,7 @@ class IntellijLintProject extends Project {
   /** Creates a new module project */
   @Nullable
   private static LintModuleProject createModuleProject(@NonNull LintClient client, @NonNull Module module) {
-    AndroidFacet facet = AndroidFacet.getInstance(module);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
     File dir;
 
     if (facet != null) {
@@ -299,7 +300,7 @@ class IntellijLintProject extends Project {
     LintModuleProject project;
     if (facet == null) {
       project = new LintModuleProject(client, dir, dir, module);
-      AndroidFacet f = findAndroidFacetInProject(module.getProject());
+      AndroidModuleExtension f = findAndroidFacetInProject(module.getProject());
       if (f != null) {
         project.mGradleProject = f.isGradleProject();
       }
@@ -319,10 +320,10 @@ class IntellijLintProject extends Project {
   }
 
   @Nullable
-  private static AndroidFacet findAndroidFacetInProject(@NonNull com.intellij.openapi.project.Project project) {
+  private static AndroidModuleExtension findAndroidFacetInProject(@NonNull com.intellij.openapi.project.Project project) {
     ModuleManager moduleManager = ModuleManager.getInstance(project);
     for (Module module : moduleManager.getModules()) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet != null) {
         return facet;
       }
@@ -336,7 +337,7 @@ class IntellijLintProject extends Project {
                                                @Nullable List<VirtualFile> files,
                                                @NonNull Map<AndroidLibrary, Project> libraryMap,
                                                @NonNull List<Project> projects,
-                                               @NonNull AndroidFacet facet,
+                                               @NonNull AndroidModuleExtension facet,
                                                @NonNull LintModuleProject project,
                                                @NonNull Map<Project,Module> projectMap,
                                                @NonNull List<Project> dependencies) {
@@ -476,7 +477,7 @@ class IntellijLintProject extends Project {
             final OrderEntry orderEntry = entries[i];
             if (orderEntry instanceof LibraryOrderEntry) {
               LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)orderEntry;
-              VirtualFile[] classes = libraryOrderEntry.getRootFiles(OrderRootType.CLASSES);
+              VirtualFile[] classes = libraryOrderEntry.getFiles(OrderRootType.CLASSES);
               if (classes != null) {
                 for (VirtualFile file : classes) {
                   mJavaLibraries.add(VfsUtilCore.virtualToIoFile(file));
@@ -495,9 +496,9 @@ class IntellijLintProject extends Project {
 
   /** Wraps an Android module */
   private static class LintAndroidProject extends LintModuleProject {
-    protected final AndroidFacet myFacet;
+    protected final AndroidModuleExtension myFacet;
 
-    private LintAndroidProject(@NonNull LintClient client, @NonNull File dir, @NonNull File referenceDir, @NonNull AndroidFacet facet) {
+    private LintAndroidProject(@NonNull LintClient client, @NonNull File dir, @NonNull File referenceDir, @NonNull AndroidModuleExtension facet) {
       super(client, dir, referenceDir, facet.getModule());
       myFacet = facet;
 
@@ -591,7 +592,7 @@ class IntellijLintProject extends Project {
             final OrderEntry orderEntry = entries[i];
             if (orderEntry instanceof LibraryOrderEntry) {
               LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)orderEntry;
-              VirtualFile[] classes = libraryOrderEntry.getRootFiles(OrderRootType.CLASSES);
+              VirtualFile[] classes = libraryOrderEntry.getFiles(OrderRootType.CLASSES);
               if (classes != null) {
                 for (VirtualFile file : classes) {
                   if (file.getName().equals("android-support-v4.jar")) {
@@ -620,7 +621,7 @@ class IntellijLintProject extends Project {
               if (module == null || module == myFacet.getModule()) {
                 continue;
               }
-              AndroidFacet facet = AndroidFacet.getInstance(module);
+              AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
               if (facet == null) {
                 continue;
               }
@@ -643,7 +644,7 @@ class IntellijLintProject extends Project {
     /**
      * Creates a new Project. Use one of the factory methods to create.
      */
-    private LintGradleProject(@NonNull LintClient client, @NonNull File dir, @NonNull File referenceDir, @NonNull AndroidFacet facet) {
+    private LintGradleProject(@NonNull LintClient client, @NonNull File dir, @NonNull File referenceDir, @NonNull AndroidModuleExtension facet) {
       super(client, dir, referenceDir, facet);
       mGradleProject = true;
       mMergeManifests = true;

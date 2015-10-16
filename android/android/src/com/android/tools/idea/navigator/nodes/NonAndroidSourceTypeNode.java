@@ -19,13 +19,13 @@ import com.google.common.collect.Lists;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper;
+import com.intellij.ide.projectView.impl.nodes.BaseProjectViewDirectoryHelper;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ContentFolder;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.ui.Queryable;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -34,6 +34,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mustbe.consulo.roots.ContentFolderScopes;
 
 import java.util.Collection;
 import java.util.List;
@@ -56,11 +57,10 @@ public class NonAndroidSourceTypeNode extends ProjectViewNode<Module> implements
     List<AbstractTreeNode> children = Lists.newArrayListWithExpectedSize(sourceFolders.size());
 
     PsiManager psiManager = PsiManager.getInstance(myProject);
-    ProjectViewDirectoryHelper directoryHelper = ProjectViewDirectoryHelper.getInstance(myProject);
     for (VirtualFile file : sourceFolders) {
       PsiDirectory dir = psiManager.findDirectory(file);
       if (dir != null) {
-        children.addAll(directoryHelper.getDirectoryChildren(dir, getSettings(), true));
+        children.addAll(BaseProjectViewDirectoryHelper.getDirectoryChildren(dir, getSettings(), true));
       }
     }
 
@@ -73,8 +73,8 @@ public class NonAndroidSourceTypeNode extends ProjectViewNode<Module> implements
 
     ContentEntry[] contentEntries = rootManager.getContentEntries();
     for (ContentEntry entry : contentEntries) {
-      List<SourceFolder> sources = entry.getSourceFolders(mySourceType.rootType);
-      for (SourceFolder folder : sources) {
+      ContentFolder[] sources = entry.getFolders(ContentFolderScopes.of(mySourceType.rootType));
+      for (ContentFolder folder : sources) {
         VirtualFile file = folder.getFile();
         if (file != null) {
           folders.add(file);

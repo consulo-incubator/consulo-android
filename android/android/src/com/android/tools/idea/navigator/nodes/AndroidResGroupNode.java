@@ -30,9 +30,9 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.PlatformIcons;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,11 +40,11 @@ import java.util.List;
 /** {@link AndroidResGroupNode} groups together all the configuration specific alternatives of a single resource. */
 public class AndroidResGroupNode extends ProjectViewNode<List<PsiFile>> implements DirectoryGroupNode, Comparable {
   @NotNull private final String myResName;
-  @NotNull private final AndroidFacet myFacet;
+  @NotNull private final AndroidModuleExtension myFacet;
   @NotNull private final List<PsiFile> myFiles;
 
   public AndroidResGroupNode(@NotNull Project project,
-                             @NotNull AndroidFacet facet,
+                             @NotNull AndroidModuleExtension facet,
                              @NotNull List<PsiFile> files,
                              @NotNull String resName,
                              @NotNull ViewSettings settings) {

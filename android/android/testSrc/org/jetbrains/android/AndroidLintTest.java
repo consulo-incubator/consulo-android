@@ -9,11 +9,11 @@ import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.inspections.lint.AndroidAddStringResourceQuickFix;
 import org.jetbrains.android.inspections.lint.AndroidLintExternalAnnotator;
 import org.jetbrains.android.inspections.lint.AndroidLintInspectionBase;
@@ -25,6 +25,7 @@ import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -236,7 +237,7 @@ public class AndroidLintTest extends AndroidTestCase {
   public void testAppCompatMethod() throws Exception {
     Module[] modules = ModuleManager.getInstance(getProject()).getModules();
     for (Module module : modules) {
-      if (module != myModule && AndroidFacet.getInstance(module) != null) {
+      if (module != myModule && ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) != null) {
         deleteManifest(module);
       }
     }

@@ -16,16 +16,17 @@
 package org.jetbrains.android.resourceManagers;
 
 import com.android.sdklib.IAndroidTarget;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xml.ConvertContext;
 import org.jetbrains.android.dom.attrs.AttributeDefinitions;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collections;
 import java.util.List;
@@ -79,7 +80,7 @@ public class SystemResourceManager extends ResourceManager {
 
   @Nullable
   public static SystemResourceManager getInstance(@NotNull ConvertContext context) {
-    AndroidFacet facet = AndroidFacet.getInstance(context);
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(context.getXmlElement(), AndroidModuleExtension.class);
     return facet != null ? facet.getSystemResourceManager() : null;
   }
 

@@ -5,19 +5,20 @@ import com.intellij.lang.Language;
 import com.intellij.lang.refactoring.InlineActionHandler;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.android.dom.converters.AndroidResourceReferenceBase;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.ErrorReporter;
 import org.jetbrains.android.util.HintBasedErrorReporter;
 import org.jetbrains.android.util.ProjectBasedErrorReporter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -38,7 +39,7 @@ public class AndroidInlineStyleHandler extends InlineActionHandler {
   @Override
   public boolean canInlineElement(PsiElement element) {
     return element != null &&
-           AndroidFacet.getInstance(element) != null &&
+           ModuleUtilCore.getExtension(element, AndroidModuleExtension.class) != null &&
            AndroidInlineUtil.getInlinableStyleDataFromContext(element) != null;
   }
 

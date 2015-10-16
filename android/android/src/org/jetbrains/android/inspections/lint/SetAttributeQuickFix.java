@@ -2,6 +2,7 @@ package org.jetbrains.android.inspections.lint;
 
 import com.android.SdkConstants;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -11,10 +12,10 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.android.dom.attrs.AttributeDefinition;
 import org.jetbrains.android.dom.attrs.AttributeDefinitions;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.SystemResourceManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -80,7 +81,7 @@ class SetAttributeQuickFix implements AndroidLintQuickFix {
 
   @Nullable
   private String askForAttributeValue(@NotNull PsiElement context) {
-    final AndroidFacet facet = AndroidFacet.getInstance(context);
+    final AndroidModuleExtension facet = ModuleUtilCore.getExtension(context, AndroidModuleExtension.class);
     final String message = "Specify value of attribute '" + myAttributeName + "'";
     final String title = "Set Attribute Value";
 

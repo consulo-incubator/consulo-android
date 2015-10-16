@@ -38,13 +38,8 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.facet.FacetManager;
-import com.intellij.facet.ModifiableFacetModel;
-import com.intellij.facet.ProjectFacetManager;
 import com.intellij.ide.util.DefaultPsiElementCellRenderer;
 import com.intellij.ide.wizard.CommitStepException;
-import com.intellij.lang.java.JavaParserDefinition;
-import com.intellij.lang.java.lexer.JavaLexer;
 import com.intellij.lexer.JavaLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.notification.Notification;
@@ -100,8 +95,6 @@ import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.android.dom.AndroidDomUtil;
 import org.jetbrains.android.dom.manifest.*;
-import org.jetbrains.android.facet.AndroidFacet;
-import org.jetbrains.android.facet.AndroidFacetConfiguration;
 import org.jetbrains.android.run.AndroidRunConfiguration;
 import org.jetbrains.android.run.AndroidRunConfigurationBase;
 import org.jetbrains.android.run.AndroidRunConfigurationType;
@@ -415,7 +408,7 @@ public class AndroidUtils {
   @Nullable
   public static Module getAndroidModule(ConfigurationContext context) {
     Module module = context.getModule();
-    if (module == null || AndroidFacet.getInstance(module) == null) {
+    if (module == null || ModuleUtilCore.getExtension(module, AndroidModuleExtension.class) == null) {
       return null;
     }
     return module;
@@ -574,21 +567,22 @@ public class AndroidUtils {
   }
 
   @NotNull
-  public static AndroidFacet addAndroidFacetInWriteAction(@NotNull final Module module,
+  public static AndroidModuleExtension addAndroidFacetInWriteAction(@NotNull final Module module,
                                                           @NotNull final VirtualFile contentRoot,
                                                           final boolean library) {
-    return ApplicationManager.getApplication().runWriteAction(new Computable<AndroidFacet>() {
+    /*return ApplicationManager.getApplication().runWriteAction(new Computable<AndroidFacet>() {
       @Override
       public AndroidFacet compute() {
         return addAndroidFacet(module, contentRoot, library);
       }
-    });
+    }); */
+    return null;
   }
 
   @NotNull
-  public static AndroidFacet addAndroidFacet(final Module module, @NotNull VirtualFile contentRoot,
+  public static AndroidModuleExtension addAndroidFacet(final Module module, @NotNull VirtualFile contentRoot,
                                              boolean library) {
-    final FacetManager facetManager = FacetManager.getInstance(module);
+    /*final FacetManager facetManager = FacetManager.getInstance(module);
     ModifiableFacetModel model = facetManager.createModifiableModel();
     AndroidFacet facet = model.getFacetByType(AndroidFacet.ID);
 
@@ -603,7 +597,8 @@ public class AndroidUtils {
     }
     model.commit();
 
-    return facet;
+    return  ; */
+    return null;
   }
 
   @Nullable

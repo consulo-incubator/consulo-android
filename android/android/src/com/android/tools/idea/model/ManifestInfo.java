@@ -21,18 +21,18 @@ import com.android.sdklib.AndroidVersion;
 import com.android.sdklib.IAndroidTarget;
 import com.android.sdklib.devices.Device;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.application.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Function;
 import org.jetbrains.android.dom.manifest.*;
-import org.jetbrains.android.dom.manifest.Application;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 import java.util.Map;
@@ -196,7 +196,7 @@ public abstract class ManifestInfo {
 
     ManifestInfo finder = module.getUserData(key);
     if (finder == null) {
-      AndroidFacet facet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (facet == null) {
         throw new IllegalArgumentException("Manifest information can only be obtained on modules with the Android facet.");
       }

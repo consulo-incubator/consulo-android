@@ -5,6 +5,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.refactoring.InlineActionHandler;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -17,13 +18,13 @@ import com.intellij.util.xml.DomManager;
 import org.jetbrains.android.dom.converters.AndroidResourceReferenceBase;
 import org.jetbrains.android.dom.layout.LayoutDomFileDescription;
 import org.jetbrains.android.dom.wrappers.ResourceElementWrapper;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.util.AndroidBundle;
 import org.jetbrains.android.util.ErrorReporter;
 import org.jetbrains.android.util.HintBasedErrorReporter;
 import org.jetbrains.android.util.ProjectBasedErrorReporter;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 /**
  * @author Eugene.Kudelevsky
@@ -52,7 +53,7 @@ public class AndroidInlineLayoutHandler extends InlineActionHandler {
       element = ((ResourceElementWrapper)element).getWrappee();
     }
     if (element instanceof XmlFile) {
-      if (AndroidFacet.getInstance(element) == null ||
+      if (ModuleUtilCore.getExtension(element, AndroidModuleExtension.class) == null ||
           ((XmlFile)element).getRootTag() == null) {
         return false;
       }
@@ -70,7 +71,7 @@ public class AndroidInlineLayoutHandler extends InlineActionHandler {
     final PsiElement element = PsiUtilBase.getElementAtCaret(editor);
 
     if (!(element instanceof XmlToken) ||
-        AndroidFacet.getInstance(element) == null) {
+        ModuleUtilCore.getExtension(element, AndroidModuleExtension.class) == null) {
       return null;
     }
     final XmlTag tag = PsiTreeUtil.getParentOfType(element, XmlTag.class);

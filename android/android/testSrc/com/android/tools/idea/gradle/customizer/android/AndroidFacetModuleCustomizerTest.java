@@ -21,12 +21,14 @@ import com.android.tools.idea.gradle.TestProjects;
 import com.android.tools.idea.gradle.stubs.android.AndroidProjectStub;
 import com.android.tools.idea.gradle.stubs.android.VariantStub;
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.IdeaTestCase;
 import com.intellij.util.ExceptionUtil;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.jps.android.model.impl.JpsAndroidModuleProperties;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 
@@ -72,7 +74,7 @@ public class AndroidFacetModuleCustomizerTest extends IdeaTestCase {
     }
 
     // Verify that AndroidFacet was added and configured.
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     assertSame(project, facet.getIdeaAndroidProject());
 

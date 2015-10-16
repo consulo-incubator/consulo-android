@@ -54,6 +54,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -81,6 +82,7 @@ import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.android.uipreview.RenderingException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import javax.swing.*;
 import java.awt.*;
@@ -117,7 +119,7 @@ public final class AndroidDesignerEditorPanel extends DesignerEditorPanel implem
   private final Alarm mySessionAlarm = new Alarm();
   private final MergingUpdateQueue mySessionQueue;
   private final AndroidDesignerEditorPanel.LayoutConfigurationListener myConfigListener;
-  private final AndroidFacet myFacet;
+  private final AndroidModuleExtension myFacet;
   private volatile RenderSession mySession;
   private volatile long mySessionId;
   private final Lock myRendererLock = new ReentrantLock();
@@ -149,7 +151,7 @@ public final class AndroidDesignerEditorPanel extends DesignerEditorPanel implem
 
     showProgress("Loading configuration...");
 
-    AndroidFacet facet = AndroidFacet.getInstance(getModule());
+    AndroidModuleExtension facet = ModuleUtilCore.getExtension(getModule(), AndroidModuleExtension.class);
     assert facet != null;
     myFacet = facet;
     if (facet.isGradleProject()) {
@@ -1588,7 +1590,7 @@ public final class AndroidDesignerEditorPanel extends DesignerEditorPanel implem
   // ---- Implements ResourceFolderManager.ResourceFolderListener ----
 
   @Override
-  public void resourceFoldersChanged(@NotNull AndroidFacet facet,
+  public void resourceFoldersChanged(@NotNull AndroidModuleExtension facet,
                                      @NotNull List<VirtualFile> folders,
                                      @NotNull Collection<VirtualFile> added,
                                      @NotNull Collection<VirtualFile> removed) {

@@ -24,10 +24,12 @@ import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.testFramework.IdeaTestCase;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.List;
 
@@ -62,7 +64,7 @@ public class GradleInvokerTest extends IdeaTestCase {
         assertNotNull(facet);
         facet.getConfiguration().GRADLE_PROJECT_PATH = myModuleGradlePath;
 
-        myAndroidFacet = AndroidFacet.getInstance(myModule);
+        myAndroidFacet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
         assertNotNull(myAndroidFacet);
       }
     });

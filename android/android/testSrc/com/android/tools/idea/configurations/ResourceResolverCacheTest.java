@@ -18,9 +18,9 @@ package com.android.tools.idea.configurations;
 import com.android.ide.common.resources.ResourceRepository;
 import com.android.ide.common.resources.ResourceResolver;
 import com.android.tools.idea.rendering.LocalResourceRepository;
-import com.android.tools.idea.rendering.Locale;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -30,6 +30,7 @@ import com.intellij.psi.xml.XmlTagValue;
 import org.jetbrains.android.AndroidTestCase;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.sdk.FrameworkResourceLoader;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 public class ResourceResolverCacheTest extends AndroidTestCase {
   @Override
@@ -44,7 +45,7 @@ public class ResourceResolverCacheTest extends AndroidTestCase {
     assertNotNull(file1);
     assertNotNull(file2);
     assertNotNull(file3);
-    AndroidFacet facet = AndroidFacet.getInstance(myModule);
+    AndroidFacet facet = ModuleUtilCore.getExtension(myModule, AndroidModuleExtension.class);
     assertNotNull(facet);
     Project project = getProject();
     PsiFile psiFile1 = PsiManager.getInstance(project).findFile(file1);

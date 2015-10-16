@@ -25,18 +25,18 @@ import com.intellij.openapi.ui.Queryable;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.SimpleTextAttributes;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 public class AndroidManifestFileNode extends PsiFileNode implements DirectoryGroupNode {
-  @NotNull private final AndroidFacet myFacet;
+  @NotNull private final AndroidModuleExtension myFacet;
 
   public AndroidManifestFileNode(@NotNull Project project,
                                  @NotNull PsiFile psiFile,
                                  @NotNull ViewSettings settings,
-                                 @NotNull AndroidFacet facet) {
+                                 @NotNull AndroidModuleExtension facet) {
     super(project, psiFile, settings);
     myFacet = facet;
   }
@@ -56,7 +56,7 @@ public class AndroidManifestFileNode extends PsiFileNode implements DirectoryGro
   }
 
   @Nullable
-  public static IdeaSourceProvider getSourceProvider(@NotNull AndroidFacet facet, @NotNull PsiFile file) {
+  public static IdeaSourceProvider getSourceProvider(@NotNull AndroidModuleExtension facet, @NotNull PsiFile file) {
     for (IdeaSourceProvider provider : AndroidProjectViewPane.getSourceProviders(facet)) {
       if (file.getVirtualFile().equals(provider.getManifestFile())) {
         return provider;

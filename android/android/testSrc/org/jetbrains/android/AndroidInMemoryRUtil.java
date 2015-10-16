@@ -34,6 +34,7 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,7 +126,7 @@ public class AndroidInMemoryRUtil {
         return new PsiClass[0];
       }
 
-      final AndroidFacet facet = AndroidFacet.getInstance(myModule);
+      final AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(myModule, AndroidModuleExtension.class);
       if (facet == null) {
         return new PsiClass[0];
       }
@@ -200,7 +201,7 @@ public class AndroidInMemoryRUtil {
         if (!scope.isSearchInModuleContent(module)) {
           continue;
         }
-        AndroidFacet facet = AndroidFacet.getInstance(module);
+        AndroidFacet facet = ModuleUtilCore.<AndroidModuleExtension>getExtension(module, AndroidModuleExtension.class);
         // If we cannot find a facet or manifest, we cannot have resources.
         if (facet == null || facet.getManifest() == null) {
           continue;

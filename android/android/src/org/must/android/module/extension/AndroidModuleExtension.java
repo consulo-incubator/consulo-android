@@ -1,24 +1,32 @@
 package org.must.android.module.extension;
 
 import com.android.builder.model.SourceProvider;
+import com.android.prefs.AndroidLocation;
+import com.android.sdklib.IAndroidTarget;
+import com.android.sdklib.internal.avd.AvdInfo;
 import com.android.sdklib.internal.avd.AvdManager;
 import com.android.tools.idea.configurations.ConfigurationManager;
 import com.android.tools.idea.databinding.DataBindingUtil;
 import com.android.tools.idea.gradle.IdeaAndroidProject;
 import com.android.tools.idea.model.AndroidModuleInfo;
+import com.android.tools.idea.rendering.AppResourceRepository;
 import com.android.tools.idea.rendering.LocalResourceRepository;
+import com.android.tools.idea.rendering.ProjectResourceRepository;
 import com.android.tools.idea.rendering.RenderService;
+import com.android.utils.ILogger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import org.consulo.module.extension.ModuleExtensionWithSdk;
 import org.jetbrains.android.dom.manifest.Manifest;
+import org.jetbrains.android.facet.AvdsNotSupportedException;
 import org.jetbrains.android.facet.ClassMapConstructor;
 import org.jetbrains.android.facet.IdeaSourceProvider;
 import org.jetbrains.android.facet.ResourceFolderManager;
 import org.jetbrains.android.resourceManagers.LocalResourceManager;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.resourceManagers.SystemResourceManager;
+import org.jetbrains.android.sdk.AndroidPlatform;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,6 +40,12 @@ import java.util.Map;
  * @since 14.10.2015
  */
 public interface AndroidModuleExtension<T extends AndroidModuleExtension<T>> extends ModuleExtensionWithSdk<T> {
+  @Nullable
+  AndroidPlatform getAndroidPlatform();
+
+  @Nullable
+  IAndroidTarget getAndroidTarget();
+
   @Nullable
   IdeaAndroidProject getIdeaAndroidProject();
 
@@ -74,6 +88,44 @@ public interface AndroidModuleExtension<T extends AndroidModuleExtension<T>> ext
   @Deprecated
   @Nullable
   VirtualFile getPrimaryResourceDir();
+
+  /**
+   * Returns the source providers for the available flavors, which will never be null for a Gradle based
+   * Android project, and always null for a legacy Android project
+   *
+   * @return the flavor source providers or null in legacy projects
+   */
+  @Nullable
+  List<SourceProvider> getFlavorSourceProviders();
+
+  /**
+   * Returns the source provider specific to the flavor combination, if any.
+   *
+   * @return the source provider or {@code null}.
+   */
+  @Nullable
+  SourceProvider getMultiFlavorSourceProvider();
+
+  /**
+   * Returns the source provider for the current build type, which will never be null for a Gradle based
+   * Android project, and always null for a legacy Android project
+   *
+   * @return the build type source set or null
+   */
+  @Nullable
+  SourceProvider getBuildTypeSourceProvider();
+
+  /**
+   * Returns the source provider specific to the variant, if any.
+   *
+   * @return the source provider or null
+   */
+  @Nullable
+  SourceProvider getVariantSourceProvider();
+
+  @Contract("true -> !null")
+  @Nullable
+  AppResourceRepository getAppResources(boolean createIfNecessary);
 
   /**
    * Returns the light BR class for this facet if it is aready set.
@@ -121,6 +173,10 @@ public interface AndroidModuleExtension<T extends AndroidModuleExtension<T>> ext
   @Nullable
   ConfigurationManager getConfigurationManager(boolean createIfNecessary);
 
+  @Contract("true -> !null")
+  @Nullable
+  ProjectResourceRepository getProjectResources(boolean createIfNecessary);
+
   /**
    * Returns all resource directories, in the overlay order
    *
@@ -141,4 +197,15 @@ public interface AndroidModuleExtension<T extends AndroidModuleExtension<T>> ext
   RenderService getRenderService();
 
   void refreshResources();
+
+  @NotNull
+  AvdInfo[] getAllAvds();
+
+  @NotNull
+  AvdInfo[] getValidCompatibleAvds();
+
+  void launchEmulator(@Nullable String avdName, @NotNull String commands);
+
+  @NotNull
+  AvdManager getAvdManager(ILogger log) throws AvdsNotSupportedException, AndroidLocation.AndroidLocationException;
 }

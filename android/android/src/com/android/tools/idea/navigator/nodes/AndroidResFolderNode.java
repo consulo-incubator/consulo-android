@@ -25,9 +25,9 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidSourceType;
 import org.jetbrains.annotations.NotNull;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.Set;
 
 public class AndroidResFolderNode extends AndroidSourceTypeNode {
   public AndroidResFolderNode(@NotNull Project project,
-                              @NotNull AndroidFacet facet,
+                              @NotNull AndroidModuleExtension facet,
                               @NotNull ViewSettings viewSettings,
                               @NotNull Set<VirtualFile> sourceRoots,
                               @NotNull AndroidProjectViewPane projectViewPane) {

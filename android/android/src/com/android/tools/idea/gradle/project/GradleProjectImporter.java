@@ -42,6 +42,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -58,6 +59,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
+import org.must.android.module.extension.AndroidModuleExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -300,7 +302,7 @@ public class GradleProjectImporter {
         // failure.
         ModuleManager moduleManager = ModuleManager.getInstance(project);
         for (Module module : moduleManager.getModules()) {
-          AndroidFacet facet = AndroidFacet.getInstance(module);
+          AndroidModuleExtension facet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
           if (facet != null) {
             facet.setIdeaAndroidProject(null);
           }
@@ -596,7 +598,7 @@ public class GradleProjectImporter {
         return true;
       }
 
-      AndroidFacet androidFacet = AndroidFacet.getInstance(module);
+      AndroidModuleExtension androidFacet = ModuleUtilCore.getExtension(module, AndroidModuleExtension.class);
       if (androidFacet != null) {
         DataNode<IdeaAndroidProject> androidDataNode = find(cache, IDE_ANDROID_PROJECT);
         if (androidDataNode == null) {
