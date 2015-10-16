@@ -538,7 +538,7 @@ public class AndroidFacet extends Facet<AndroidFacetConfiguration> {
       MessageBuildingSdkLog log = new MessageBuildingSdkLog();
       manager.reloadAvds(log);
       if (!log.getErrorMessage().isEmpty()) {
-        Messages                                    getAvdManager
+        Messages
           .showErrorDialog(getModule().getProject(), AndroidBundle.message("cant.load.avds.error.prefix") + ' ' + log.getErrorMessage(),
                            CommonBundle.getErrorTitle());
       }
